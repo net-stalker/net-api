@@ -1,7 +1,5 @@
 # net-api
 
-# net-timescale
-
 # How to Work with CHANGELOG.MD
 This guide explains how to work with the `CHANGELOG.md` file in our multi-repo project. We use this file for versioning and have set up a custom CI/CD pipeline to manage it effectively.
 
