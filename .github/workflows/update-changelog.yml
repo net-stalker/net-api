@@ -78,4 +78,5 @@ jobs:
         with:
           path: CHANGELOG.md
           GITHUB_TOKEN: ${{ secrets.OWNER_PAT }}
+          commit_message: "Updated CHANGELOG.md [skip ci]"
           content: "${{ steps.change-log.outputs.CHANGE_LOG }}\n\n${{ github.event.head_commit.message }}"
