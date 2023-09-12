@@ -1,0 +1,11 @@
+[workspace]
+
+members = [
+	"net-timescale-api",
+]
+
+[workspace.dependencies]
+net-proto-api = {version = "0.1.0", registry = "net-registry" }
+
+log = "0.4.17"
+log4rs = "1.2.0"
