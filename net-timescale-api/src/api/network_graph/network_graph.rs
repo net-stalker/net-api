@@ -60,11 +60,11 @@ impl Encoder for NetworkGraphDTO {
         for graph_node in &self.graph_nodes {
             writer.step_in(ion_rs::IonType::Struct).expect("Error while entering an ion struct");
             
-            writer.set_field_name("id");
-            writer.write_string(graph_node.get_id()).unwrap();
+            writer.set_field_name("node_id");
+            writer.write_string(graph_node.get_node_id()).unwrap();
             
-            writer.set_field_name("aggregator");
-            writer.write_string(graph_node.get_aggregator()).unwrap();
+            writer.set_field_name("agent_id");
+            writer.write_string(graph_node.get_agent_id()).unwrap();
 
             writer.step_out().unwrap();
         }
@@ -104,12 +104,16 @@ impl Decoder for NetworkGraphDTO {
         binary_user_reader.step_in().unwrap();
         while binary_user_reader.next().unwrap() != StreamItem::Nothing {
             binary_user_reader.step_in().unwrap();
+
             binary_user_reader.next().unwrap();
             let binding = binary_user_reader.read_string().unwrap();
-            let id = binding.text();
+            let node_id = binding.text();
+
+            binary_user_reader.next().unwrap();
             let binding = binary_user_reader.read_string().unwrap();
-            let aggregator = binding.text();
-            graph_nodes.push(GraphNodeDTO::new(id, aggregator));
+            let agent_id = binding.text();
+
+            graph_nodes.push(GraphNodeDTO::new(node_id, agent_id));
             binary_user_reader.step_out().unwrap();
         }
         binary_user_reader.step_out().unwrap();
@@ -119,12 +123,15 @@ impl Decoder for NetworkGraphDTO {
         binary_user_reader.step_in().unwrap();
         while binary_user_reader.next().unwrap() != StreamItem::Nothing {
             binary_user_reader.step_in().unwrap();
+
             binary_user_reader.next().unwrap();
             let binding = binary_user_reader.read_string().unwrap();
             let src_id = binding.text();
+
             binary_user_reader.next().unwrap();
             let binding = binary_user_reader.read_string().unwrap();
             let dst_id = binding.text();
+
             graph_edges.push(GraphEdgeDTO::new(src_id, dst_id));
             binary_user_reader.step_out().unwrap();
         }
@@ -155,11 +162,11 @@ mod tests {
     #[test]
     fn reader_correctly_read_encoded_graph_edge() {
         const FIRST_NODE_ID: &str = "0.0.0.0:0000";
-        const FIRST_NODE_AGGREGATOR: &str = "some first node agent id";
-        let first_graph_node = GraphNodeDTO::new(FIRST_NODE_ID, FIRST_NODE_AGGREGATOR);
+        const FIRST_NODE_AGENT_ID: &str = "some first node agent id";
+        let first_graph_node = GraphNodeDTO::new(FIRST_NODE_ID, FIRST_NODE_AGENT_ID);
         const SECOND_NODE_ID: &str = "0.0.0.0:5656";
-        const SECOND_NODE_AGGREGATOR: &str = "some second node agent id";
-        let second_graph_node = GraphNodeDTO::new(SECOND_NODE_ID, SECOND_NODE_AGGREGATOR);
+        const SECOND_NODE_AGENT_ID: &str = "some second node agent id";
+        let second_graph_node = GraphNodeDTO::new(SECOND_NODE_ID, SECOND_NODE_AGENT_ID);
 
         const SRC_ID: &str = "0.0.0.0:0000";
         const DST_ID: &str = "0.0.0.0:5656";
@@ -183,23 +190,23 @@ mod tests {
         assert_eq!(StreamItem::Value(IonType::Struct), binary_user_reader.next().unwrap());
         binary_user_reader.step_in().unwrap();
         assert_eq!(StreamItem::Value(IonType::String), binary_user_reader.next().unwrap());
-        assert_eq!("id", binary_user_reader.field_name().unwrap());
+        assert_eq!("node_id", binary_user_reader.field_name().unwrap());
         assert_eq!(FIRST_NODE_ID,  binary_user_reader.read_string().unwrap().text());
 
         assert_eq!(StreamItem::Value(IonType::String), binary_user_reader.next().unwrap());
-        assert_eq!("aggregator", binary_user_reader.field_name().unwrap());
-        assert_eq!(FIRST_NODE_AGGREGATOR,  binary_user_reader.read_string().unwrap().text());
+        assert_eq!("agent_id", binary_user_reader.field_name().unwrap());
+        assert_eq!(FIRST_NODE_AGENT_ID, binary_user_reader.read_string().unwrap().text());
         binary_user_reader.step_out().unwrap();
 
         assert_eq!(StreamItem::Value(IonType::Struct), binary_user_reader.next().unwrap());
         binary_user_reader.step_in().unwrap();
         assert_eq!(StreamItem::Value(IonType::String), binary_user_reader.next().unwrap());
-        assert_eq!("id", binary_user_reader.field_name().unwrap());
+        assert_eq!("node_id", binary_user_reader.field_name().unwrap());
         assert_eq!(SECOND_NODE_ID,  binary_user_reader.read_string().unwrap().text());
         
         assert_eq!(StreamItem::Value(IonType::String), binary_user_reader.next().unwrap());
-        assert_eq!("aggregator", binary_user_reader.field_name().unwrap());
-        assert_eq!(SECOND_NODE_AGGREGATOR,  binary_user_reader.read_string().unwrap().text());
+        assert_eq!("agent_id", binary_user_reader.field_name().unwrap());
+        assert_eq!(SECOND_NODE_AGENT_ID, binary_user_reader.read_string().unwrap().text());
         binary_user_reader.step_out().unwrap();
 
         binary_user_reader.step_out().unwrap();
@@ -223,14 +230,13 @@ mod tests {
     }
 
     #[test]
-    #[ignore]
     fn endec_network_graph() {
         const FIRST_NODE_ID: &str = "0.0.0.0:0000";
-        const FIRST_NODE_AGGREGATOR: &str = "first node aggregator"; 
-        let first_graph_node = GraphNodeDTO::new(FIRST_NODE_ID, FIRST_NODE_AGGREGATOR);
+        const FIRST_NODE_AGENT_ID: &str = "first node agent id";
+        let first_graph_node = GraphNodeDTO::new(FIRST_NODE_ID, FIRST_NODE_AGENT_ID);
         const SECOND_NODE_ID: &str = "0.0.0.0:5656";
-        const SECOND_NODE_AGGREGATOR: &str = "second node aggregator";
-        let second_graph_node = GraphNodeDTO::new(SECOND_NODE_ID, SECOND_NODE_AGGREGATOR);
+        const SECOND_NODE_AGENT_ID: &str = "second node agent id";
+        let second_graph_node = GraphNodeDTO::new(SECOND_NODE_ID, SECOND_NODE_AGENT_ID);
 
         const SRC_ID: &str = "0.0.0.0:0000";
         const DST_ID: &str = "0.0.0.0:5656";

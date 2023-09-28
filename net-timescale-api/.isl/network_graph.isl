@@ -4,8 +4,8 @@ type::{
     name: graph_node,
     type: struct,
     fields: {
-        id: string,
-        aggregator: string,
+        node_id: string,
+        agent_id: string,
     },
 }
 
