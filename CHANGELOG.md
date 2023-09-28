@@ -8,12 +8,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 <!-- [START AUTO UPDATE] -->
 <!-- Please keep comment here to allow auto-update -->
+## [0.1.2-86d583b] - 2023-09-28
+
+feature/update-push-prereleases.yml: updated push-prerelease.yml to m… (#4)
+
+* feature/update-push-prereleases.yml: updated push-prerelease.yml to make it workflow trigger after pushing into pull requests
+<!-- [END AUTO UPDATE] -->
 ## [0.1.2-42099e1] - 2023-09-25
 
 feature/CU-8692te2td: updated ci scripts (#2)
 
 * feature/CU-8692te2td: updated ci scripts, changed owner's credentials to the bot's ones
-<!-- [END AUTO UPDATE] -->
 ## [0.1.2-dd83adc] - 2023-09-12
 
 Feature/cu 8692q8rzy: moved net-*-apis to net-api repo (#1)
