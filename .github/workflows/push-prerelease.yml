@@ -1,7 +1,9 @@
 name: Update crates version
 on:
   push:
-    branches: ["*"]
+    branches: ["develop"]
+  pull_request:
+    branches: [ "*" ]
 
 env:
   CARGO_TERM_COLOR: always
