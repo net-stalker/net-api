@@ -14,7 +14,13 @@ type::{
     type: struct,
     fields: {
         src_id: string,
-        dst_id: string
+        dst_id: string,
+        factors: {
+            type: list,
+            element: {
+                type: string,
+            }
+        }
     },
 }
 

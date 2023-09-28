@@ -1,5 +1,5 @@
 use ion_rs;
-use ion_rs::IonWriter;
+use ion_rs::{IonWriter, StreamItem};
 use ion_rs::IonReader;
 use ion_rs::element::writer::TextKind;
 
@@ -11,13 +11,15 @@ use net_proto_api::decoder_api::Decoder;
 pub struct GraphEdgeDTO {
     src_id: String,
     dst_id: String,
+    factors: Vec<String>,
 }
 
 impl GraphEdgeDTO {
-    pub fn new ( src_id: &str, dst_id: &str) -> Self {
+    pub fn new ( src_id: &str, dst_id: &str, factors: &[String]) -> Self {
         GraphEdgeDTO {
             src_id: src_id.into(), 
-            dst_id: dst_id.into(), 
+            dst_id: dst_id.into(),
+            factors: factors.to_vec(),
         }
     }
 
@@ -27,6 +29,10 @@ impl GraphEdgeDTO {
 
     pub fn get_dst_id (&self) -> &str {
         &self.dst_id
+    }
+
+    pub fn get_factors (&self) -> &[String] {
+        self.factors.as_slice()
     }
 }
 
@@ -57,6 +63,13 @@ impl Encoder for GraphEdgeDTO {
         writer.set_field_name("dst_id");
         writer.write_string(&self.dst_id).unwrap();
 
+        writer.set_field_name("factors");
+        writer.step_in(ion_rs::IonType::List).expect("Error while entering an ion list");
+        for factor in &self.factors {
+            writer.write_string(factor).unwrap();
+        }
+        writer.step_out().unwrap();
+
         writer.step_out().unwrap();
         writer.flush().unwrap();
 
@@ -79,9 +92,22 @@ impl Decoder for GraphEdgeDTO {
         let binding = binary_user_reader.read_string().unwrap();
         let dst_id = binding.text();
 
+        binary_user_reader.next().unwrap();
+        let mut factors = Vec::new();
+        binary_user_reader.step_in().unwrap();
+        while binary_user_reader.next().unwrap() != StreamItem::Nothing {
+            let binding = binary_user_reader.read_string().unwrap();
+            let factor = binding.text();
+            factors.push(factor.to_string());
+        }
+        binary_user_reader.step_out().unwrap();
+
+        binary_user_reader.step_out().unwrap();
+
         GraphEdgeDTO::new(
             src_id,
             dst_id,
+            factors.as_slice(),
         )
     }
 }
@@ -104,7 +130,8 @@ mod tests {
     fn reader_correctly_read_encoded_graph_edge() {
         const SRC_ID: &str = "0.0.0.0:0000";
         const DST_ID: &str = "0.0.0.0:5656";
-        let graph_edge: GraphEdgeDTO = GraphEdgeDTO::new(SRC_ID, DST_ID);
+        let factors: Vec<String> = vec!["fac1".to_string(), "fac2".to_string(), "fac3".to_string()];
+        let graph_edge: GraphEdgeDTO = GraphEdgeDTO::new(SRC_ID, DST_ID, factors.as_slice());
         let mut binary_user_reader = ReaderBuilder::new().build(graph_edge.encode()).unwrap();
 
         assert_eq!(StreamItem::Value(IonType::Struct), binary_user_reader.next().unwrap());
@@ -117,14 +144,31 @@ mod tests {
         assert_eq!(StreamItem::Value(IonType::String), binary_user_reader.next().unwrap());
         assert_eq!("dst_id", binary_user_reader.field_name().unwrap());
         assert_eq!(DST_ID,  binary_user_reader.read_string().unwrap().text());
+
+        assert_eq!(StreamItem::Value(IonType::List), binary_user_reader.next().unwrap());
+        assert_eq!("factors", binary_user_reader.field_name().unwrap());
+
+        binary_user_reader.step_in().unwrap();
+
+        assert_eq!(StreamItem::Value(IonType::String), binary_user_reader.next().unwrap());
+        assert_eq!(factors.get(0).unwrap(), binary_user_reader.read_string().unwrap().text());
+
+        assert_eq!(StreamItem::Value(IonType::String), binary_user_reader.next().unwrap());
+        assert_eq!(factors.get(1).unwrap(), binary_user_reader.read_string().unwrap().text());
+
+        assert_eq!(StreamItem::Value(IonType::String), binary_user_reader.next().unwrap());
+        assert_eq!(factors.get(2).unwrap(), binary_user_reader.read_string().unwrap().text());
+        binary_user_reader.step_out().unwrap();
+
+        binary_user_reader.step_out().unwrap();
     }
 
     #[test]
-    #[ignore]
     fn endec_graph_edge() {
         const SRC_ID: &str = "0.0.0.0:0000";
         const DST_ID: &str = "0.0.0.0:5656";
-        let graph_edge = GraphEdgeDTO::new(SRC_ID, DST_ID);
+        let factors: Vec<String> = vec!["fac1".to_string(), "fac2".to_string(), "fac3".to_string()];
+        let graph_edge = GraphEdgeDTO::new(SRC_ID, DST_ID, factors.as_slice());
         assert_eq!(graph_edge, GraphEdgeDTO::decode(&graph_edge.encode()));
     }
 }
