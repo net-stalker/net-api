@@ -15,7 +15,7 @@ type::{
     fields: {
         src_id: string,
         dst_id: string,
-        factors: {
+        communication_types: {
             type: list,
             element: {
                 type: string,

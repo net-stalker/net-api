@@ -1,4 +1,5 @@
 use ion_rs;
+use ion_rs::element::reader::ElementReader;
 use ion_rs::IonWriter;
 use ion_rs::IonReader;
 use ion_rs::StreamItem;
@@ -81,10 +82,10 @@ impl Encoder for NetworkGraphDTO {
             writer.set_field_name("dst_id");
             writer.write_string(graph_edge.get_dst_id()).unwrap();
 
-            writer.set_field_name("factors");
+            writer.set_field_name("communication_types");
             writer.step_in(ion_rs::IonType::List).expect("Error while entering an ion list");
-            for factor in graph_edge.get_factors() {
-                writer.write_string(factor).unwrap();
+            for communication_type in graph_edge.get_communication_types() {
+                writer.write_string(communication_type).unwrap();
             }
             writer.step_out().unwrap();
             
@@ -140,16 +141,15 @@ impl Decoder for NetworkGraphDTO {
             let dst_id = binding.text();
 
             binary_user_reader.next().unwrap();
-            let mut factors = Vec::new();
             binary_user_reader.step_in().unwrap();
-            while binary_user_reader.next().unwrap() != StreamItem::Nothing {
-                let binding = binary_user_reader.read_string().unwrap();
-                let factor = binding.text();
-                factors.push(factor.to_string());
+            let elements = binary_user_reader.read_all_elements().unwrap();
+            let mut communication_types = Vec::<String>::with_capacity(elements.len());
+            for element in elements {
+                communication_types.push(element.as_text().unwrap().to_string());
             }
             binary_user_reader.step_out().unwrap();
 
-            graph_edges.push(GraphEdgeDTO::new(src_id, dst_id, factors.as_slice()));
+            graph_edges.push(GraphEdgeDTO::new(src_id, dst_id, communication_types.as_slice()));
             binary_user_reader.step_out().unwrap();
         }
         binary_user_reader.step_out().unwrap();
@@ -188,9 +188,9 @@ mod tests {
 
         const SRC_ID: &str = "0.0.0.0:0000";
         const DST_ID: &str = "0.0.0.0:5656";
-        let factors: Vec<String> = vec!["fac1".to_string(), "fac2".to_string(), "fac3".to_string()];
+        let communication_types: Vec<String> = vec!["fac1".to_string(), "fac2".to_string(), "fac3".to_string()];
 
-        let graph_edge: GraphEdgeDTO = GraphEdgeDTO::new(SRC_ID, DST_ID, factors.as_slice());
+        let graph_edge: GraphEdgeDTO = GraphEdgeDTO::new(SRC_ID, DST_ID, communication_types.as_slice());
 
         let network_graph = NetworkGraphDTO::new(
             &[first_graph_node, second_graph_node],
@@ -246,18 +246,18 @@ mod tests {
         assert_eq!(DST_ID,  binary_user_reader.read_string().unwrap().text());
 
         assert_eq!(StreamItem::Value(IonType::List), binary_user_reader.next().unwrap());
-        assert_eq!("factors", binary_user_reader.field_name().unwrap());
+        assert_eq!("communication_types", binary_user_reader.field_name().unwrap());
 
         binary_user_reader.step_in().unwrap();
 
         assert_eq!(StreamItem::Value(IonType::String), binary_user_reader.next().unwrap());
-        assert_eq!(factors.get(0).unwrap(), binary_user_reader.read_string().unwrap().text());
+        assert_eq!(communication_types.get(0).unwrap(), binary_user_reader.read_string().unwrap().text());
 
         assert_eq!(StreamItem::Value(IonType::String), binary_user_reader.next().unwrap());
-        assert_eq!(factors.get(1).unwrap(), binary_user_reader.read_string().unwrap().text());
+        assert_eq!(communication_types.get(1).unwrap(), binary_user_reader.read_string().unwrap().text());
 
         assert_eq!(StreamItem::Value(IonType::String), binary_user_reader.next().unwrap());
-        assert_eq!(factors.get(2).unwrap(), binary_user_reader.read_string().unwrap().text());
+        assert_eq!(communication_types.get(2).unwrap(), binary_user_reader.read_string().unwrap().text());
         binary_user_reader.step_out().unwrap();
         binary_user_reader.step_out().unwrap();
         binary_user_reader.step_out().unwrap();
@@ -278,9 +278,9 @@ mod tests {
         const SRC_ID: &str = "0.0.0.0:0000";
         const DST_ID: &str = "0.0.0.0:5656";
 
-        let factors: Vec<String> = vec!["fac1".to_string(), "fac2".to_string(), "fac3".to_string()];
+        let communication_types: Vec<String> = vec!["fac1".to_string(), "fac2".to_string(), "fac3".to_string()];
 
-        let graph_edge: GraphEdgeDTO = GraphEdgeDTO::new(SRC_ID, DST_ID, factors.as_slice());
+        let graph_edge: GraphEdgeDTO = GraphEdgeDTO::new(SRC_ID, DST_ID, communication_types.as_slice());
 
         let network_graph = NetworkGraphDTO::new(
             &[first_graph_node, second_graph_node],
