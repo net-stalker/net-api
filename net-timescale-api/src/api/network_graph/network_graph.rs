@@ -2,7 +2,6 @@ use ion_rs;
 use ion_rs::element::reader::ElementReader;
 use ion_rs::IonWriter;
 use ion_rs::IonReader;
-use ion_rs::StreamItem;
 use ion_rs::element::writer::TextKind;
 
 use net_proto_api::encoder_api::Encoder;
@@ -108,50 +107,32 @@ impl Decoder for NetworkGraphDTO {
         binary_user_reader.step_in().unwrap();
 
         binary_user_reader.next().unwrap();
-        let mut graph_nodes = Vec::new();
         binary_user_reader.step_in().unwrap();
-        while binary_user_reader.next().unwrap() != StreamItem::Nothing {
-            binary_user_reader.step_in().unwrap();
-
-            binary_user_reader.next().unwrap();
-            let binding = binary_user_reader.read_string().unwrap();
-            let node_id = binding.text();
-
-            binary_user_reader.next().unwrap();
-            let binding = binary_user_reader.read_string().unwrap();
-            let agent_id = binding.text();
-
+        let elements = binary_user_reader.read_all_elements().unwrap();
+        let mut graph_nodes = Vec::<GraphNodeDTO>::with_capacity(elements.capacity());
+        for element in elements {
+            let graph_node = element.as_struct().unwrap();
+            let node_id = graph_node.get("node_id").unwrap().as_text().unwrap();
+            let agent_id = graph_node.get("agent_id").unwrap().as_text().unwrap();
             graph_nodes.push(GraphNodeDTO::new(node_id, agent_id));
-            binary_user_reader.step_out().unwrap();
         }
         binary_user_reader.step_out().unwrap();
 
         binary_user_reader.next().unwrap();
-        let mut graph_edges = Vec::new();
         binary_user_reader.step_in().unwrap();
-        while binary_user_reader.next().unwrap() != StreamItem::Nothing {
-            binary_user_reader.step_in().unwrap();
-
-            binary_user_reader.next().unwrap();
-            let binding = binary_user_reader.read_string().unwrap();
-            let src_id = binding.text();
-
-            binary_user_reader.next().unwrap();
-            let binding = binary_user_reader.read_string().unwrap();
-            let dst_id = binding.text();
-
-            binary_user_reader.next().unwrap();
-            binary_user_reader.step_in().unwrap();
-            let elements = binary_user_reader.read_all_elements().unwrap();
-            let mut communication_types = Vec::<String>::with_capacity(elements.len());
-            for element in elements {
-                communication_types.push(element.as_text().unwrap().to_string());
-            }
-            binary_user_reader.step_out().unwrap();
-
+        let elements = binary_user_reader.read_all_elements().unwrap();
+        let mut graph_edges = Vec::<GraphEdgeDTO>::with_capacity(elements.capacity());
+        for element in elements {
+            let graph_edge = element.as_struct().unwrap();
+            let src_id = graph_edge.get("src_id").unwrap().as_text().unwrap();
+            let dst_id = graph_edge.get("dst_id").unwrap().as_text().unwrap();
+            let ct = graph_edge.get("communication_types").unwrap().as_sequence().unwrap();
+            let mut communication_types = Vec::<String>::with_capacity(ct.len());
+            ct.elements().for_each(|el| communication_types.push(el.as_text().unwrap().to_string()));
             graph_edges.push(GraphEdgeDTO::new(src_id, dst_id, communication_types.as_slice()));
-            binary_user_reader.step_out().unwrap();
         }
+        binary_user_reader.step_out().unwrap();
+
         binary_user_reader.step_out().unwrap();
 
         NetworkGraphDTO {
