@@ -4,8 +4,8 @@ type::{
     name: graph_node,
     type: struct,
     fields: {
-        id: string,
-        aggregator: string,
+        node_id: string,
+        agent_id: string,
     },
 }
 
@@ -14,7 +14,13 @@ type::{
     type: struct,
     fields: {
         src_id: string,
-        dst_id: string
+        dst_id: string,
+        communication_types: {
+            type: list,
+            element: {
+                type: string,
+            }
+        }
     },
 }
 
