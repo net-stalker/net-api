@@ -8,12 +8,26 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 <!-- [START AUTO UPDATE] -->
 <!-- Please keep comment here to allow auto-update -->
+## [0.1.2-17ea57a] - 2023-10-03
+
+Feature/cu 8692u7hf4: updated net-timescale-api (#3)
+
+* feature/CU-8692u7hf4: changed names of the field in graph_node.rs (id -> node_id, aggregator -> agent_id), fixed endec tests in graph_node.rs and in network_graph.rs
+
+* feature/CU-8692u7hf4: added factor list into graph_edge.rs, updated network_graph.rs
+
+* feature/CU-8692u7hf4: renamed factor to communication_types
+
+* feature/CU-8692u7hf4: optimized decoding in network_graph.rs
+
+* feature/CU-8692u7hf4: removed unused import
 <!-- [END AUTO UPDATE] -->
 ## [0.1.2-86d583b] - 2023-09-28
 
 feature/update-push-prereleases.yml: updated push-prerelease.yml to m… (#4)
 
 * feature/update-push-prereleases.yml: updated push-prerelease.yml to make it workflow trigger after pushing into pull requests
+<!-- [END AUTO UPDATE] -->
 ## [0.1.2-42099e1] - 2023-09-25
 
 feature/CU-8692te2td: updated ci scripts (#2)
