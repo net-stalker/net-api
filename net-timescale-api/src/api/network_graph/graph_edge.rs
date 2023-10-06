@@ -7,6 +7,7 @@ use ion_rs::element::writer::TextKind;
 use net_proto_api::encoder_api::Encoder;
 use net_proto_api::decoder_api::Decoder;
 
+const DATA_TYPE: &str = "graph_edge";
 
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct GraphEdgeDTO {
@@ -34,6 +35,10 @@ impl GraphEdgeDTO {
 
     pub fn get_communication_types(&self) -> &[String] {
         self.communication_types.as_slice()
+    }
+
+    pub fn get_type() -> &'static str {
+        DATA_TYPE
     }
 }
 
@@ -75,6 +80,10 @@ impl Encoder for GraphEdgeDTO {
         writer.flush().unwrap();
 
         writer.output().as_slice().into()
+    }
+
+    fn get_data_type(&self) -> &str {
+        DATA_TYPE
     }
 }
 

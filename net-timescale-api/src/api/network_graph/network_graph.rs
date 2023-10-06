@@ -10,7 +10,7 @@ use net_proto_api::decoder_api::Decoder;
 use super::graph_edge::GraphEdgeDTO;
 use super::graph_node::GraphNodeDTO;
 
-
+const DATA_TYPE: &str = "network_graph";
 #[derive(Debug, PartialEq, Eq)]
 pub struct NetworkGraphDTO {
     graph_nodes: Vec<GraphNodeDTO>,
@@ -31,6 +31,10 @@ impl NetworkGraphDTO {
 
     pub fn get_graph_edges (&self) -> &[GraphEdgeDTO] {
         &self.graph_edges
+    }
+
+    pub fn get_type() -> &'static str {
+        DATA_TYPE
     }
 }
 
@@ -96,6 +100,10 @@ impl Encoder for NetworkGraphDTO {
         writer.flush().unwrap();
 
         writer.output().as_slice().into()
+    }
+
+    fn get_data_type(&self) -> &str {
+        DATA_TYPE
     }
 }
 

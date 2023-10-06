@@ -6,7 +6,7 @@ use ion_rs::element::writer::TextKind;
 use net_proto_api::encoder_api::Encoder;
 use net_proto_api::decoder_api::Decoder;
 
-
+const DATA_TYPE: &str = "network_graph_request";
 #[derive(Debug, PartialEq, Eq)]
 pub struct NetworkGraphRequestDTO {
     start_date_time: i64,
@@ -33,6 +33,10 @@ impl NetworkGraphRequestDTO {
 
     pub fn is_subscribe (&self) -> bool {
         self.subscribe
+    }
+
+    pub fn get_type() -> &'static str {
+        DATA_TYPE
     }
 }
 
@@ -70,6 +74,10 @@ impl Encoder for NetworkGraphRequestDTO {
         writer.flush().unwrap();
 
         writer.output().as_slice().into()
+    }
+
+    fn get_data_type(&self) -> &str {
+        DATA_TYPE
     }
 }
 

@@ -6,7 +6,7 @@ use ion_rs::element::writer::TextKind;
 use net_proto_api::encoder_api::Encoder;
 use net_proto_api::decoder_api::Decoder;
 
-
+const DATA_TYPE: &str = "data_packet";
 #[derive(Debug, PartialEq, Eq)]
 pub struct DataPacketDTO {
     data: Vec<u8>
@@ -21,6 +21,10 @@ impl DataPacketDTO {
 
     pub fn get_data (&self) -> &[u8] {
         &self.data
+    }
+
+    pub fn get_type() -> &'static str {
+        DATA_TYPE
     }
 }
 
@@ -51,6 +55,10 @@ impl Encoder for DataPacketDTO {
         writer.flush().unwrap();
 
         writer.output().as_slice().into()
+    }
+
+    fn get_data_type(&self) -> &str {
+        DATA_TYPE
     }
 }
 
