@@ -8,7 +8,7 @@ use net_proto_api::encoder_api::Encoder;
 use net_proto_api::decoder_api::Decoder;
 use net_proto_api::envelope::envelope::Envelope;
 
-
+const DATA_TYPE: &str = "dashboard_request";
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct DashboardRequestDTO {
     chart_requests: Vec<Envelope>,
@@ -25,6 +25,10 @@ impl DashboardRequestDTO {
 
     pub fn get_network_graph_request(&self) -> &[Envelope] {
         &self.chart_requests
+    }
+
+    pub fn get_type() -> &'static str {
+        DATA_TYPE
     }
 }
 
@@ -81,6 +85,10 @@ impl Encoder for DashboardRequestDTO {
         writer.flush().unwrap();
 
         writer.output().as_slice().into()
+    }
+
+    fn get_data_type(&self) -> &str {
+        DATA_TYPE
     }
 }
 

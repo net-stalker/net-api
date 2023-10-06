@@ -8,6 +8,8 @@ use net_proto_api::encoder_api::Encoder;
 use net_proto_api::decoder_api::Decoder;
 use net_proto_api::envelope::envelope::Envelope;
 
+
+const DATA_TYPE: &str = "dashboard";
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct DashboardDTO {
     charts: Vec<Envelope>,
@@ -23,6 +25,10 @@ impl DashboardDTO {
 
     pub fn get_charts(&self) -> &[Envelope] {
         &self.charts
+    }
+
+    pub fn get_type() -> &'static str {
+        DATA_TYPE
     }
 }
 
@@ -78,6 +84,10 @@ impl Encoder for DashboardDTO {
         writer.flush().unwrap();
 
         writer.output().as_slice().into()
+    }
+
+    fn get_data_type(&self) -> &str {
+        DATA_TYPE
     }
 }
 
