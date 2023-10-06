@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 <!-- [START AUTO UPDATE] -->
 <!-- Please keep comment here to allow auto-update -->
+<!-- [END AUTO UPDATE] -->
 ## [0.1.2-17ea57a] - 2023-10-03
 
 Feature/cu 8692u7hf4: updated net-timescale-api (#3)
@@ -21,7 +22,6 @@ Feature/cu 8692u7hf4: updated net-timescale-api (#3)
 * feature/CU-8692u7hf4: optimized decoding in network_graph.rs
 
 * feature/CU-8692u7hf4: removed unused import
-<!-- [END AUTO UPDATE] -->
 ## [0.1.2-86d583b] - 2023-09-28
 
 feature/update-push-prereleases.yml: updated push-prerelease.yml to m… (#4)
