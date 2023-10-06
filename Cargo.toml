@@ -6,7 +6,7 @@ members = [
 ]
 
 [workspace.dependencies]
-net-proto-api = {version = "0.1.1-00a5b83", registry = "net-registry" }
+net-proto-api = {version = "=0.1.1-dabeba5", registry = "net-registry" }
 
 log = "0.4.17"
 log4rs = "1.2.0"
