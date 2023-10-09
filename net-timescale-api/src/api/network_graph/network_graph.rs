@@ -17,19 +17,21 @@ pub struct NetworkGraphDTO {
     graph_edges: Vec<GraphEdgeDTO>,
 }
 
+impl net_proto_api::api::API for NetworkGraphDTO { }
+
 impl NetworkGraphDTO {
-    pub fn new ( graph_nodes: &[GraphNodeDTO], graph_edges: &[GraphEdgeDTO]) -> Self {
+    pub fn new(graph_nodes: &[GraphNodeDTO], graph_edges: &[GraphEdgeDTO]) -> Self {
         NetworkGraphDTO {
             graph_nodes: graph_nodes.to_vec(),
             graph_edges: graph_edges.to_vec(),
         }
     }
 
-    pub fn get_graph_nodes (&self) -> &[GraphNodeDTO] {
+    pub fn get_graph_nodes(&self) -> &[GraphNodeDTO] {
         &self.graph_nodes
     }
 
-    pub fn get_graph_edges (&self) -> &[GraphEdgeDTO] {
+    pub fn get_graph_edges(&self) -> &[GraphEdgeDTO] {
         &self.graph_edges
     }
 
@@ -101,10 +103,6 @@ impl Encoder for NetworkGraphDTO {
 
         writer.output().as_slice().into()
     }
-
-    fn get_data_type(&self) -> &str {
-        DATA_TYPE
-    }
 }
 
 impl Decoder for NetworkGraphDTO {
@@ -147,6 +145,12 @@ impl Decoder for NetworkGraphDTO {
             graph_nodes,
             graph_edges,
         }
+    }
+}
+
+impl net_proto_api::typed_api::Typed for NetworkGraphDTO {
+    fn get_data_type(&self) -> &str {
+        DATA_TYPE
     }
 }
 

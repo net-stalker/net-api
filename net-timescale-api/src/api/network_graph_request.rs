@@ -7,6 +7,8 @@ use net_proto_api::encoder_api::Encoder;
 use net_proto_api::decoder_api::Decoder;
 
 const DATA_TYPE: &str = "network_graph_request";
+
+impl net_proto_api::api::API for NetworkGraphRequestDTO { }
 #[derive(Debug, PartialEq, Eq)]
 pub struct NetworkGraphRequestDTO {
     start_date_time: i64,
@@ -15,7 +17,7 @@ pub struct NetworkGraphRequestDTO {
 }
 
 impl NetworkGraphRequestDTO {
-    pub fn new (start_date_time: i64, end_date_time: i64, subscribe: bool) -> Self {
+    pub fn new(start_date_time: i64, end_date_time: i64, subscribe: bool) -> Self {
         NetworkGraphRequestDTO {
             start_date_time,
             end_date_time,
@@ -23,15 +25,15 @@ impl NetworkGraphRequestDTO {
         }
     }
 
-    pub fn get_start_date_time (&self) -> i64 {
+    pub fn get_start_date_time(&self) -> i64 {
         self.start_date_time
     }
 
-    pub fn get_end_date_time (&self) -> i64 {
+    pub fn get_end_date_time(&self) -> i64 {
         self.end_date_time
     }
 
-    pub fn is_subscribe (&self) -> bool {
+    pub fn is_subscribe(&self) -> bool {
         self.subscribe
     }
 
@@ -75,10 +77,6 @@ impl Encoder for NetworkGraphRequestDTO {
 
         writer.output().as_slice().into()
     }
-
-    fn get_data_type(&self) -> &str {
-        DATA_TYPE
-    }
 }
 
 impl Decoder for NetworkGraphRequestDTO {
@@ -102,6 +100,12 @@ impl Decoder for NetworkGraphRequestDTO {
             end_date_time,
             subscribe
         )
+    }
+}
+
+impl net_proto_api::typed_api::Typed for NetworkGraphRequestDTO {
+    fn get_data_type(&self) -> &str {
+        DATA_TYPE
     }
 }
 

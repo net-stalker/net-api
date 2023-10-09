@@ -9,6 +9,8 @@ use net_proto_api::decoder_api::Decoder;
 
 const DATA_TYPE: &str = "graph_edge";
 
+impl net_proto_api::api::API for GraphEdgeDTO { }
+
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct GraphEdgeDTO {
     src_id: String,
@@ -17,7 +19,7 @@ pub struct GraphEdgeDTO {
 }
 
 impl GraphEdgeDTO {
-    pub fn new (src_id: &str, dst_id: &str, communication_types: &[String]) -> Self {
+    pub fn new(src_id: &str, dst_id: &str, communication_types: &[String]) -> Self {
         GraphEdgeDTO {
             src_id: src_id.into(), 
             dst_id: dst_id.into(),
@@ -25,11 +27,11 @@ impl GraphEdgeDTO {
         }
     }
 
-    pub fn get_src_id (&self) -> &str {
+    pub fn get_src_id(&self) -> &str {
         &self.src_id
     }
 
-    pub fn get_dst_id (&self) -> &str {
+    pub fn get_dst_id(&self) -> &str {
         &self.dst_id
     }
 
@@ -81,10 +83,6 @@ impl Encoder for GraphEdgeDTO {
 
         writer.output().as_slice().into()
     }
-
-    fn get_data_type(&self) -> &str {
-        DATA_TYPE
-    }
 }
 
 impl Decoder for GraphEdgeDTO {
@@ -118,6 +116,12 @@ impl Decoder for GraphEdgeDTO {
             dst_id,
             communication_types.as_slice(),
         )
+    }
+}
+
+impl net_proto_api::typed_api::Typed for GraphEdgeDTO {
+    fn get_data_type(&self) -> &str {
+        DATA_TYPE
     }
 }
 
