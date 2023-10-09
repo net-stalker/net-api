@@ -23,7 +23,7 @@ impl DashboardRequestDTO {
         Self { chart_requests }
     }
 
-    pub fn get_network_graph_request(&self) -> &[Envelope] {
+    pub fn get_chart_requests(&self) -> &[Envelope] {
         &self.chart_requests
     }
 
