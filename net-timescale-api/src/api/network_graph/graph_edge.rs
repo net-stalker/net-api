@@ -7,6 +7,9 @@ use ion_rs::element::writer::TextKind;
 use net_proto_api::encoder_api::Encoder;
 use net_proto_api::decoder_api::Decoder;
 
+const DATA_TYPE: &str = "graph_edge";
+
+impl net_proto_api::api::API for GraphEdgeDTO { }
 
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct GraphEdgeDTO {
@@ -16,7 +19,7 @@ pub struct GraphEdgeDTO {
 }
 
 impl GraphEdgeDTO {
-    pub fn new (src_id: &str, dst_id: &str, communication_types: &[String]) -> Self {
+    pub fn new(src_id: &str, dst_id: &str, communication_types: &[String]) -> Self {
         GraphEdgeDTO {
             src_id: src_id.into(), 
             dst_id: dst_id.into(),
@@ -24,11 +27,11 @@ impl GraphEdgeDTO {
         }
     }
 
-    pub fn get_src_id (&self) -> &str {
+    pub fn get_src_id(&self) -> &str {
         &self.src_id
     }
 
-    pub fn get_dst_id (&self) -> &str {
+    pub fn get_dst_id(&self) -> &str {
         &self.dst_id
     }
 
@@ -112,6 +115,15 @@ impl Decoder for GraphEdgeDTO {
     }
 }
 
+impl net_proto_api::typed_api::Typed for GraphEdgeDTO {
+    fn get_data_type() -> &'static str {
+        DATA_TYPE
+    }
+    fn get_type(&self) -> &str {
+        Self::get_data_type()
+    }
+}
+
 
 #[cfg(test)]
 mod tests {
@@ -122,6 +134,7 @@ mod tests {
 
     use net_proto_api::decoder_api::Decoder;
     use net_proto_api::encoder_api::Encoder;
+    use net_proto_api::typed_api::Typed;
 
     use crate::api::network_graph::graph_edge::GraphEdgeDTO;
 
@@ -170,5 +183,15 @@ mod tests {
         let factors: Vec<String> = vec!["fac1".to_string(), "fac2".to_string(), "fac3".to_string()];
         let graph_edge = GraphEdgeDTO::new(SRC_ID, DST_ID, factors.as_slice());
         assert_eq!(graph_edge, GraphEdgeDTO::decode(&graph_edge.encode()));
+    }
+
+    #[test]
+    fn test_getting_data_types() {
+        const SRC_ID: &str = "0.0.0.0:0000";
+        const DST_ID: &str = "0.0.0.0:5656";
+        let factors: Vec<String> = vec!["fac1".to_string(), "fac2".to_string(), "fac3".to_string()];
+        let graph_edge = GraphEdgeDTO::new(SRC_ID, DST_ID, factors.as_slice());
+        assert_eq!(graph_edge.get_type(), GraphEdgeDTO::get_data_type());
+        assert_eq!(graph_edge.get_type(), super::DATA_TYPE);
     }
 }

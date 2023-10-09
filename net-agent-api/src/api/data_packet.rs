@@ -6,11 +6,13 @@ use ion_rs::element::writer::TextKind;
 use net_proto_api::encoder_api::Encoder;
 use net_proto_api::decoder_api::Decoder;
 
-
+const DATA_TYPE: &str = "data_packet";
 #[derive(Debug, PartialEq, Eq)]
 pub struct DataPacketDTO {
     data: Vec<u8>
 }
+
+impl net_proto_api::api::API for DataPacketDTO { }
 
 impl DataPacketDTO {
     pub fn new (data: &[u8]) -> Self {
@@ -19,7 +21,7 @@ impl DataPacketDTO {
         }
     }
 
-    pub fn get_data (&self) -> &[u8] {
+    pub fn get_data(&self) -> &[u8] {
         &self.data
     }
 }
@@ -71,6 +73,15 @@ impl Decoder for DataPacketDTO {
     }
 }
 
+impl net_proto_api::typed_api::Typed for DataPacketDTO {
+    fn get_data_type() -> &'static str {
+        DATA_TYPE
+    }
+
+    fn get_type(&self) -> &str {
+        Self::get_data_type()
+    }
+}
 
 #[cfg(test)]
 mod tests {
@@ -81,8 +92,9 @@ mod tests {
 
     use net_proto_api::decoder_api::Decoder;
     use net_proto_api::encoder_api::Encoder;
+    use net_proto_api::typed_api::Typed;
 
-    
+
     use crate::api::data_packet::DataPacketDTO;
 
     #[test]
@@ -104,5 +116,13 @@ mod tests {
         const DATA: &[u8] = "SOME_RAW_PCAP".as_bytes();
         let data_packet: DataPacketDTO = DataPacketDTO::new(DATA);
         assert_eq!(data_packet, DataPacketDTO::decode(&data_packet.encode()));
+    }
+
+    #[test]
+    fn test_getting_data_types() {
+        const DATA: &[u8] = "SOME_RAW_PCAP".as_bytes();
+        let data_packet: DataPacketDTO = DataPacketDTO::new(DATA);
+        assert_eq!(data_packet.get_type(), DataPacketDTO::get_data_type());
+        assert_eq!(data_packet.get_type(), super::DATA_TYPE);
     }
 }
