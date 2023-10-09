@@ -12,6 +12,8 @@ pub struct DataPacketDTO {
     data: Vec<u8>
 }
 
+impl net_proto_api::api::API for DataPacketDTO { }
+
 impl DataPacketDTO {
     pub fn new (data: &[u8]) -> Self {
         DataPacketDTO {
@@ -19,7 +21,7 @@ impl DataPacketDTO {
         }
     }
 
-    pub fn get_data (&self) -> &[u8] {
+    pub fn get_data(&self) -> &[u8] {
         &self.data
     }
 
@@ -56,10 +58,6 @@ impl Encoder for DataPacketDTO {
 
         writer.output().as_slice().into()
     }
-
-    fn get_data_type(&self) -> &str {
-        DATA_TYPE
-    }
 }
 
 impl Decoder for DataPacketDTO {
@@ -79,6 +77,11 @@ impl Decoder for DataPacketDTO {
     }
 }
 
+impl net_proto_api::typed_api::Typed for DataPacketDTO {
+    fn get_data_type(&self) -> &str {
+        DATA_TYPE
+    }
+}
 
 #[cfg(test)]
 mod tests {

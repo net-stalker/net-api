@@ -13,9 +13,10 @@ pub struct GraphNodeDTO {
     agent_id: String,
 }
 
+impl net_proto_api::api::API for GraphNodeDTO { }
 
 impl GraphNodeDTO {
-    pub fn new (node_id: &str, agent_id: &str) -> Self {
+    pub fn new(node_id: &str, agent_id: &str) -> Self {
         GraphNodeDTO {
             node_id: node_id.into(),
             agent_id: agent_id.into(),
@@ -67,10 +68,6 @@ impl Encoder for GraphNodeDTO {
 
         writer.output().as_slice().into()
     }
-
-    fn get_data_type(&self) -> &str {
-        DATA_TYPE
-    }
 }
 
 impl Decoder for GraphNodeDTO {
@@ -92,6 +89,12 @@ impl Decoder for GraphNodeDTO {
             node_id,
             agent_id
         )
+    }
+}
+
+impl net_proto_api::typed_api::Typed for GraphNodeDTO {
+    fn get_data_type(&self) -> &str {
+        DATA_TYPE
     }
 }
 

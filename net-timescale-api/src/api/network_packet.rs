@@ -8,6 +8,8 @@ use net_proto_api::decoder_api::Decoder;
 
 const DATA_TYPE: &str = "network_packet";
 
+impl net_proto_api::api::API for NetworkPacketDTO { }
+
 #[derive(Debug, PartialEq, Eq)]
 pub struct NetworkPacketDTO {
     frame_time: i64,
@@ -19,7 +21,7 @@ pub struct NetworkPacketDTO {
 }
 
 impl NetworkPacketDTO {
-    pub fn new ( frame_time: i64, src_addr: &str, dst_addr: &str, network_packet_data: &[u8]) -> Self {
+    pub fn new(frame_time: i64, src_addr: &str, dst_addr: &str, network_packet_data: &[u8]) -> Self {
         NetworkPacketDTO { 
             frame_time, 
             src_addr: src_addr.into(), 
@@ -28,19 +30,19 @@ impl NetworkPacketDTO {
         }
     }
 
-    pub fn get_frame_time (&self) -> i64 {
+    pub fn get_frame_time(&self) -> i64 {
         self.frame_time
     }
 
-    pub fn get_src_addr (&self) -> &str {
+    pub fn get_src_addr(&self) -> &str {
         &self.src_addr
     }
 
-    pub fn get_dst_addr (&self) -> &str {
+    pub fn get_dst_addr(&self) -> &str {
         &self.dst_addr
     }
 
-    pub fn get_network_packet_data (&self) -> &[u8] {
+    pub fn get_network_packet_data(&self) -> &[u8] {
         &self.network_packet_data
     }
 
@@ -87,11 +89,15 @@ impl Encoder for NetworkPacketDTO {
 
         writer.output().as_slice().into()
     }
+}
 
+impl net_proto_api::typed_api::Typed for NetworkPacketDTO {
     fn get_data_type(&self) -> &str {
         DATA_TYPE
     }
 }
+
+
 
 impl Decoder for NetworkPacketDTO {
     fn decode(data: &[u8]) -> Self {
