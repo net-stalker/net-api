@@ -38,10 +38,6 @@ impl GraphEdgeDTO {
     pub fn get_communication_types(&self) -> &[String] {
         self.communication_types.as_slice()
     }
-
-    pub fn get_type() -> &'static str {
-        DATA_TYPE
-    }
 }
 
 impl Encoder for GraphEdgeDTO {
@@ -120,8 +116,11 @@ impl Decoder for GraphEdgeDTO {
 }
 
 impl net_proto_api::typed_api::Typed for GraphEdgeDTO {
-    fn get_data_type(&self) -> &str {
+    fn get_data_type() -> &'static str {
         DATA_TYPE
+    }
+    fn get_type(&self) -> &str {
+        Self::get_data_type()
     }
 }
 
@@ -135,6 +134,7 @@ mod tests {
 
     use net_proto_api::decoder_api::Decoder;
     use net_proto_api::encoder_api::Encoder;
+    use net_proto_api::typed_api::Typed;
 
     use crate::api::network_graph::graph_edge::GraphEdgeDTO;
 
@@ -183,5 +183,15 @@ mod tests {
         let factors: Vec<String> = vec!["fac1".to_string(), "fac2".to_string(), "fac3".to_string()];
         let graph_edge = GraphEdgeDTO::new(SRC_ID, DST_ID, factors.as_slice());
         assert_eq!(graph_edge, GraphEdgeDTO::decode(&graph_edge.encode()));
+    }
+
+    #[test]
+    fn test_getting_data_types() {
+        const SRC_ID: &str = "0.0.0.0:0000";
+        const DST_ID: &str = "0.0.0.0:5656";
+        let factors: Vec<String> = vec!["fac1".to_string(), "fac2".to_string(), "fac3".to_string()];
+        let graph_edge = GraphEdgeDTO::new(SRC_ID, DST_ID, factors.as_slice());
+        assert_eq!(graph_edge.get_type(), GraphEdgeDTO::get_data_type());
+        assert_eq!(graph_edge.get_type(), super::DATA_TYPE);
     }
 }

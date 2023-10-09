@@ -24,10 +24,6 @@ impl DataPacketDTO {
     pub fn get_data(&self) -> &[u8] {
         &self.data
     }
-
-    pub fn get_type() -> &'static str {
-        DATA_TYPE
-    }
 }
 
 impl Encoder for DataPacketDTO {
@@ -78,8 +74,12 @@ impl Decoder for DataPacketDTO {
 }
 
 impl net_proto_api::typed_api::Typed for DataPacketDTO {
-    fn get_data_type(&self) -> &str {
+    fn get_data_type() -> &'static str {
         DATA_TYPE
+    }
+
+    fn get_type(&self) -> &str {
+        Self::get_data_type()
     }
 }
 
@@ -92,8 +92,9 @@ mod tests {
 
     use net_proto_api::decoder_api::Decoder;
     use net_proto_api::encoder_api::Encoder;
+    use net_proto_api::typed_api::Typed;
 
-    
+
     use crate::api::data_packet::DataPacketDTO;
 
     #[test]
@@ -115,5 +116,13 @@ mod tests {
         const DATA: &[u8] = "SOME_RAW_PCAP".as_bytes();
         let data_packet: DataPacketDTO = DataPacketDTO::new(DATA);
         assert_eq!(data_packet, DataPacketDTO::decode(&data_packet.encode()));
+    }
+
+    #[test]
+    fn test_getting_data_types() {
+        const DATA: &[u8] = "SOME_RAW_PCAP".as_bytes();
+        let data_packet: DataPacketDTO = DataPacketDTO::new(DATA);
+        assert_eq!(data_packet.get_type(), DataPacketDTO::get_data_type());
+        assert_eq!(data_packet.get_type(), super::DATA_TYPE);
     }
 }

@@ -36,10 +36,6 @@ impl NetworkGraphRequestDTO {
     pub fn is_subscribe(&self) -> bool {
         self.subscribe
     }
-
-    pub fn get_type() -> &'static str {
-        DATA_TYPE
-    }
 }
 
 impl Encoder for NetworkGraphRequestDTO {
@@ -104,8 +100,12 @@ impl Decoder for NetworkGraphRequestDTO {
 }
 
 impl net_proto_api::typed_api::Typed for NetworkGraphRequestDTO {
-    fn get_data_type(&self) -> &str {
+    fn get_data_type() -> &'static str {
         DATA_TYPE
+    }
+
+    fn get_type(&self) -> &str {
+        Self::get_data_type()
     }
 }
 
@@ -119,6 +119,7 @@ mod tests {
 
     use net_proto_api::decoder_api::Decoder;
     use net_proto_api::encoder_api::Encoder;
+    use net_proto_api::typed_api::Typed;
 
     use crate::api::network_graph_request::NetworkGraphRequestDTO;
 
@@ -164,5 +165,19 @@ mod tests {
             SUBSCRIBE,
         );
         assert_eq!(network_graph_request, NetworkGraphRequestDTO::decode(&network_graph_request.encode()));
+    }
+    #[test]
+    fn test_getting_data_types() {
+        const START_DATE_TIME: i64 = i64::MIN;
+        const END_DATE_TIME: i64 = i64::MAX;
+        const SUBSCRIBE: bool = true;
+
+        let network_graph_request = NetworkGraphRequestDTO::new(
+            START_DATE_TIME,
+            END_DATE_TIME,
+            SUBSCRIBE,
+        );
+        assert_eq!(network_graph_request.get_type(), NetworkGraphRequestDTO::get_data_type());
+        assert_eq!(network_graph_request.get_type(), super::DATA_TYPE);
     }
 }

@@ -45,10 +45,6 @@ impl NetworkPacketDTO {
     pub fn get_network_packet_data(&self) -> &[u8] {
         &self.network_packet_data
     }
-
-    pub fn get_type() -> &'static str {
-        DATA_TYPE
-    }
 }
 
 impl Encoder for NetworkPacketDTO {
@@ -92,8 +88,12 @@ impl Encoder for NetworkPacketDTO {
 }
 
 impl net_proto_api::typed_api::Typed for NetworkPacketDTO {
-    fn get_data_type(&self) -> &str {
+    fn get_data_type() -> &'static str {
         DATA_TYPE
+    }
+
+    fn get_type(&self) -> &str {
+        Self::get_data_type()
     }
 }
 
@@ -140,6 +140,7 @@ mod tests {
 
     use net_proto_api::decoder_api::Decoder;
     use net_proto_api::encoder_api::Encoder;
+    use net_proto_api::typed_api::Typed;
 
     use crate::api::network_packet::NetworkPacketDTO;
 
@@ -192,5 +193,21 @@ mod tests {
             NETWORK_PACKET_DATA
         );
         assert_eq!(network_paket, NetworkPacketDTO::decode(&network_paket.encode()));
+    }
+
+    #[test]
+    fn test_getting_data_types() {
+        const FRAME_TIME: i64 = i64::MIN;
+        const SRC_ADDR: &str = "0.0.0.0:0000";
+        const DST_ADDR: &str = "0.0.0.0:5656";
+        const NETWORK_PACKET_DATA: &[u8] = "NETWORK_PACKET_DATA".as_bytes();
+        let network_paket = NetworkPacketDTO::new(
+            FRAME_TIME,
+            SRC_ADDR,
+            DST_ADDR,
+            NETWORK_PACKET_DATA
+        );
+        assert_eq!(network_paket.get_type(), NetworkPacketDTO::get_data_type());
+        assert_eq!(network_paket.get_type(), super::DATA_TYPE);
     }
 }
