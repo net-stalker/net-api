@@ -34,10 +34,6 @@ impl NetworkGraphDTO {
     pub fn get_graph_edges(&self) -> &[GraphEdgeDTO] {
         &self.graph_edges
     }
-
-    pub fn get_type() -> &'static str {
-        DATA_TYPE
-    }
 }
 
 impl Encoder for NetworkGraphDTO {
@@ -149,8 +145,12 @@ impl Decoder for NetworkGraphDTO {
 }
 
 impl net_proto_api::typed_api::Typed for NetworkGraphDTO {
-    fn get_data_type(&self) -> &str {
+    fn get_data_type() -> &'static str {
         DATA_TYPE
+    }
+
+    fn get_type(&self) -> &str {
+        Self::get_data_type()
     }
 }
 
@@ -163,6 +163,7 @@ mod tests {
 
     use net_proto_api::decoder_api::Decoder;
     use net_proto_api::encoder_api::Encoder;
+    use net_proto_api::typed_api::Typed;
 
     use crate::api::network_graph::graph_edge::GraphEdgeDTO;
     use crate::api::network_graph::graph_node::GraphNodeDTO;
@@ -281,5 +282,30 @@ mod tests {
         );
 
         assert_eq!(network_graph, NetworkGraphDTO::decode(&network_graph.encode()));
+    }
+
+    #[test]
+    fn test_getting_data_types() {
+        const FIRST_NODE_ID: &str = "0.0.0.0:0000";
+        const FIRST_NODE_AGENT_ID: &str = "first node agent id";
+        let first_graph_node = GraphNodeDTO::new(FIRST_NODE_ID, FIRST_NODE_AGENT_ID);
+        const SECOND_NODE_ID: &str = "0.0.0.0:5656";
+        const SECOND_NODE_AGENT_ID: &str = "second node agent id";
+        let second_graph_node = GraphNodeDTO::new(SECOND_NODE_ID, SECOND_NODE_AGENT_ID);
+
+        const SRC_ID: &str = "0.0.0.0:0000";
+        const DST_ID: &str = "0.0.0.0:5656";
+
+        let communication_types: Vec<String> = vec!["fac1".to_string(), "fac2".to_string(), "fac3".to_string()];
+
+        let graph_edge: GraphEdgeDTO = GraphEdgeDTO::new(SRC_ID, DST_ID, communication_types.as_slice());
+
+        let network_graph = NetworkGraphDTO::new(
+            &[first_graph_node, second_graph_node],
+            &[graph_edge],
+        );
+
+        assert_eq!(network_graph.get_type(), NetworkGraphDTO::get_data_type());
+        assert_eq!(network_graph.get_type(), super::DATA_TYPE);
     }
 }

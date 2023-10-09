@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 <!-- [START AUTO UPDATE] -->
 <!-- Please keep comment here to allow auto-update -->
+## [0.1.2-8fb717a] - 2023-10-09
+
+feature/CU-8692vnf7e: updated APIs by changes net-proto-api (#6)
+
+*  updated net-api components after adding supertrait API and trait Typed into net-proto-api
 <!-- [END AUTO UPDATE] -->
 ## [0.1.2-17ea57a] - 2023-10-03
 
