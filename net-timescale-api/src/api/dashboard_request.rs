@@ -19,7 +19,7 @@ impl DashboardRequestDTO {
         Self { chart_requests: chart_requests.to_vec() }
     }
 
-    pub fn _new (chart_requests: Vec<Envelope>) -> Self {
+    fn m_new(chart_requests: Vec<Envelope>) -> Self {
         Self { chart_requests }
     }
 
@@ -112,13 +112,17 @@ impl Decoder for DashboardRequestDTO {
         binary_user_reader.step_out().unwrap();
 
         binary_user_reader.step_out().unwrap();
-        DashboardRequestDTO::_new(chart_requests)
+        DashboardRequestDTO::m_new(chart_requests)
     }
 }
 
 impl net_proto_api::typed_api::Typed for DashboardRequestDTO {
-    fn get_data_type(&self) -> &str {
+    fn get_data_type() -> &'static str {
         DATA_TYPE
+    }
+
+    fn get_type(&self) -> &str {
+        Self::get_data_type()
     }
 }
 
@@ -133,6 +137,7 @@ mod tests {
     use net_proto_api::decoder_api::Decoder;
     use net_proto_api::encoder_api::Encoder;
     use net_proto_api::envelope::envelope::Envelope;
+    use net_proto_api::typed_api::Typed;
 
     use crate::api::dashboard_request::DashboardRequestDTO;
 
@@ -225,5 +230,31 @@ mod tests {
 
         let dashboard_request = DashboardRequestDTO::new(chart_requests.as_slice());
         assert_eq!(dashboard_request, DashboardRequestDTO::decode(&dashboard_request.encode()));
+    }
+    #[test]
+    fn test_getting_data_types() {
+        let group_id: Option<&str> = Some("some-group-id");
+        let agent_id: Option<&str> = Some("some-agent-id");
+
+        const TYPE1: &str = "type1";
+        const TYPE2: &str = "type2";
+        const TYPE3: &str = "type3";
+        const TYPE4: &str = "type4";
+
+        let data1: Vec<u8> = vec![1,2,3];
+        let data2: Vec<u8> = vec![4,5,6];
+        let data3: Vec<u8> = vec![7,8,9];
+        let data4: Vec<u8> = vec![10,11,12];
+
+        let chart_requests: Vec<Envelope> = vec![
+            Envelope::new(group_id, None, TYPE1, data1.as_slice()),
+            Envelope::new(None, agent_id, TYPE2, data2.as_slice()),
+            Envelope::new(None, None, TYPE3, data3.as_slice()),
+            Envelope::new(group_id, agent_id, TYPE4, data4.as_slice()),
+        ];
+
+        let dashboard_request = DashboardRequestDTO::new(chart_requests.as_slice());
+        assert_eq!(dashboard_request.get_type(), DashboardRequestDTO::get_data_type());
+        assert_eq!(dashboard_request.get_type(), super::DATA_TYPE);
     }
 }

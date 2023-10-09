@@ -20,7 +20,7 @@ impl DashboardDTO {
     pub fn new(charts: &[Envelope]) -> Self {
         DashboardDTO { charts: charts.to_vec() }
     }
-    pub fn _new(charts: Vec<Envelope>) -> Self {
+    fn m_new(charts: Vec<Envelope>) -> Self {
         DashboardDTO { charts }
     }
 
@@ -112,13 +112,17 @@ impl Decoder for DashboardDTO {
         binary_user_reader.step_out().unwrap();
 
         binary_user_reader.step_out().unwrap();
-        DashboardDTO::_new(charts)
+        DashboardDTO::m_new(charts)
     }
 }
 
 impl net_proto_api::typed_api::Typed for DashboardDTO {
-    fn get_data_type(&self) -> &str {
+    fn get_data_type() -> &'static str {
         DATA_TYPE
+    }
+
+    fn get_type(&self) -> &str {
+        Self::get_data_type()
     }
 }
 
@@ -133,6 +137,7 @@ mod tests {
     use net_proto_api::decoder_api::Decoder;
     use net_proto_api::encoder_api::Encoder;
     use net_proto_api::envelope::envelope::Envelope;
+    use net_proto_api::typed_api::Typed;
 
     use crate::api::dashboard::DashboardDTO;
 
@@ -225,5 +230,32 @@ mod tests {
 
         let dashboard = DashboardDTO::new(charts.as_slice());
         assert_eq!(dashboard, DashboardDTO::decode(&dashboard.encode()));
+    }
+
+    #[test]
+    fn test_getting_data_types() {
+        let group_id: Option<&str> = Some("some-group-id");
+        let agent_id: Option<&str> = Some("some-agent-id");
+
+        const TYPE1: &str = "type1";
+        const TYPE2: &str = "type2";
+        const TYPE3: &str = "type3";
+        const TYPE4: &str = "type4";
+
+        let data1: Vec<u8> = vec![1,2,3];
+        let data2: Vec<u8> = vec![4,5,6];
+        let data3: Vec<u8> = vec![7,8,9];
+        let data4: Vec<u8> = vec![10,11,12];
+
+        let charts: Vec<Envelope> = vec![
+            Envelope::new(group_id, None, TYPE1, data1.as_slice()),
+            Envelope::new(None, agent_id, TYPE2, data2.as_slice()),
+            Envelope::new(None, None, TYPE3, data3.as_slice()),
+            Envelope::new(group_id, agent_id, TYPE4, data4.as_slice()),
+        ];
+
+        let dashboard = DashboardDTO::new(charts.as_slice());
+        assert_eq!(dashboard.get_type(), DashboardDTO::get_data_type());
+        assert_eq!(dashboard.get_type(), super::DATA_TYPE);
     }
 }
