@@ -13,7 +13,7 @@ const DATA_TYPE: &str = "dashboard_request";
 pub struct DashboardRequestDTO {
     chart_requests: Vec<Envelope>,
 }
-
+impl net_proto_api::api::API for DashboardRequestDTO { }
 impl DashboardRequestDTO {
     pub fn new (chart_requests: &[Envelope]) -> Self {
         Self { chart_requests: chart_requests.to_vec() }
@@ -86,10 +86,6 @@ impl Encoder for DashboardRequestDTO {
 
         writer.output().as_slice().into()
     }
-
-    fn get_data_type(&self) -> &str {
-        DATA_TYPE
-    }
 }
 
 impl Decoder for DashboardRequestDTO {
@@ -120,6 +116,11 @@ impl Decoder for DashboardRequestDTO {
     }
 }
 
+impl net_proto_api::typed_api::Typed for DashboardRequestDTO {
+    fn get_data_type(&self) -> &str {
+        DATA_TYPE
+    }
+}
 
 #[cfg(test)]
 mod tests {

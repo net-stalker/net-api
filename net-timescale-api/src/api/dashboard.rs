@@ -15,6 +15,7 @@ pub struct DashboardDTO {
     charts: Vec<Envelope>,
 }
 
+impl net_proto_api::api::API for DashboardDTO { }
 impl DashboardDTO {
     pub fn new(charts: &[Envelope]) -> Self {
         DashboardDTO { charts: charts.to_vec() }
@@ -85,10 +86,6 @@ impl Encoder for DashboardDTO {
 
         writer.output().as_slice().into()
     }
-
-    fn get_data_type(&self) -> &str {
-        DATA_TYPE
-    }
 }
 
 impl Decoder for DashboardDTO {
@@ -116,6 +113,12 @@ impl Decoder for DashboardDTO {
 
         binary_user_reader.step_out().unwrap();
         DashboardDTO::_new(charts)
+    }
+}
+
+impl net_proto_api::typed_api::Typed for DashboardDTO {
+    fn get_data_type(&self) -> &str {
+        DATA_TYPE
     }
 }
 
