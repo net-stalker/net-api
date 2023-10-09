@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 <!-- [START AUTO UPDATE] -->
 <!-- Please keep comment here to allow auto-update -->
+## [0.1.2-90bf1ae] - 2023-10-09
+
+Feature/cu 8692vgfbd: added structures for dashboards (#7)
+
+* updated APIs by changes net-proto-api
+
+* added dashboard DTO structures
 <!-- [END AUTO UPDATE] -->
 ## [0.1.2-8fb717a] - 2023-10-09
 
