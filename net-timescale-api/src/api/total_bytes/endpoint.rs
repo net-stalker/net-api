@@ -82,7 +82,7 @@ impl Encoder for EndpointDTO {
 }
 
 impl Decoder for EndpointDTO {
-    fn decode(data: &[u8]) -> Self  {
+    fn decode(data: &[u8]) -> Self where Self: Sized  {
         let mut binary_user_reader = ion_rs::ReaderBuilder::new().build(data).unwrap();
         binary_user_reader.next().unwrap();
         binary_user_reader.step_in().unwrap();
