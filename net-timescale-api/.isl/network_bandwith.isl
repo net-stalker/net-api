@@ -5,7 +5,7 @@ type::{
     type: struct,
     fields: {
         bucket_timestamp: int,
-        bandwith: int,
+        total_bytes: int,
     },
 }
 
