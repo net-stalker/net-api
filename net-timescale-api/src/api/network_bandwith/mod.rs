@@ -1,2 +1,3 @@
+#[allow(clippy::module_inception)]
 pub mod network_bandwith;
-mod bandwith_bucket;
+pub mod bandwith_bucket;
