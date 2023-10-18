@@ -108,7 +108,7 @@ mod tests {
     use net_proto_api::decoder_api::Decoder;
     use net_proto_api::encoder_api::Encoder;
 
-    use crate::api::network_graph_request::NetworkGraphRequestDTO;
+    use crate::api::network_bandwith::NetworkBandwithRequestDTO;
 
     #[test]
     fn reader_correctly_read_encoded_ng_request() {
@@ -116,7 +116,7 @@ mod tests {
         const END_DATE_TIME: i64 = i64::MAX;
         const SUBSCRIBE: bool = true;
 
-        let network_graph_request = NetworkGraphRequestDTO::new(
+        let network_graph_request = NetworkBandwithRequestDTO::new(
             START_DATE_TIME,
             END_DATE_TIME,
             SUBSCRIBE,
@@ -146,11 +146,11 @@ mod tests {
         const END_DATE_TIME: i64 = i64::MAX;
         const SUBSCRIBE: bool = true;
 
-        let network_graph_request = NetworkGraphRequestDTO::new(
+        let network_graph_request = NetworkBandwithRequestDTO::new(
             START_DATE_TIME,
             END_DATE_TIME,
             SUBSCRIBE,
         );
-        assert_eq!(network_graph_request, NetworkGraphRequestDTO::decode(&network_graph_request.encode()));
+        assert_eq!(network_graph_request, NetworkBandwithRequestDTO::decode(&network_graph_request.encode()));
     }
 }
