@@ -6,16 +6,17 @@ use ion_rs::element::writer::TextKind;
 use net_proto_api::encoder_api::Encoder;
 use net_proto_api::decoder_api::Decoder;
 
-
+const DATA_TYPE: &str = "graph_node";
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct GraphNodeDTO {
     node_id: String,
     agent_id: String,
 }
 
+impl net_proto_api::api::API for GraphNodeDTO { }
 
 impl GraphNodeDTO {
-    pub fn new (node_id: &str, agent_id: &str) -> Self {
+    pub fn new(node_id: &str, agent_id: &str) -> Self {
         GraphNodeDTO {
             node_id: node_id.into(),
             agent_id: agent_id.into(),
@@ -87,6 +88,16 @@ impl Decoder for GraphNodeDTO {
     }
 }
 
+impl net_proto_api::typed_api::Typed for GraphNodeDTO {
+    fn get_data_type() -> &'static str {
+        DATA_TYPE
+    }
+
+    fn get_type(&self) -> &str {
+        Self::get_data_type()
+    }
+}
+
 
 #[cfg(test)]
 mod tests {
@@ -97,6 +108,7 @@ mod tests {
 
     use net_proto_api::decoder_api::Decoder;
     use net_proto_api::encoder_api::Encoder;
+    use net_proto_api::typed_api::Typed;
 
     use crate::api::network_graph::graph_node::GraphNodeDTO;
 
@@ -129,5 +141,15 @@ mod tests {
         let graph_node = GraphNodeDTO::new(NODE_ID, AGENT_ID);
         let endec_graph_node = GraphNodeDTO::decode(&graph_node.encode());
         assert_eq!(graph_node, GraphNodeDTO::decode(&graph_node.encode()));
+    }
+
+    #[test]
+    fn test_getting_data_types() {
+        const NODE_ID: &str = "0.0.0.0:0000";
+        const AGENT_ID: &str = "some-agent-id";
+
+        let graph_node = GraphNodeDTO::new(NODE_ID, AGENT_ID);
+        assert_eq!(graph_node.get_type(), GraphNodeDTO::get_data_type());
+        assert_eq!(graph_node.get_type(), super::DATA_TYPE);
     }
 }

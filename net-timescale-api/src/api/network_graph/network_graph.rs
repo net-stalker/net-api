@@ -10,26 +10,28 @@ use net_proto_api::decoder_api::Decoder;
 use super::graph_edge::GraphEdgeDTO;
 use super::graph_node::GraphNodeDTO;
 
-
+const DATA_TYPE: &str = "network_graph";
 #[derive(Debug, PartialEq, Eq)]
 pub struct NetworkGraphDTO {
     graph_nodes: Vec<GraphNodeDTO>,
     graph_edges: Vec<GraphEdgeDTO>,
 }
 
+impl net_proto_api::api::API for NetworkGraphDTO { }
+
 impl NetworkGraphDTO {
-    pub fn new ( graph_nodes: &[GraphNodeDTO], graph_edges: &[GraphEdgeDTO]) -> Self {
+    pub fn new(graph_nodes: &[GraphNodeDTO], graph_edges: &[GraphEdgeDTO]) -> Self {
         NetworkGraphDTO {
             graph_nodes: graph_nodes.to_vec(),
             graph_edges: graph_edges.to_vec(),
         }
     }
 
-    pub fn get_graph_nodes (&self) -> &[GraphNodeDTO] {
+    pub fn get_graph_nodes(&self) -> &[GraphNodeDTO] {
         &self.graph_nodes
     }
 
-    pub fn get_graph_edges (&self) -> &[GraphEdgeDTO] {
+    pub fn get_graph_edges(&self) -> &[GraphEdgeDTO] {
         &self.graph_edges
     }
 }
@@ -142,6 +144,16 @@ impl Decoder for NetworkGraphDTO {
     }
 }
 
+impl net_proto_api::typed_api::Typed for NetworkGraphDTO {
+    fn get_data_type() -> &'static str {
+        DATA_TYPE
+    }
+
+    fn get_type(&self) -> &str {
+        Self::get_data_type()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use ion_rs::IonType;
@@ -151,6 +163,7 @@ mod tests {
 
     use net_proto_api::decoder_api::Decoder;
     use net_proto_api::encoder_api::Encoder;
+    use net_proto_api::typed_api::Typed;
 
     use crate::api::network_graph::graph_edge::GraphEdgeDTO;
     use crate::api::network_graph::graph_node::GraphNodeDTO;
@@ -269,5 +282,30 @@ mod tests {
         );
 
         assert_eq!(network_graph, NetworkGraphDTO::decode(&network_graph.encode()));
+    }
+
+    #[test]
+    fn test_getting_data_types() {
+        const FIRST_NODE_ID: &str = "0.0.0.0:0000";
+        const FIRST_NODE_AGENT_ID: &str = "first node agent id";
+        let first_graph_node = GraphNodeDTO::new(FIRST_NODE_ID, FIRST_NODE_AGENT_ID);
+        const SECOND_NODE_ID: &str = "0.0.0.0:5656";
+        const SECOND_NODE_AGENT_ID: &str = "second node agent id";
+        let second_graph_node = GraphNodeDTO::new(SECOND_NODE_ID, SECOND_NODE_AGENT_ID);
+
+        const SRC_ID: &str = "0.0.0.0:0000";
+        const DST_ID: &str = "0.0.0.0:5656";
+
+        let communication_types: Vec<String> = vec!["fac1".to_string(), "fac2".to_string(), "fac3".to_string()];
+
+        let graph_edge: GraphEdgeDTO = GraphEdgeDTO::new(SRC_ID, DST_ID, communication_types.as_slice());
+
+        let network_graph = NetworkGraphDTO::new(
+            &[first_graph_node, second_graph_node],
+            &[graph_edge],
+        );
+
+        assert_eq!(network_graph.get_type(), NetworkGraphDTO::get_data_type());
+        assert_eq!(network_graph.get_type(), super::DATA_TYPE);
     }
 }

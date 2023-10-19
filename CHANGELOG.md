@@ -8,6 +8,29 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 <!-- [START AUTO UPDATE] -->
 <!-- Please keep comment here to allow auto-update -->
+## [0.1.2-5f6fcc3] - 2023-10-16
+
+Feature/cu 8692vgfbd (#8)
+
+*  added overview_dashboard_request
+
+*  udpated net-proto-api to 0.1.1-da85a0a
+
+*  fixed bad method name in dashboard_request
+<!-- [END AUTO UPDATE] -->
+## [0.1.2-90bf1ae] - 2023-10-09
+
+Feature/cu 8692vgfbd: added structures for dashboards (#7)
+
+* updated APIs by changes net-proto-api
+
+* added dashboard DTO structures
+## [0.1.2-8fb717a] - 2023-10-09
+
+feature/CU-8692vnf7e: updated APIs by changes net-proto-api (#6)
+
+*  updated net-api components after adding supertrait API and trait Typed into net-proto-api
+<!-- [END AUTO UPDATE] -->
 ## [0.1.2-17ea57a] - 2023-10-03
 
 Feature/cu 8692u7hf4: updated net-timescale-api (#3)
@@ -21,7 +44,6 @@ Feature/cu 8692u7hf4: updated net-timescale-api (#3)
 * feature/CU-8692u7hf4: optimized decoding in network_graph.rs
 
 * feature/CU-8692u7hf4: removed unused import
-<!-- [END AUTO UPDATE] -->
 ## [0.1.2-86d583b] - 2023-09-28
 
 feature/update-push-prereleases.yml: updated push-prerelease.yml to m… (#4)
