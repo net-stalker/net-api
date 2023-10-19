@@ -11,15 +11,13 @@ use net_proto_api::decoder_api::Decoder;
 pub struct NetworkBandwithRequestDTO {
     start_date_time: i64,
     end_date_time: i64,
-    subscribe: bool,
 }
 
 impl NetworkBandwithRequestDTO {
-    pub fn new (start_date_time: i64, end_date_time: i64, subscribe: bool) -> Self {
+    pub fn new (start_date_time: i64, end_date_time: i64) -> Self {
         NetworkBandwithRequestDTO {
             start_date_time,
             end_date_time,
-            subscribe,
         }
     }
 
@@ -29,10 +27,6 @@ impl NetworkBandwithRequestDTO {
 
     pub fn get_end_date_time (&self) -> i64 {
         self.end_date_time
-    }
-
-    pub fn is_subscribe (&self) -> bool {
-        self.subscribe
     }
 }
 
@@ -63,9 +57,6 @@ impl Encoder for NetworkBandwithRequestDTO {
         writer.set_field_name("end_date_time");
         writer.write_i64(self.end_date_time).unwrap();
 
-        writer.set_field_name("subscribe");
-        writer.write_bool(self.subscribe).unwrap();
-
         writer.step_out().unwrap();
         writer.flush().unwrap();
 
@@ -86,13 +77,9 @@ impl Decoder for NetworkBandwithRequestDTO {
         binary_user_reader.next().unwrap();
         let end_date_time = binary_user_reader.read_i64().unwrap();
 
-        binary_user_reader.next().unwrap();
-        let subscribe = binary_user_reader.read_bool().unwrap();
-
         NetworkBandwithRequestDTO::new(
             start_date_time,
-            end_date_time,
-            subscribe
+            end_date_time
         )
     }
 }
@@ -114,15 +101,13 @@ mod tests {
     fn reader_correctly_read_encoded_ng_request() {
         const START_DATE_TIME: i64 = i64::MIN;
         const END_DATE_TIME: i64 = i64::MAX;
-        const SUBSCRIBE: bool = true;
 
-        let network_graph_request = NetworkBandwithRequestDTO::new(
+        let network_bandwith_request = NetworkBandwithRequestDTO::new(
             START_DATE_TIME,
-            END_DATE_TIME,
-            SUBSCRIBE,
+            END_DATE_TIME
         );
         
-        let mut binary_user_reader = ReaderBuilder::new().build(network_graph_request.encode()).unwrap();
+        let mut binary_user_reader = ReaderBuilder::new().build(network_bandwith_request.encode()).unwrap();
 
         assert_eq!(StreamItem::Value(IonType::Struct), binary_user_reader.next().unwrap());
         binary_user_reader.step_in().unwrap();
@@ -134,23 +119,17 @@ mod tests {
         assert_eq!(StreamItem::Value(IonType::Int), binary_user_reader.next().unwrap());
         assert_eq!("end_date_time", binary_user_reader.field_name().unwrap());
         assert_eq!(END_DATE_TIME,  binary_user_reader.read_i64().unwrap());
-
-        assert_eq!(StreamItem::Value(IonType::Bool), binary_user_reader.next().unwrap());
-        assert_eq!("subscribe", binary_user_reader.field_name().unwrap());
-        assert_eq!(SUBSCRIBE,  binary_user_reader.read_bool().unwrap());
     }
 
     #[test]
     fn endec_ng_request() {
         const START_DATE_TIME: i64 = i64::MIN;
         const END_DATE_TIME: i64 = i64::MAX;
-        const SUBSCRIBE: bool = true;
 
-        let network_graph_request = NetworkBandwithRequestDTO::new(
+        let network_bandwith_request = NetworkBandwithRequestDTO::new(
             START_DATE_TIME,
-            END_DATE_TIME,
-            SUBSCRIBE,
+            END_DATE_TIME
         );
-        assert_eq!(network_graph_request, NetworkBandwithRequestDTO::decode(&network_graph_request.encode()));
+        assert_eq!(network_bandwith_request, NetworkBandwithRequestDTO::decode(&network_bandwith_request.encode()));
     }
 }
