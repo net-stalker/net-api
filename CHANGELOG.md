@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 <!-- [START AUTO UPDATE] -->
 <!-- Please keep comment here to allow auto-update -->
+<!-- [END AUTO UPDATE] -->
 ## [0.1.2-5f6fcc3] - 2023-10-16
 
 Feature/cu 8692vgfbd (#8)
@@ -17,7 +18,6 @@ Feature/cu 8692vgfbd (#8)
 *  udpated net-proto-api to 0.1.1-da85a0a
 
 *  fixed bad method name in dashboard_request
-<!-- [END AUTO UPDATE] -->
 ## [0.1.2-90bf1ae] - 2023-10-09
 
 Feature/cu 8692vgfbd: added structures for dashboards (#7)
