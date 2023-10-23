@@ -2,13 +2,14 @@ use ion_rs;
 use ion_rs::IonWriter;
 use ion_rs::IonReader;
 use ion_rs::element::writer::TextKind;
+use net_proto_api::api::API;
 
 use net_proto_api::encoder_api::Encoder;
 use net_proto_api::decoder_api::Decoder;
 use net_proto_api::typed_api::Typed;
-
-
 const DATA_TYPE: &str = "endpoint";
+
+impl API for EndpointDTO { }
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct EndpointDTO {
     id: String,

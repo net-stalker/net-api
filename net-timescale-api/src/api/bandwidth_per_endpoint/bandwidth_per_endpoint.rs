@@ -3,14 +3,15 @@ use ion_rs::element::reader::ElementReader;
 use ion_rs::IonWriter;
 use ion_rs::IonReader;
 use ion_rs::element::writer::TextKind;
+use net_proto_api::api::API;
 
 use net_proto_api::encoder_api::Encoder;
 use net_proto_api::decoder_api::Decoder;
 use net_proto_api::typed_api::Typed;
 use crate::api::bandwidth_per_endpoint::endpoint::EndpointDTO;
-
-
 const DATA_TYPE: &str = "bandwidth-per-endpoint";
+
+impl API for  BandwidthPerEndpointDTO { }
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct BandwidthPerEndpointDTO {
     endpoints: Vec<EndpointDTO>,
