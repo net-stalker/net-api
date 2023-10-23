@@ -53,7 +53,7 @@ impl Encoder for BandwithBucketDTO {
         writer.set_field_name("bucket_timestamp");
         writer.write_i64(self.bucket_timestamp).unwrap();
 
-        writer.set_field_name("total_bytes");
+        writer.set_field_name("bandwidth_per_endpoint");
         writer.write_i64(self.total_bytes).unwrap();
 
         writer.step_out().unwrap();
@@ -116,7 +116,7 @@ mod tests {
         assert_eq!(BUCKET_TIMESTAMP,  binary_user_reader.read_i64().unwrap());
 
         assert_eq!(StreamItem::Value(IonType::Int), binary_user_reader.next().unwrap());
-        assert_eq!("total_bytes", binary_user_reader.field_name().unwrap());
+        assert_eq!("bandwidth_per_endpoint", binary_user_reader.field_name().unwrap());
         assert_eq!(TOTAL_BYTES,  binary_user_reader.read_i64().unwrap());
 
         binary_user_reader.step_out().unwrap();

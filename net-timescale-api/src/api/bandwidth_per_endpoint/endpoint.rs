@@ -120,7 +120,7 @@ mod tests {
     use net_proto_api::decoder_api::Decoder;
     use net_proto_api::encoder_api::Encoder;
     use net_proto_api::typed_api::Typed;
-    use crate::api::total_bytes::endpoint::EndpointDTO;
+    use crate::api::bandwidth_per_endpoint::endpoint::EndpointDTO;
 
     #[test]
     fn test_correctly_read_encoded_endpoint() {

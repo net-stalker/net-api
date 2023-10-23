@@ -7,16 +7,16 @@ use ion_rs::element::writer::TextKind;
 use net_proto_api::encoder_api::Encoder;
 use net_proto_api::decoder_api::Decoder;
 use net_proto_api::typed_api::Typed;
-use crate::api::total_bytes::endpoint::EndpointDTO;
+use crate::api::bandwidth_per_endpoint::endpoint::EndpointDTO;
 
 
-const DATA_TYPE: &str = "total-bytes";
+const DATA_TYPE: &str = "bandwidth-per-endpoint";
 #[derive(Debug, PartialEq, Eq, Clone)]
-pub struct TotalBytesDTO {
+pub struct BandwidthPerEndpointDTO {
     endpoints: Vec<EndpointDTO>,
 }
 
-impl TotalBytesDTO {
+impl BandwidthPerEndpointDTO {
     pub fn new(endpoints: &[EndpointDTO]) -> Self {
         Self { endpoints: endpoints.to_vec() }
     }
@@ -30,7 +30,7 @@ impl TotalBytesDTO {
     }
 }
 
-impl Encoder for TotalBytesDTO {
+impl Encoder for BandwidthPerEndpointDTO {
     fn encode(&self) -> Vec<u8> {
         let buffer: Vec<u8> = Vec::new();
 
@@ -66,7 +66,7 @@ impl Encoder for TotalBytesDTO {
     }
 }
 
-impl Decoder for TotalBytesDTO {
+impl Decoder for BandwidthPerEndpointDTO {
     fn decode(data: &[u8]) -> Self where Self: Sized {
         let mut binary_user_reader = ion_rs::ReaderBuilder::new().build(data).unwrap();
         binary_user_reader.next().unwrap();
@@ -86,7 +86,7 @@ impl Decoder for TotalBytesDTO {
     }
 }
 
-impl Typed for TotalBytesDTO {
+impl Typed for BandwidthPerEndpointDTO {
     fn get_data_type() -> &'static str where Self: Sized {
         DATA_TYPE
     }
@@ -103,11 +103,11 @@ mod tests {
     use net_proto_api::decoder_api::Decoder;
     use net_proto_api::encoder_api::Encoder;
     use net_proto_api::typed_api::Typed;
-    use crate::api::total_bytes::endpoint::EndpointDTO;
-    use crate::api::total_bytes::total_bytes::TotalBytesDTO;
+    use crate::api::bandwidth_per_endpoint::endpoint::EndpointDTO;
+    use crate::api::bandwidth_per_endpoint::bandwidth_per_endpoint::BandwidthPerEndpointDTO;
 
     #[test]
-    fn test_correctly_read_encoded_total_bytes() {
+    fn test_correctly_read_encoded_bandsiwth_per_endpoint() {
         const ID1: &str = "id1";
         const ID2: &str = "id2";
         const ID3: &str = "id3";
@@ -130,9 +130,9 @@ mod tests {
             EndpointDTO::new(ID3, BR3, BS3),
         ];
 
-        let total_bytes = TotalBytesDTO::new(endpoints.as_slice());
+        let bandwidth_per_endpoint = BandwidthPerEndpointDTO::new(endpoints.as_slice());
 
-        let mut binary_user_reader = ReaderBuilder::new().build(total_bytes.encode()).unwrap();
+        let mut binary_user_reader = ReaderBuilder::new().build(bandwidth_per_endpoint.encode()).unwrap();
 
         assert_eq!(StreamItem::Value(IonType::Struct), binary_user_reader.next().unwrap());
         binary_user_reader.step_in().unwrap();
@@ -175,9 +175,9 @@ mod tests {
             EndpointDTO::new(ID3, BR3, BS3),
         ];
 
-        let total_bytes = TotalBytesDTO::new(endpoints.as_slice());
+        let bandwidth_per_endpoint = BandwidthPerEndpointDTO::new(endpoints.as_slice());
 
-        assert_eq!(total_bytes, TotalBytesDTO::decode(total_bytes.encode().as_slice()));
+        assert_eq!(bandwidth_per_endpoint, BandwidthPerEndpointDTO::decode(bandwidth_per_endpoint.encode().as_slice()));
     }
 
     #[test]
@@ -204,8 +204,8 @@ mod tests {
             EndpointDTO::new(ID3, BR3, BS3),
         ];
 
-        let total_bytes = TotalBytesDTO::new(endpoints.as_slice());
-        assert_eq!(total_bytes.get_type(), TotalBytesDTO::get_data_type());
-        assert_eq!(total_bytes.get_type(), super::DATA_TYPE);
+        let bandwidth_per_endpoint = BandwidthPerEndpointDTO::new(endpoints.as_slice());
+        assert_eq!(bandwidth_per_endpoint.get_type(), BandwidthPerEndpointDTO::get_data_type());
+        assert_eq!(bandwidth_per_endpoint.get_type(), super::DATA_TYPE);
     }
 }
