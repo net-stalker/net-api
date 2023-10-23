@@ -9,7 +9,7 @@ use net_proto_api::decoder_api::Decoder;
 
 const DATA_TYPE: &str = "bandwidth-per-endpoint-request";
 #[derive(Debug, PartialEq, Eq, Clone)]
-pub struct BandwidthPerEndpointDTO {
+pub struct BandwidthPerEndpointRequestDTO {
     start_date_time: i64,
     end_date_time: i64,
     // may be expandable in future
@@ -19,7 +19,7 @@ pub struct BandwidthPerEndpointDTO {
     // TODO: add filtering factor (a string)
 }
 
-impl BandwidthPerEndpointDTO {
+impl BandwidthPerEndpointRequestDTO {
     pub fn new(start_date_time: i64, end_date_time: i64) -> Self {
         Self {
             start_date_time,
@@ -35,24 +35,24 @@ impl BandwidthPerEndpointDTO {
     }
 }
 
-impl Encoder for BandwidthPerEndpointDTO {
+impl Encoder for BandwidthPerEndpointRequestDTO {
     fn encode(&self) -> Vec<u8> {
         let buffer: Vec<u8> = Vec::new();
 
         #[cfg(feature = "ion-binary")]
-            let binary_writer_builder = ion_rs::BinaryWriterBuilder::new();
+        let binary_writer_builder = ion_rs::BinaryWriterBuilder::new();
         #[cfg(feature = "ion-text")]
-            let text_writer_builder = ion_rs::TextWriterBuilder::new(TextKind::Compact);
+        let text_writer_builder = ion_rs::TextWriterBuilder::new(TextKind::Compact);
 
         #[cfg(feature = "ion-binary")]
-            #[allow(unused_variables)]
-            #[allow(unused_mut)]
-            let mut writer = binary_writer_builder.build(buffer.clone()).unwrap();
+        #[allow(unused_variables)]
+        #[allow(unused_mut)]
+        let mut writer = binary_writer_builder.build(buffer.clone()).unwrap();
 
         #[cfg(feature = "ion-text")]
-            #[allow(unused_variables)]
-            #[allow(unused_mut)]
-            let mut writer = text_writer_builder.build(buffer).unwrap();
+        #[allow(unused_variables)]
+        #[allow(unused_mut)]
+        let mut writer = text_writer_builder.build(buffer).unwrap();
 
         writer.step_in(ion_rs::IonType::Struct).expect("Error while creating an ion struct");
 
@@ -69,7 +69,7 @@ impl Encoder for BandwidthPerEndpointDTO {
     }
 }
 
-impl Decoder for BandwidthPerEndpointDTO {
+impl Decoder for BandwidthPerEndpointRequestDTO {
     fn decode(data: &[u8]) -> Self where Self: Sized {
         let mut binary_user_reader = ion_rs::ReaderBuilder::new().build(data).unwrap();
         binary_user_reader.next().unwrap();
@@ -81,14 +81,14 @@ impl Decoder for BandwidthPerEndpointDTO {
         binary_user_reader.next().unwrap();
         let end_date_time = binary_user_reader.read_i64().unwrap();
 
-        BandwidthPerEndpointDTO::new(
+        BandwidthPerEndpointRequestDTO::new(
             start_date_time,
             end_date_time
         )
     }
 }
 
-impl net_proto_api::typed_api::Typed for BandwidthPerEndpointDTO {
+impl net_proto_api::typed_api::Typed for BandwidthPerEndpointRequestDTO {
     fn get_data_type() -> &'static str {
         DATA_TYPE
     }
@@ -104,14 +104,14 @@ mod tests {
     use net_proto_api::decoder_api::Decoder;
     use net_proto_api::encoder_api::Encoder;
     use net_proto_api::typed_api::Typed;
-    use crate::api::bandwidth_per_endpoint_request::BandwidthPerEndpointDTO;
+    use crate::api::bandwidth_per_endpoint_request::BandwidthPerEndpointRequestDTO;
 
     #[test]
     fn reader_correctly_read_encoded_bandwidth_per_endpoint_request() {
         const START_DATE_TIME: i64 = i64::MIN;
         const END_DATE_TIME: i64 = i64::MAX;
 
-        let bandwidth_per_endpoint_request = BandwidthPerEndpointDTO::new(
+        let bandwidth_per_endpoint_request = BandwidthPerEndpointRequestDTO::new(
             START_DATE_TIME,
             END_DATE_TIME,
         );
@@ -135,11 +135,11 @@ mod tests {
         const START_DATE_TIME: i64 = i64::MIN;
         const END_DATE_TIME: i64 = i64::MAX;
 
-        let bandwidth_per_endpoint_request = BandwidthPerEndpointDTO::new(
+        let bandwidth_per_endpoint_request = BandwidthPerEndpointRequestDTO::new(
             START_DATE_TIME,
             END_DATE_TIME,
         );
-        assert_eq!(bandwidth_per_endpoint_request, BandwidthPerEndpointDTO::decode(&bandwidth_per_endpoint_request.encode()));
+        assert_eq!(bandwidth_per_endpoint_request, BandwidthPerEndpointRequestDTO::decode(&bandwidth_per_endpoint_request.encode()));
     }
 
     #[test]
@@ -147,11 +147,11 @@ mod tests {
         const START_DATE_TIME: i64 = i64::MIN;
         const END_DATE_TIME: i64 = i64::MAX;
 
-        let bandwidth_per_endpoint_request = BandwidthPerEndpointDTO::new(
+        let bandwidth_per_endpoint_request = BandwidthPerEndpointRequestDTO::new(
             START_DATE_TIME,
             END_DATE_TIME,
         );
-        assert_eq!(bandwidth_per_endpoint_request.get_type(), BandwidthPerEndpointDTO::get_data_type());
+        assert_eq!(bandwidth_per_endpoint_request.get_type(), BandwidthPerEndpointRequestDTO::get_data_type());
         assert_eq!(bandwidth_per_endpoint_request.get_type(), super::DATA_TYPE);
     }
 }
