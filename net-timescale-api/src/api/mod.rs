@@ -5,4 +5,4 @@ pub mod network_packet;
 pub mod dashboard_request;
 pub mod dashboard;
 pub mod bandwidth_per_endpoint;
-pub mod total_bytes_request;
+pub mod bandwidth_per_endpoint_request;

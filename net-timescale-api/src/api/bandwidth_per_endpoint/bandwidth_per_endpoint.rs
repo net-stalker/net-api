@@ -107,10 +107,10 @@ mod tests {
     use crate::api::bandwidth_per_endpoint::bandwidth_per_endpoint::BandwidthPerEndpointDTO;
 
     #[test]
-    fn test_correctly_read_encoded_bandsiwth_per_endpoint() {
+    fn test_correctly_read_encoded_bandwidth_per_endpoint() {
         const ID1: &str = "id1";
         const ID2: &str = "id2";
-        const ID3: &str = "id3";
+        const ID3: &str = "id3";;
 
         const BR1: i64 = 1;
 
@@ -152,7 +152,7 @@ mod tests {
     }
 
     #[test]
-    fn test_endec_total_bytes() {
+    fn test_endec_bandwidth_per_endpoint() {
         const ID1: &str = "id1";
         const ID2: &str = "id2";
         const ID3: &str = "id3";
