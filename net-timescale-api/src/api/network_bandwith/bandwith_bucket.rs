@@ -34,26 +34,26 @@ impl Encoder for BandwithBucketDTO {
         let buffer: Vec<u8> = Vec::new();
 
         #[cfg(feature = "ion-binary")]
-        let binary_writer_builder = ion_rs::BinaryWriterBuilder::new();
+            let binary_writer_builder = ion_rs::BinaryWriterBuilder::new();
         #[cfg(feature = "ion-text")]
-        let text_writer_builder = ion_rs::TextWriterBuilder::new(TextKind::Compact); 
+            let text_writer_builder = ion_rs::TextWriterBuilder::new(TextKind::Compact);
 
         #[cfg(feature = "ion-binary")]
-        #[allow(unused_variables)]
-        #[allow(unused_mut)]
-        let mut writer = binary_writer_builder.build(buffer.clone()).unwrap();
-        
+            #[allow(unused_variables)]
+            #[allow(unused_mut)]
+            let mut writer = binary_writer_builder.build(buffer.clone()).unwrap();
+
         #[cfg(feature = "ion-text")]
-        #[allow(unused_variables)]
-        #[allow(unused_mut)]
-        let mut writer = text_writer_builder.build(buffer).unwrap();
+            #[allow(unused_variables)]
+            #[allow(unused_mut)]
+            let mut writer = text_writer_builder.build(buffer).unwrap();
 
         writer.step_in(ion_rs::IonType::Struct).expect("Error while creating an ion struct");
-        
+
         writer.set_field_name("bucket_timestamp");
         writer.write_i64(self.bucket_timestamp).unwrap();
 
-        writer.set_field_name("bandwidth_per_endpoint");
+        writer.set_field_name("total_bytes");
         writer.write_i64(self.total_bytes).unwrap();
 
         writer.step_out().unwrap();
@@ -110,13 +110,13 @@ mod tests {
 
         assert_eq!(StreamItem::Value(IonType::Struct), binary_user_reader.next().unwrap());
         binary_user_reader.step_in().unwrap();
-        
+
         assert_eq!(StreamItem::Value(IonType::Int), binary_user_reader.next().unwrap());
         assert_eq!("bucket_timestamp", binary_user_reader.field_name().unwrap());
         assert_eq!(BUCKET_TIMESTAMP,  binary_user_reader.read_i64().unwrap());
 
         assert_eq!(StreamItem::Value(IonType::Int), binary_user_reader.next().unwrap());
-        assert_eq!("bandwidth_per_endpoint", binary_user_reader.field_name().unwrap());
+        assert_eq!("total_bytes", binary_user_reader.field_name().unwrap());
         assert_eq!(TOTAL_BYTES,  binary_user_reader.read_i64().unwrap());
 
         binary_user_reader.step_out().unwrap();
@@ -134,4 +134,3 @@ mod tests {
         assert_eq!(bandwith_bucket, BandwithBucketDTO::decode(&bandwith_bucket.encode()));
     }
 }
-
