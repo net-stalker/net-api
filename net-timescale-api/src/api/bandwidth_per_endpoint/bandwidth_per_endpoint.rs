@@ -111,24 +111,24 @@ mod tests {
     fn test_correctly_read_encoded_bandwidth_per_endpoint() {
         const ID1: &str = "id1";
         const ID2: &str = "id2";
-        const ID3: &str = "id3";;
+        const ID3: &str = "id3";
 
-        const BR1: i64 = 1;
+        const BYTES_RECEIVED_1: i64 = 1;
 
-        const BR2: i64 = 2;
+        const BYTES_RECEIVED_2: i64 = 2;
 
-        const BR3: i64 = 3;
+        const BYTES_RECEIVED_3: i64 = 3;
 
-        const BS1: i64 = 10;
+        const BYTES_SENT_1: i64 = 10;
 
-        const BS2: i64 = 20;
+        const BYTES_SENT_2: i64 = 20;
 
-        const BS3: i64 = 30;
+        const BYTES_SENT_3: i64 = 30;
 
         let endpoints = vec![
-            EndpointDTO::new(ID1, BR1, BS1),
-            EndpointDTO::new(ID2, BR2, BS2),
-            EndpointDTO::new(ID3, BR3, BS3),
+            EndpointDTO::new(ID1, BYTES_RECEIVED_1, BYTES_SENT_1),
+            EndpointDTO::new(ID2, BYTES_RECEIVED_2, BYTES_SENT_2),
+            EndpointDTO::new(ID3, BYTES_RECEIVED_3, BYTES_SENT_3),
         ];
 
         let bandwidth_per_endpoint = BandwidthPerEndpointDTO::new(endpoints.as_slice());
@@ -158,22 +158,22 @@ mod tests {
         const ID2: &str = "id2";
         const ID3: &str = "id3";
 
-        const BR1: i64 = 1;
+        const BYTES_RECEIVED_1: i64 = 1;
 
-        const BR2: i64 = 2;
+        const BYTES_RECEIVED_2: i64 = 2;
 
-        const BR3: i64 = 3;
+        const BYTES_RECEIVED_3: i64 = 3;
 
-        const BS1: i64 = 10;
+        const BYTES_SENT_1: i64 = 10;
 
-        const BS2: i64 = 20;
+        const BYTES_SENT_2: i64 = 20;
 
-        const BS3: i64 = 30;
+        const BYTES_SENT_3: i64 = 30;
 
         let endpoints = vec![
-            EndpointDTO::new(ID1, BR1, BS1),
-            EndpointDTO::new(ID2, BR2, BS2),
-            EndpointDTO::new(ID3, BR3, BS3),
+            EndpointDTO::new(ID1, BYTES_RECEIVED_1, BYTES_SENT_1),
+            EndpointDTO::new(ID2, BYTES_RECEIVED_2, BYTES_SENT_2),
+            EndpointDTO::new(ID3, BYTES_RECEIVED_3, BYTES_SENT_3),
         ];
 
         let bandwidth_per_endpoint = BandwidthPerEndpointDTO::new(endpoints.as_slice());
@@ -187,22 +187,22 @@ mod tests {
         const ID2: &str = "id2";
         const ID3: &str = "id3";
 
-        const BR1: i64 = 1;
+        const BYTES_RECEIVED_1: i64 = 1;
 
-        const BR2: i64 = 2;
+        const BYTES_RECEIVED_2: i64 = 2;
 
-        const BR3: i64 = 3;
+        const BYTES_RECEIVED_3: i64 = 3;
 
-        const BS1: i64 = 10;
+        const BYTES_SENT_1: i64 = 10;
 
-        const BS2: i64 = 20;
+        const BYTES_SENT_2: i64 = 20;
 
-        const BS3: i64 = 30;
+        const BYTES_SENT_3: i64 = 30;
 
         let endpoints = vec![
-            EndpointDTO::new(ID1, BR1, BS1),
-            EndpointDTO::new(ID2, BR2, BS2),
-            EndpointDTO::new(ID3, BR3, BS3),
+            EndpointDTO::new(ID1, BYTES_RECEIVED_1, BYTES_SENT_1),
+            EndpointDTO::new(ID2, BYTES_RECEIVED_2, BYTES_SENT_2),
+            EndpointDTO::new(ID3, BYTES_RECEIVED_3, BYTES_SENT_3),
         ];
 
         let bandwidth_per_endpoint = BandwidthPerEndpointDTO::new(endpoints.as_slice());
