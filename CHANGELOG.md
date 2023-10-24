@@ -8,12 +8,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 <!-- [START AUTO UPDATE] -->
 <!-- Please keep comment here to allow auto-update -->
+<!-- [END AUTO UPDATE] -->
 ## [0.1.2-66835a3] - 2023-10-19
 
 Feature/cu 8692w9z59 : Create all the necessary DTO structures for the NetworkBandwith chart (#10)
 
 * feature/CU-8692w9z59: Add struct bandwith_bucket, network_bandwith and network_bandwith_request for bandwith chart
-<!-- [END AUTO UPDATE] -->
 ## [0.1.2-5f6fcc3] - 2023-10-16
 
 Feature/cu 8692vgfbd (#8)
@@ -35,7 +35,6 @@ Feature/cu 8692vgfbd: added structures for dashboards (#7)
 feature/CU-8692vnf7e: updated APIs by changes net-proto-api (#6)
 
 *  updated net-api components after adding supertrait API and trait Typed into net-proto-api
-<!-- [END AUTO UPDATE] -->
 ## [0.1.2-17ea57a] - 2023-10-03
 
 Feature/cu 8692u7hf4: updated net-timescale-api (#3)
