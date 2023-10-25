@@ -130,7 +130,7 @@ mod tests {
     use net_proto_api::encoder_api::Encoder;
     use net_proto_api::typed_api::Typed;
 
-    use crate::api::requests::network_graph_request::NetworkGraphRequestDTO;
+    use crate::api::network_graph::network_graph_request::NetworkGraphRequestDTO;
 
     #[test]
     fn reader_correctly_read_encoded_ng_request() {

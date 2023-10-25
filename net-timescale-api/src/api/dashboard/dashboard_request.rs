@@ -17,24 +17,25 @@ use net_proto_api::envelope::envelope::Envelope;
 use net_proto_api::typed_api::Typed;
 
 
-const DATA_TYPE: &str = "dashboard";
+const DATA_TYPE: &str = "dashboard_request";
 
 #[derive(Debug, PartialEq, Eq, Clone)]
-pub struct DashboardDTO {
-    charts: Vec<Envelope>,
+pub struct DashboardRequestDTO {
+    chart_requests: Vec<Envelope>,
 }
-impl API for DashboardDTO { }
+impl API for DashboardRequestDTO { }
 
-impl DashboardDTO {
-    pub fn new(charts: &[Envelope]) -> Self {
-        DashboardDTO { charts: charts.to_vec() }
-    }
-    fn m_new(charts: Vec<Envelope>) -> Self {
-        DashboardDTO { charts }
+impl DashboardRequestDTO {
+    pub fn new (chart_requests: &[Envelope]) -> Self {
+        Self { chart_requests: chart_requests.to_vec() }
     }
 
-    pub fn get_charts(&self) -> &[Envelope] {
-        &self.charts
+    fn m_new(chart_requests: Vec<Envelope>) -> Self {
+        Self { chart_requests }
+    }
+
+    pub fn get_chart_requests(&self) -> &[Envelope] {
+        &self.chart_requests
     }
 
     pub fn get_type() -> &'static str {
@@ -42,7 +43,7 @@ impl DashboardDTO {
     }
 }
 
-impl Encoder for DashboardDTO {
+impl Encoder for DashboardRequestDTO {
     fn encode(&self) -> Vec<u8> {
         let buffer: Vec<u8> = Vec::new();
 
@@ -63,28 +64,28 @@ impl Encoder for DashboardDTO {
 
         writer.step_in(IonType::Struct).expect("Error while creating an ion struct");
 
-        writer.set_field_name("charts");
+        writer.set_field_name("chart_requests");
         writer.step_in(IonType::List).unwrap();
 
-        self.charts.iter().for_each(|chart| {
+        self.chart_requests.iter().for_each(|chart_request| {
             writer.step_in(IonType::Struct).unwrap();
             writer.set_field_name("group_id");
-            match chart.get_group_id() {
+            match chart_request.get_group_id() {
                 Ok(id) => writer.write_string(id).unwrap(),
                 Err(_) => writer.write_null(IonType::String).unwrap(),
             };
 
             writer.set_field_name("agent_id");
-            match chart.get_agent_id() {
+            match chart_request.get_agent_id() {
                 Ok(id) => writer.write_string(id).unwrap(),
                 Err(_) => writer.write_null(IonType::String).unwrap(),
             };
 
             writer.set_field_name("type");
-            writer.write_string(chart.get_type()).unwrap();
+            writer.write_string(chart_request.get_type()).unwrap();
 
             writer.set_field_name("data");
-            writer.write_blob(chart.get_data()).unwrap();
+            writer.write_blob(chart_request.get_data()).unwrap();
 
             writer.step_out().unwrap();
         });
@@ -97,7 +98,7 @@ impl Encoder for DashboardDTO {
     }
 }
 
-impl Decoder for DashboardDTO {
+impl Decoder for DashboardRequestDTO {
     fn decode(data: &[u8]) -> Self {
 
         let mut binary_user_reader = ReaderBuilder::new().build(data).unwrap();
@@ -107,25 +108,25 @@ impl Decoder for DashboardDTO {
         binary_user_reader.next().unwrap();
         binary_user_reader.step_in().unwrap();
 
-        let charts_raw = binary_user_reader.read_all_elements().unwrap();
-        let mut charts: Vec<Envelope> = Vec::with_capacity(charts_raw.len());
+        let chart_requests_raw = binary_user_reader.read_all_elements().unwrap();
+        let mut chart_requests: Vec<Envelope> = Vec::with_capacity(chart_requests_raw.len());
 
-        charts_raw.iter().for_each(|element| {
+        chart_requests_raw.iter().for_each(|element| {
             let raw_structure = element.as_struct().unwrap();
             let agent_id = raw_structure.get("agent_id").unwrap().as_string();
             let group_id = raw_structure.get("group_id").unwrap().as_string();
             let ty = raw_structure.get("type").unwrap().as_string().unwrap();
             let data = raw_structure.get("data").unwrap().as_blob().unwrap();
-            charts.push(Envelope::new(group_id, agent_id, ty, data));
+            chart_requests.push(Envelope::new(group_id, agent_id, ty, data));
         });
         binary_user_reader.step_out().unwrap();
 
         binary_user_reader.step_out().unwrap();
-        DashboardDTO::m_new(charts)
+        DashboardRequestDTO::m_new(chart_requests)
     }
 }
 
-impl Typed for DashboardDTO {
+impl Typed for DashboardRequestDTO {
     fn get_data_type() -> &'static str {
         DATA_TYPE
     }
@@ -149,7 +150,7 @@ mod tests {
     use net_proto_api::envelope::envelope::Envelope;
     use net_proto_api::typed_api::Typed;
 
-    use crate::api::dashboard::DashboardDTO;
+    use crate::api::dashboard::dashboard_request::DashboardRequestDTO;
 
     #[test]
     fn reader_correctly_read_encoded_ng_request() {
@@ -166,14 +167,14 @@ mod tests {
         let data3: Vec<u8> = vec![7,8,9];
         let data4: Vec<u8> = vec![10,11,12];
 
-        let charts: Vec<Envelope> = vec![
+        let chart_requests: Vec<Envelope> = vec![
             Envelope::new(group_id, None, TYPE1, data1.as_slice()),
             Envelope::new(None, agent_id, TYPE2, data2.as_slice()),
             Envelope::new(None, None, TYPE3, data3.as_slice()),
             Envelope::new(group_id, agent_id, TYPE4, data4.as_slice()),
         ];
 
-        let dashboard_request = DashboardDTO::new(charts.as_slice());
+        let dashboard_request = DashboardRequestDTO::new(chart_requests.as_slice());
 
         let mut binary_user_reader = ReaderBuilder::new().build(dashboard_request.encode()).unwrap();
 
@@ -181,7 +182,7 @@ mod tests {
         binary_user_reader.step_in().unwrap();
 
         assert_eq!(StreamItem::Value(IonType::List), binary_user_reader.next().unwrap());
-        assert_eq!("charts", binary_user_reader.field_name().unwrap());
+        assert_eq!("chart_requests", binary_user_reader.field_name().unwrap());
         binary_user_reader.step_in().unwrap();
 
         let binding = binary_user_reader.read_all_elements().unwrap();
@@ -231,17 +232,16 @@ mod tests {
         let data3: Vec<u8> = vec![7,8,9];
         let data4: Vec<u8> = vec![10,11,12];
 
-        let charts: Vec<Envelope> = vec![
+        let chart_requests: Vec<Envelope> = vec![
             Envelope::new(group_id, None, TYPE1, data1.as_slice()),
             Envelope::new(None, agent_id, TYPE2, data2.as_slice()),
             Envelope::new(None, None, TYPE3, data3.as_slice()),
             Envelope::new(group_id, agent_id, TYPE4, data4.as_slice()),
         ];
 
-        let dashboard = DashboardDTO::new(charts.as_slice());
-        assert_eq!(dashboard, DashboardDTO::decode(&dashboard.encode()));
+        let dashboard_request = DashboardRequestDTO::new(chart_requests.as_slice());
+        assert_eq!(dashboard_request, DashboardRequestDTO::decode(&dashboard_request.encode()));
     }
-
     #[test]
     fn test_getting_data_types() {
         let group_id: Option<&str> = Some("some-group-id");
@@ -257,15 +257,15 @@ mod tests {
         let data3: Vec<u8> = vec![7,8,9];
         let data4: Vec<u8> = vec![10,11,12];
 
-        let charts: Vec<Envelope> = vec![
+        let chart_requests: Vec<Envelope> = vec![
             Envelope::new(group_id, None, TYPE1, data1.as_slice()),
             Envelope::new(None, agent_id, TYPE2, data2.as_slice()),
             Envelope::new(None, None, TYPE3, data3.as_slice()),
             Envelope::new(group_id, agent_id, TYPE4, data4.as_slice()),
         ];
 
-        let dashboard = DashboardDTO::new(charts.as_slice());
-        assert_eq!(dashboard.get_type(), DashboardDTO::get_data_type());
-        assert_eq!(dashboard.get_type(), super::DATA_TYPE);
+        let dashboard_request = DashboardRequestDTO::new(chart_requests.as_slice());
+        assert_eq!(dashboard_request.get_type(), DashboardRequestDTO::get_data_type());
+        assert_eq!(dashboard_request.get_type(), super::DATA_TYPE);
     }
 }

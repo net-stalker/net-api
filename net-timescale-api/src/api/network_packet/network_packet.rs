@@ -148,7 +148,7 @@ mod tests {
     use net_proto_api::encoder_api::Encoder;
     use net_proto_api::typed_api::Typed;
 
-    use crate::api::network_packet::NetworkPacketDTO;
+    use crate::api::network_packet::network_packet::NetworkPacketDTO;
 
 
     #[test]
