@@ -8,14 +8,14 @@ use net_proto_api::decoder_api::Decoder;
 
 
 #[derive(Debug, PartialEq, Eq)]
-pub struct NetworkBandwithRequestDTO {
+pub struct NetworkBandwidthRequestDTO {
     start_date_time: i64,
     end_date_time: i64,
 }
 
-impl NetworkBandwithRequestDTO {
+impl NetworkBandwidthRequestDTO {
     pub fn new (start_date_time: i64, end_date_time: i64) -> Self {
-        NetworkBandwithRequestDTO {
+        NetworkBandwidthRequestDTO {
             start_date_time,
             end_date_time,
         }
@@ -30,7 +30,7 @@ impl NetworkBandwithRequestDTO {
     }
 }
 
-impl Encoder for NetworkBandwithRequestDTO {
+impl Encoder for NetworkBandwidthRequestDTO {
     fn encode(&self) -> Vec<u8> {
         let buffer: Vec<u8> = Vec::new();
 
@@ -64,7 +64,7 @@ impl Encoder for NetworkBandwithRequestDTO {
     }
 }
 
-impl Decoder for NetworkBandwithRequestDTO {
+impl Decoder for NetworkBandwidthRequestDTO {
     fn decode(data: &[u8]) -> Self {
 
         let mut binary_user_reader = ion_rs::ReaderBuilder::new().build(data).unwrap();
@@ -77,7 +77,7 @@ impl Decoder for NetworkBandwithRequestDTO {
         binary_user_reader.next().unwrap();
         let end_date_time = binary_user_reader.read_i64().unwrap();
 
-        NetworkBandwithRequestDTO::new(
+        NetworkBandwidthRequestDTO::new(
             start_date_time,
             end_date_time
         )
@@ -95,19 +95,19 @@ mod tests {
     use net_proto_api::decoder_api::Decoder;
     use net_proto_api::encoder_api::Encoder;
 
-    use crate::api::network_bandwith::NetworkBandwithRequestDTO;
+    use crate::api::network_bandwidth_request::NetworkBandwidthRequestDTO;
 
     #[test]
     fn reader_correctly_read_encoded_ng_request() {
         const START_DATE_TIME: i64 = i64::MIN;
         const END_DATE_TIME: i64 = i64::MAX;
 
-        let network_bandwith_request = NetworkBandwithRequestDTO::new(
+        let network_bandwidth_request = NetworkBandwidthRequestDTO::new(
             START_DATE_TIME,
             END_DATE_TIME
         );
         
-        let mut binary_user_reader = ReaderBuilder::new().build(network_bandwith_request.encode()).unwrap();
+        let mut binary_user_reader = ReaderBuilder::new().build(network_bandwidth_request.encode()).unwrap();
 
         assert_eq!(StreamItem::Value(IonType::Struct), binary_user_reader.next().unwrap());
         binary_user_reader.step_in().unwrap();
@@ -126,10 +126,10 @@ mod tests {
         const START_DATE_TIME: i64 = i64::MIN;
         const END_DATE_TIME: i64 = i64::MAX;
 
-        let network_bandwith_request = NetworkBandwithRequestDTO::new(
+        let network_bandwidth_request = NetworkBandwidthRequestDTO::new(
             START_DATE_TIME,
             END_DATE_TIME
         );
-        assert_eq!(network_bandwith_request, NetworkBandwithRequestDTO::decode(&network_bandwith_request.encode()));
+        assert_eq!(network_bandwidth_request, NetworkBandwidthRequestDTO::decode(&network_bandwidth_request.encode()));
     }
 }
