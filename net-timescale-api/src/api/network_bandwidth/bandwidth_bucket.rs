@@ -15,14 +15,14 @@ use net_proto_api::decoder_api::Decoder;
 use net_proto_api::typed_api::Typed;
 
 
-const DATA_TYPE: &str = "bandwith_bucket";
+const DATA_TYPE: &str = "bandwidth_bucket";
 
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct BandwidthBucketDTO {
     bucket_timestamp: i64,
     total_bytes: i64,
 }
-impl API for BandwithBucketDTO { }
+impl API for BandwidthBucketDTO { }
 
 impl BandwidthBucketDTO {
     pub fn new (bucket_timestamp: i64, total_bytes: i64) -> Self {
@@ -95,7 +95,7 @@ impl Decoder for BandwidthBucketDTO {
     }
 }
 
-impl Typed for BandwithBucketDTO {
+impl Typed for BandwidthBucketDTO {
     fn get_data_type() -> &'static str {
         DATA_TYPE
     }
