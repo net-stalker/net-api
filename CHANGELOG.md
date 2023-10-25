@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 <!-- [START AUTO UPDATE] -->
 <!-- Please keep comment here to allow auto-update -->
+## [0.1.2-5b5436c] - 2023-10-25
+
+feature/CU-8692w9z59: Add the missing .isl file for the bandwith_request (#12)
+
+* feature/CU-8692w9z59: Add the missing .isl file for the bandwith_request
+
+* feature/CU-8692w9z59: Rename bandwith to bandwidth
 <!-- [END AUTO UPDATE] -->
 ## [0.1.2-20a413f] - 2023-10-24
 
