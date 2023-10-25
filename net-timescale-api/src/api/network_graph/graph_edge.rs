@@ -1,15 +1,22 @@
 use ion_rs;
-use ion_rs::IonWriter;
-use ion_rs::element::reader::ElementReader;
+
 use ion_rs::IonReader;
+use ion_rs::IonType;
+use ion_rs::IonWriter;
+
+use ion_rs::ReaderBuilder;
+use ion_rs::TextWriterBuilder;
+
+use ion_rs::element::reader::ElementReader;
 use ion_rs::element::writer::TextKind;
 
+use net_proto_api::api::API;
 use net_proto_api::encoder_api::Encoder;
 use net_proto_api::decoder_api::Decoder;
+use net_proto_api::typed_api::Typed;
+
 
 const DATA_TYPE: &str = "graph_edge";
-
-impl net_proto_api::api::API for GraphEdgeDTO { }
 
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct GraphEdgeDTO {
@@ -17,6 +24,7 @@ pub struct GraphEdgeDTO {
     dst_id: String,
     communication_types: Vec<String>,
 }
+impl API for GraphEdgeDTO { }
 
 impl GraphEdgeDTO {
     pub fn new(src_id: &str, dst_id: &str, communication_types: &[String]) -> Self {
@@ -47,7 +55,7 @@ impl Encoder for GraphEdgeDTO {
         #[cfg(feature = "ion-binary")]
         let binary_writer_builder = ion_rs::BinaryWriterBuilder::new();
         #[cfg(feature = "ion-text")]
-        let text_writer_builder = ion_rs::TextWriterBuilder::new(TextKind::Compact); 
+        let text_writer_builder = TextWriterBuilder::new(TextKind::Compact); 
 
         #[cfg(feature = "ion-binary")]
         #[allow(unused_variables)]
@@ -59,7 +67,7 @@ impl Encoder for GraphEdgeDTO {
         #[allow(unused_mut)]
         let mut writer = text_writer_builder.build(buffer).unwrap();
 
-        writer.step_in(ion_rs::IonType::Struct).expect("Error while creating an ion struct");
+        writer.step_in(IonType::Struct).expect("Error while creating an ion struct");
         
         writer.set_field_name("src_id");
         writer.write_string(&self.src_id).unwrap();
@@ -68,7 +76,7 @@ impl Encoder for GraphEdgeDTO {
         writer.write_string(&self.dst_id).unwrap();
 
         writer.set_field_name("communication_types");
-        writer.step_in(ion_rs::IonType::List).expect("Error while entering an ion list");
+        writer.step_in(IonType::List).expect("Error while entering an ion list");
         for communication_type in &self.communication_types {
             writer.write_string(communication_type).unwrap();
         }
@@ -84,7 +92,7 @@ impl Encoder for GraphEdgeDTO {
 impl Decoder for GraphEdgeDTO {
     fn decode(data: &[u8]) -> Self {
 
-        let mut binary_user_reader = ion_rs::ReaderBuilder::new().build(data).unwrap();
+        let mut binary_user_reader = ReaderBuilder::new().build(data).unwrap();
         binary_user_reader.next().unwrap();
         binary_user_reader.step_in().unwrap();
 
@@ -115,7 +123,7 @@ impl Decoder for GraphEdgeDTO {
     }
 }
 
-impl net_proto_api::typed_api::Typed for GraphEdgeDTO {
+impl Typed for GraphEdgeDTO {
     fn get_data_type() -> &'static str {
         DATA_TYPE
     }

@@ -1,21 +1,30 @@
 use ion_rs;
-use ion_rs::element::reader::ElementReader;
-use ion_rs::{IonType, IonWriter};
+
 use ion_rs::IonReader;
+use ion_rs::IonType;
+use ion_rs::IonWriter;
+
+use ion_rs::ReaderBuilder;
+use ion_rs::TextWriterBuilder;
+
+use ion_rs::element::reader::ElementReader;
 use ion_rs::element::writer::TextKind;
 
+use net_proto_api::api::API;
 use net_proto_api::encoder_api::Encoder;
 use net_proto_api::decoder_api::Decoder;
 use net_proto_api::envelope::envelope::Envelope;
+use net_proto_api::typed_api::Typed;
 
 
 const DATA_TYPE: &str = "dashboard";
+
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct DashboardDTO {
     charts: Vec<Envelope>,
 }
+impl API for DashboardDTO { }
 
-impl net_proto_api::api::API for DashboardDTO { }
 impl DashboardDTO {
     pub fn new(charts: &[Envelope]) -> Self {
         DashboardDTO { charts: charts.to_vec() }
@@ -40,7 +49,7 @@ impl Encoder for DashboardDTO {
         #[cfg(feature = "ion-binary")]
             let binary_writer_builder = ion_rs::BinaryWriterBuilder::new();
         #[cfg(feature = "ion-text")]
-            let text_writer_builder = ion_rs::TextWriterBuilder::new(TextKind::Compact);
+            let text_writer_builder = TextWriterBuilder::new(TextKind::Compact);
 
         #[cfg(feature = "ion-binary")]
             #[allow(unused_variables)]
@@ -52,7 +61,7 @@ impl Encoder for DashboardDTO {
             #[allow(unused_mut)]
             let mut writer = text_writer_builder.build(buffer).unwrap();
 
-        writer.step_in(ion_rs::IonType::Struct).expect("Error while creating an ion struct");
+        writer.step_in(IonType::Struct).expect("Error while creating an ion struct");
 
         writer.set_field_name("charts");
         writer.step_in(IonType::List).unwrap();
@@ -91,7 +100,7 @@ impl Encoder for DashboardDTO {
 impl Decoder for DashboardDTO {
     fn decode(data: &[u8]) -> Self {
 
-        let mut binary_user_reader = ion_rs::ReaderBuilder::new().build(data).unwrap();
+        let mut binary_user_reader = ReaderBuilder::new().build(data).unwrap();
         binary_user_reader.next().unwrap();
         binary_user_reader.step_in().unwrap();
 
@@ -116,7 +125,7 @@ impl Decoder for DashboardDTO {
     }
 }
 
-impl net_proto_api::typed_api::Typed for DashboardDTO {
+impl Typed for DashboardDTO {
     fn get_data_type() -> &'static str {
         DATA_TYPE
     }
@@ -125,6 +134,7 @@ impl net_proto_api::typed_api::Typed for DashboardDTO {
         Self::get_data_type()
     }
 }
+
 
 #[cfg(test)]
 mod tests {
@@ -139,7 +149,7 @@ mod tests {
     use net_proto_api::envelope::envelope::Envelope;
     use net_proto_api::typed_api::Typed;
 
-    use crate::api::dashboard::DashboardDTO;
+    use crate::api::dashboard::dashboard::DashboardDTO;
 
     #[test]
     fn reader_correctly_read_encoded_ng_request() {

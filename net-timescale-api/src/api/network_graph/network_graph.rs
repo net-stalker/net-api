@@ -1,23 +1,32 @@
 use ion_rs;
-use ion_rs::element::reader::ElementReader;
-use ion_rs::IonWriter;
+
 use ion_rs::IonReader;
+use ion_rs::IonType;
+use ion_rs::IonWriter;
+
+use ion_rs::ReaderBuilder;
+use ion_rs::TextWriterBuilder;
+
+use ion_rs::element::reader::ElementReader;
 use ion_rs::element::writer::TextKind;
 
+use net_proto_api::api::API;
 use net_proto_api::encoder_api::Encoder;
 use net_proto_api::decoder_api::Decoder;
+use net_proto_api::typed_api::Typed;
 
 use super::graph_edge::GraphEdgeDTO;
 use super::graph_node::GraphNodeDTO;
 
+
 const DATA_TYPE: &str = "network_graph";
+
 #[derive(Debug, PartialEq, Eq)]
 pub struct NetworkGraphDTO {
     graph_nodes: Vec<GraphNodeDTO>,
     graph_edges: Vec<GraphEdgeDTO>,
 }
-
-impl net_proto_api::api::API for NetworkGraphDTO { }
+impl API for NetworkGraphDTO { }
 
 impl NetworkGraphDTO {
     pub fn new(graph_nodes: &[GraphNodeDTO], graph_edges: &[GraphEdgeDTO]) -> Self {
@@ -43,7 +52,7 @@ impl Encoder for NetworkGraphDTO {
         #[cfg(feature = "ion-binary")]
         let binary_writer_builder = ion_rs::BinaryWriterBuilder::new();
         #[cfg(feature = "ion-text")]
-        let text_writer_builder = ion_rs::TextWriterBuilder::new(TextKind::Compact); 
+        let text_writer_builder = TextWriterBuilder::new(TextKind::Compact); 
 
         #[cfg(feature = "ion-binary")]
         #[allow(unused_variables)]
@@ -55,12 +64,12 @@ impl Encoder for NetworkGraphDTO {
         #[allow(unused_mut)]
         let mut writer = text_writer_builder.build(buffer).unwrap();
 
-        writer.step_in(ion_rs::IonType::Struct).expect("Error while creating an ion struct");
+        writer.step_in(IonType::Struct).expect("Error while creating an ion struct");
 
         writer.set_field_name("graph_nodes");
-        writer.step_in(ion_rs::IonType::List).expect("Error while entering an ion list");
+        writer.step_in(IonType::List).expect("Error while entering an ion list");
         for graph_node in &self.graph_nodes {
-            writer.step_in(ion_rs::IonType::Struct).expect("Error while entering an ion struct");
+            writer.step_in(IonType::Struct).expect("Error while entering an ion struct");
             
             writer.set_field_name("node_id");
             writer.write_string(graph_node.get_node_id()).unwrap();
@@ -73,9 +82,9 @@ impl Encoder for NetworkGraphDTO {
         writer.step_out().unwrap();
 
         writer.set_field_name("graph_edges");
-        writer.step_in(ion_rs::IonType::List).expect("Error while entering an ion list");
+        writer.step_in(IonType::List).expect("Error while entering an ion list");
         for graph_edge in &self.graph_edges {
-            writer.step_in(ion_rs::IonType::Struct).expect("Error while entering an ion struct");
+            writer.step_in(IonType::Struct).expect("Error while entering an ion struct");
             
             writer.set_field_name("src_id");
             writer.write_string(graph_edge.get_src_id()).unwrap();
@@ -84,7 +93,7 @@ impl Encoder for NetworkGraphDTO {
             writer.write_string(graph_edge.get_dst_id()).unwrap();
 
             writer.set_field_name("communication_types");
-            writer.step_in(ion_rs::IonType::List).expect("Error while entering an ion list");
+            writer.step_in(IonType::List).expect("Error while entering an ion list");
             for communication_type in graph_edge.get_communication_types() {
                 writer.write_string(communication_type).unwrap();
             }
@@ -104,7 +113,7 @@ impl Encoder for NetworkGraphDTO {
 impl Decoder for NetworkGraphDTO {
     fn decode(data: &[u8]) -> Self {
 
-        let mut binary_user_reader = ion_rs::ReaderBuilder::new().build(data).unwrap();
+        let mut binary_user_reader = ReaderBuilder::new().build(data).unwrap();
         binary_user_reader.next().unwrap();
         binary_user_reader.step_in().unwrap();
 
@@ -144,7 +153,7 @@ impl Decoder for NetworkGraphDTO {
     }
 }
 
-impl net_proto_api::typed_api::Typed for NetworkGraphDTO {
+impl Typed for NetworkGraphDTO {
     fn get_data_type() -> &'static str {
         DATA_TYPE
     }
@@ -153,6 +162,7 @@ impl net_proto_api::typed_api::Typed for NetworkGraphDTO {
         Self::get_data_type()
     }
 }
+
 
 #[cfg(test)]
 mod tests {

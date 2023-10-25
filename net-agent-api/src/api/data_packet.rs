@@ -1,18 +1,26 @@
 use ion_rs;
-use ion_rs::IonWriter;
+
 use ion_rs::IonReader;
+use ion_rs::IonType;
+use ion_rs::IonWriter;
+
+use ion_rs::ReaderBuilder;
+use ion_rs::TextWriterBuilder;
+
 use ion_rs::element::writer::TextKind;
 
+use net_proto_api::api::API;
 use net_proto_api::encoder_api::Encoder;
 use net_proto_api::decoder_api::Decoder;
 
+
 const DATA_TYPE: &str = "data_packet";
+
 #[derive(Debug, PartialEq, Eq)]
 pub struct DataPacketDTO {
     data: Vec<u8>
 }
-
-impl net_proto_api::api::API for DataPacketDTO { }
+impl API for DataPacketDTO { }
 
 impl DataPacketDTO {
     pub fn new (data: &[u8]) -> Self {
@@ -33,7 +41,7 @@ impl Encoder for DataPacketDTO {
         #[cfg(feature = "ion-binary")]
         let binary_writer_builder = ion_rs::BinaryWriterBuilder::new();
         #[cfg(feature = "ion-text")]
-        let text_writer_builder = ion_rs::TextWriterBuilder::new(TextKind::Compact); 
+        let text_writer_builder = TextWriterBuilder::new(TextKind::Compact); 
 
         #[cfg(feature = "ion-binary")]
         #[allow(unused_mut)]
@@ -44,7 +52,7 @@ impl Encoder for DataPacketDTO {
         #[allow(unused_variables)]
         let mut writer = text_writer_builder.build(buffer).unwrap();
 
-        writer.step_in(ion_rs::IonType::Struct).expect("Error while creating an ion struct");
+        writer.step_in(IonType::Struct).expect("Error while creating an ion struct");
 
         writer.set_field_name("data");
         writer.write_blob(&self.data).unwrap();
@@ -59,7 +67,7 @@ impl Encoder for DataPacketDTO {
 impl Decoder for DataPacketDTO {
     fn decode(data: &[u8]) -> Self {
 
-        let mut binary_user_reader = ion_rs::ReaderBuilder::new().build(data).unwrap();
+        let mut binary_user_reader = ReaderBuilder::new().build(data).unwrap();
         binary_user_reader.next().unwrap();
         binary_user_reader.step_in().unwrap();
 
@@ -82,6 +90,7 @@ impl net_proto_api::typed_api::Typed for DataPacketDTO {
         Self::get_data_type()
     }
 }
+
 
 #[cfg(test)]
 mod tests {

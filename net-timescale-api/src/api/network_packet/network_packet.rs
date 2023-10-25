@@ -1,14 +1,21 @@
 use ion_rs;
-use ion_rs::IonWriter;
+
 use ion_rs::IonReader;
+use ion_rs::IonType;
+use ion_rs::IonWriter;
+
+use ion_rs::ReaderBuilder;
+use ion_rs::TextWriterBuilder;
+
 use ion_rs::element::writer::TextKind;
 
+use net_proto_api::api::API;
 use net_proto_api::encoder_api::Encoder;
 use net_proto_api::decoder_api::Decoder;
+use net_proto_api::typed_api::Typed;
+
 
 const DATA_TYPE: &str = "network_packet";
-
-impl net_proto_api::api::API for NetworkPacketDTO { }
 
 #[derive(Debug, PartialEq, Eq)]
 pub struct NetworkPacketDTO {
@@ -19,6 +26,7 @@ pub struct NetworkPacketDTO {
 
     network_packet_data: Vec<u8>,
 }
+impl API for NetworkPacketDTO { }
 
 impl NetworkPacketDTO {
     pub fn new(frame_time: i64, src_addr: &str, dst_addr: &str, network_packet_data: &[u8]) -> Self {
@@ -54,7 +62,7 @@ impl Encoder for NetworkPacketDTO {
         #[cfg(feature = "ion-binary")]
         let binary_writer_builder = ion_rs::BinaryWriterBuilder::new();
         #[cfg(feature = "ion-text")]
-        let text_writer_builder = ion_rs::TextWriterBuilder::new(TextKind::Compact); 
+        let text_writer_builder = TextWriterBuilder::new(TextKind::Compact); 
 
         #[cfg(feature = "ion-binary")]
         #[allow(unused_variables)]
@@ -66,7 +74,7 @@ impl Encoder for NetworkPacketDTO {
         #[allow(unused_mut)]
         let mut writer = text_writer_builder.build(buffer).unwrap();
 
-        writer.step_in(ion_rs::IonType::Struct).expect("Error while creating an ion struct");
+        writer.step_in(IonType::Struct).expect("Error while creating an ion struct");
         
         writer.set_field_name("frame_time");
         writer.write_i64(self.frame_time).unwrap();
@@ -87,22 +95,10 @@ impl Encoder for NetworkPacketDTO {
     }
 }
 
-impl net_proto_api::typed_api::Typed for NetworkPacketDTO {
-    fn get_data_type() -> &'static str {
-        DATA_TYPE
-    }
-
-    fn get_type(&self) -> &str {
-        Self::get_data_type()
-    }
-}
-
-
-
 impl Decoder for NetworkPacketDTO {
     fn decode(data: &[u8]) -> Self {
 
-        let mut binary_user_reader = ion_rs::ReaderBuilder::new().build(data).unwrap();
+        let mut binary_user_reader = ReaderBuilder::new().build(data).unwrap();
         binary_user_reader.next().unwrap();
         binary_user_reader.step_in().unwrap();
 
@@ -130,6 +126,16 @@ impl Decoder for NetworkPacketDTO {
     }
 }
 
+impl Typed for NetworkPacketDTO {
+    fn get_data_type() -> &'static str {
+        DATA_TYPE
+    }
+
+    fn get_type(&self) -> &str {
+        Self::get_data_type()
+    }
+}
+
 
 #[cfg(test)]
 mod tests {
@@ -142,7 +148,7 @@ mod tests {
     use net_proto_api::encoder_api::Encoder;
     use net_proto_api::typed_api::Typed;
 
-    use crate::api::network_packet::NetworkPacketDTO;
+    use crate::api::network_packet::network_packet::NetworkPacketDTO;
 
 
     #[test]

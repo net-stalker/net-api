@@ -1,16 +1,28 @@
 use ion_rs;
-use ion_rs::IonWriter;
+
 use ion_rs::IonReader;
+use ion_rs::IonType;
+use ion_rs::IonWriter;
+
+use ion_rs::ReaderBuilder;
+use ion_rs::TextWriterBuilder;
+
 use ion_rs::element::writer::TextKind;
 
+use net_proto_api::api::API;
 use net_proto_api::encoder_api::Encoder;
 use net_proto_api::decoder_api::Decoder;
+use net_proto_api::typed_api::Typed;
+
+
+const DATA_TYPE: &str = "bandwidth_bucket";
 
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct BandwidthBucketDTO {
     bucket_timestamp: i64,
     total_bytes: i64,
 }
+impl API for BandwidthBucketDTO { }
 
 impl BandwidthBucketDTO {
     pub fn new (bucket_timestamp: i64, total_bytes: i64) -> Self {
@@ -34,22 +46,22 @@ impl Encoder for BandwidthBucketDTO {
         let buffer: Vec<u8> = Vec::new();
 
         #[cfg(feature = "ion-binary")]
-            let binary_writer_builder = ion_rs::BinaryWriterBuilder::new();
+        let binary_writer_builder = ion_rs::BinaryWriterBuilder::new();
         #[cfg(feature = "ion-text")]
-            let text_writer_builder = ion_rs::TextWriterBuilder::new(TextKind::Compact);
+        let text_writer_builder = TextWriterBuilder::new(TextKind::Compact); 
 
         #[cfg(feature = "ion-binary")]
-            #[allow(unused_variables)]
-            #[allow(unused_mut)]
-            let mut writer = binary_writer_builder.build(buffer.clone()).unwrap();
-
+        #[allow(unused_variables)]
+        #[allow(unused_mut)]
+        let mut writer = binary_writer_builder.build(buffer.clone()).unwrap();
+        
         #[cfg(feature = "ion-text")]
-            #[allow(unused_variables)]
-            #[allow(unused_mut)]
-            let mut writer = text_writer_builder.build(buffer).unwrap();
+        #[allow(unused_variables)]
+        #[allow(unused_mut)]
+        let mut writer = text_writer_builder.build(buffer).unwrap();
 
-        writer.step_in(ion_rs::IonType::Struct).expect("Error while creating an ion struct");
-
+        writer.step_in(IonType::Struct).expect("Error while creating an ion struct");
+        
         writer.set_field_name("bucket_timestamp");
         writer.write_i64(self.bucket_timestamp).unwrap();
 
@@ -66,7 +78,7 @@ impl Encoder for BandwidthBucketDTO {
 impl Decoder for BandwidthBucketDTO {
     fn decode(data: &[u8]) -> Self {
 
-        let mut binary_user_reader = ion_rs::ReaderBuilder::new().build(data).unwrap();
+        let mut binary_user_reader = ReaderBuilder::new().build(data).unwrap();
         binary_user_reader.next().unwrap();
         binary_user_reader.step_in().unwrap();
 
@@ -80,6 +92,15 @@ impl Decoder for BandwidthBucketDTO {
             bucket_timestamp,
             total_bytes
         )
+    }
+}
+
+impl Typed for BandwidthBucketDTO {
+    fn get_data_type() -> &'static str {
+        DATA_TYPE
+    }
+    fn get_type(&self) -> &str {
+        Self::get_data_type()
     }
 }
 
@@ -110,7 +131,7 @@ mod tests {
 
         assert_eq!(StreamItem::Value(IonType::Struct), binary_user_reader.next().unwrap());
         binary_user_reader.step_in().unwrap();
-
+        
         assert_eq!(StreamItem::Value(IonType::Int), binary_user_reader.next().unwrap());
         assert_eq!("bucket_timestamp", binary_user_reader.field_name().unwrap());
         assert_eq!(BUCKET_TIMESTAMP,  binary_user_reader.read_i64().unwrap());
@@ -134,3 +155,4 @@ mod tests {
         assert_eq!(bandwidth_bucket, BandwidthBucketDTO::decode(&bandwidth_bucket.encode()));
     }
 }
+
