@@ -1,7 +1,7 @@
 schema_header::{}
 
 type::{
-    name: bandwith_bucket,
+    name: bandwidth_bucket,
     type: struct,
     fields: {
         bucket_timestamp: int,
@@ -10,13 +10,13 @@ type::{
 }
 
 type::{
-    name: network_bandwith,
+    name: network_bandwidth,
     type: struct,
     fields: {
-        bandwith_buckets: {
+        bandwidth_buckets: {
             type: list,
             element: {
-                type: bandwith_bucket
+                type: bandwidth_bucket
             },
         },
     },

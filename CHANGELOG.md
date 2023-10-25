@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 <!-- [START AUTO UPDATE] -->
 <!-- Please keep comment here to allow auto-update -->
+<!-- [END AUTO UPDATE] -->
 ## [0.1.2-20a413f] - 2023-10-24
 
 Feature/cu 8692xghpp: implemented structures for bandwidth per endpoint chart (#9)
@@ -23,7 +24,6 @@ Feature/cu 8692xghpp: implemented structures for bandwidth per endpoint chart (#
 ### Added
 
 * API trait implementations for bandwidth per endpoint structures
-<!-- [END AUTO UPDATE] -->
 ## [0.1.2-66835a3] - 2023-10-19
 
 Feature/cu 8692w9z59 : Create all the necessary DTO structures for the NetworkBandwith chart (#10)

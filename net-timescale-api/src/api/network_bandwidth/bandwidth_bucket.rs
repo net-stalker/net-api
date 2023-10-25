@@ -7,14 +7,14 @@ use net_proto_api::encoder_api::Encoder;
 use net_proto_api::decoder_api::Decoder;
 
 #[derive(Debug, PartialEq, Eq, Clone)]
-pub struct BandwithBucketDTO {
+pub struct BandwidthBucketDTO {
     bucket_timestamp: i64,
     total_bytes: i64,
 }
 
-impl BandwithBucketDTO {
+impl BandwidthBucketDTO {
     pub fn new (bucket_timestamp: i64, total_bytes: i64) -> Self {
-        BandwithBucketDTO {
+        BandwidthBucketDTO {
             bucket_timestamp,
             total_bytes,
         }
@@ -29,7 +29,7 @@ impl BandwithBucketDTO {
     }
 }
 
-impl Encoder for BandwithBucketDTO {
+impl Encoder for BandwidthBucketDTO {
     fn encode(&self) -> Vec<u8> {
         let buffer: Vec<u8> = Vec::new();
 
@@ -63,7 +63,7 @@ impl Encoder for BandwithBucketDTO {
     }
 }
 
-impl Decoder for BandwithBucketDTO {
+impl Decoder for BandwidthBucketDTO {
     fn decode(data: &[u8]) -> Self {
 
         let mut binary_user_reader = ion_rs::ReaderBuilder::new().build(data).unwrap();
@@ -76,7 +76,7 @@ impl Decoder for BandwithBucketDTO {
         binary_user_reader.next().unwrap();
         let total_bytes = binary_user_reader.read_i64().unwrap();
 
-        BandwithBucketDTO::new(
+        BandwidthBucketDTO::new(
             bucket_timestamp,
             total_bytes
         )
@@ -94,19 +94,19 @@ mod tests {
     use net_proto_api::decoder_api::Decoder;
     use net_proto_api::encoder_api::Encoder;
 
-    use crate::api::network_bandwith::bandwith_bucket::BandwithBucketDTO;
+    use crate::api::network_bandwidth::bandwidth_bucket::BandwidthBucketDTO;
 
 
     #[test]
-    fn reader_correctly_read_encoded_bandwith_bucket() {
+    fn reader_correctly_read_encoded_bandwidth_bucket() {
         const BUCKET_TIMESTAMP: i64 = i64::MAX;
         const TOTAL_BYTES: i64 = i64::MAX;
 
-        let bandwith_bucket = BandwithBucketDTO::new(
+        let bandwidth_bucket = BandwidthBucketDTO::new(
             BUCKET_TIMESTAMP,
             TOTAL_BYTES
         );
-        let mut binary_user_reader = ReaderBuilder::new().build(bandwith_bucket.encode()).unwrap();
+        let mut binary_user_reader = ReaderBuilder::new().build(bandwidth_bucket.encode()).unwrap();
 
         assert_eq!(StreamItem::Value(IonType::Struct), binary_user_reader.next().unwrap());
         binary_user_reader.step_in().unwrap();
@@ -123,14 +123,14 @@ mod tests {
     }
 
     #[test]
-    fn endec_bandwith_bucket() {
+    fn endec_bandwidth_bucket() {
         const BUCKET_TIMESTAMP: i64 = i64::MAX;
         const TOTAL_BYTES: i64 = i64::MAX;
 
-        let bandwith_bucket = BandwithBucketDTO::new(
+        let bandwidth_bucket = BandwidthBucketDTO::new(
             BUCKET_TIMESTAMP,
             TOTAL_BYTES
         );
-        assert_eq!(bandwith_bucket, BandwithBucketDTO::decode(&bandwith_bucket.encode()));
+        assert_eq!(bandwidth_bucket, BandwidthBucketDTO::decode(&bandwidth_bucket.encode()));
     }
 }
