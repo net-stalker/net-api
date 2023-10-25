@@ -6,7 +6,6 @@ type::{
     fields: {
         start_date_time: int,
         end_date_time: int,
-        subscribe: bool,
     },
 }
 
