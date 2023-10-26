@@ -1,8 +1,8 @@
 use ion_rs;
 
+use ion_rs::IonReader;
 use ion_rs::IonType;
 use ion_rs::IonWriter;
-use ion_rs::IonReader;
 
 use ion_rs::ReaderBuilder;
 use ion_rs::TextWriterBuilder;
@@ -10,9 +10,9 @@ use ion_rs::TextWriterBuilder;
 use ion_rs::element::writer::TextKind;
 
 use net_proto_api::api::API;
+use net_proto_api::typed_api::Typed;
 use net_proto_api::encoder_api::Encoder;
 use net_proto_api::decoder_api::Decoder;
-use net_proto_api::typed_api::Typed;
 
 
 const DATA_TYPE: &str = "bandwidth-per-endpoint-request";
@@ -107,6 +107,7 @@ impl Typed for BandwidthPerEndpointRequestDTO {
         Self::get_data_type()
     }
 }
+
 
 #[cfg(test)]
 mod tests {

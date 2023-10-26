@@ -1,19 +1,30 @@
 use ion_rs;
 
-use ion_rs::IonWriter;
-use ion_rs::element::reader::ElementReader;
 use ion_rs::IonReader;
+use ion_rs::IonType;
+use ion_rs::IonWriter;
+
+use ion_rs::ReaderBuilder;
+use ion_rs::TextWriterBuilder;
+
+use ion_rs::element::reader::ElementReader;
 use ion_rs::element::writer::TextKind;
 
+use net_proto_api::api::API;
 use net_proto_api::encoder_api::Encoder;
 use net_proto_api::decoder_api::Decoder;
+use net_proto_api::typed_api::Typed;
 
 use super::bandwidth_bucket::BandwidthBucketDTO;
+
+
+const DATA_TYPE: &str = "network_bandwidth";
 
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct NetworkBandwidthDTO {
     bandwidth_buckets: Vec<BandwidthBucketDTO>,
 }
+impl API for NetworkBandwidthDTO { }
 
 impl NetworkBandwidthDTO {
     pub fn new ( bandwidth_buckets: &[BandwidthBucketDTO],) -> Self {
@@ -34,7 +45,7 @@ impl Encoder for NetworkBandwidthDTO {
         #[cfg(feature = "ion-binary")]
         let binary_writer_builder = ion_rs::BinaryWriterBuilder::new();
         #[cfg(feature = "ion-text")]
-        let text_writer_builder = ion_rs::TextWriterBuilder::new(TextKind::Compact); 
+        let text_writer_builder = TextWriterBuilder::new(TextKind::Compact); 
 
         #[cfg(feature = "ion-binary")]
         #[allow(unused_variables)]
@@ -46,10 +57,10 @@ impl Encoder for NetworkBandwidthDTO {
         #[allow(unused_mut)]
         let mut writer = text_writer_builder.build(buffer).unwrap();
 
-        writer.step_in(ion_rs::IonType::Struct).expect("Error while creating an ion struct");
+        writer.step_in(IonType::Struct).expect("Error while creating an ion struct");
 
         writer.set_field_name("bandwidth_buckets");
-        writer.step_in(ion_rs::IonType::List).expect("Error while entering an ion list");
+        writer.step_in(IonType::List).expect("Error while entering an ion list");
         self.bandwidth_buckets.iter().for_each(|bandwidth_bucket| {
             let data = bandwidth_bucket.encode();
             writer.write_blob(data.as_slice()).unwrap();
@@ -66,7 +77,7 @@ impl Encoder for NetworkBandwidthDTO {
 impl Decoder for NetworkBandwidthDTO {
     fn decode(data: &[u8]) -> Self {
         
-        let mut binary_user_reader = ion_rs::ReaderBuilder::new().build(data).unwrap();
+        let mut binary_user_reader = ReaderBuilder::new().build(data).unwrap();
         binary_user_reader.next().unwrap();
         binary_user_reader.step_in().unwrap();
 
@@ -85,6 +96,17 @@ impl Decoder for NetworkBandwidthDTO {
         )
     }
 }
+
+impl Typed for NetworkBandwidthDTO {
+    fn get_data_type() -> &'static str {
+        DATA_TYPE
+    }
+
+    fn get_type(&self) -> &str {
+        Self::get_data_type()
+    }
+}
+
 
 #[cfg(test)]
 mod tests {
