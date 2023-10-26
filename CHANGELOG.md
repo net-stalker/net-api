@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 <!-- [START AUTO UPDATE] -->
 <!-- Please keep comment here to allow auto-update -->
+## [0.1.2-f7e482d] - 2023-10-26
+
+feature/CU-86930959c: Add missing APIs + refactor (#13)
+
+* feature/CU-86930959c: Add missing APIs + small refactor
 <!-- [END AUTO UPDATE] -->
 ## [0.1.2-a31021f] - 2023-10-25
 
