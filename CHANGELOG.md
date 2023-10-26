@@ -8,12 +8,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 <!-- [START AUTO UPDATE] -->
 <!-- Please keep comment here to allow auto-update -->
+<!-- [END AUTO UPDATE] -->
 ## [0.1.2-a31021f] - 2023-10-25
 
 Feature/cu 8692xqew1: Refactor all the apis (DTO structs) (#11)
 
 * feature/CU-8692xqew1: Refactor all the APIs (DTOs) in net-timescale
-<!-- [END AUTO UPDATE] -->
 ## [0.1.2-5b5436c] - 2023-10-25
 
 feature/CU-8692w9z59: Add the missing .isl file for the bandwith_request (#12)
