@@ -69,37 +69,14 @@ impl Encoder for NetworkGraphDTO {
         writer.set_field_name("graph_nodes");
         writer.step_in(IonType::List).expect("Error while entering an ion list");
         for graph_node in &self.graph_nodes {
-            writer.step_in(IonType::Struct).expect("Error while entering an ion struct");
-            
-            writer.set_field_name("node_id");
-            writer.write_string(graph_node.get_node_id()).unwrap();
-            
-            writer.set_field_name("agent_id");
-            writer.write_string(graph_node.get_agent_id()).unwrap();
-
-            writer.step_out().unwrap();
+            writer.write_blob(graph_node.encode()).unwrap();
         }
         writer.step_out().unwrap();
 
         writer.set_field_name("graph_edges");
         writer.step_in(IonType::List).expect("Error while entering an ion list");
         for graph_edge in &self.graph_edges {
-            writer.step_in(IonType::Struct).expect("Error while entering an ion struct");
-            
-            writer.set_field_name("src_id");
-            writer.write_string(graph_edge.get_src_id()).unwrap();
-    
-            writer.set_field_name("dst_id");
-            writer.write_string(graph_edge.get_dst_id()).unwrap();
-
-            writer.set_field_name("communication_types");
-            writer.step_in(IonType::List).expect("Error while entering an ion list");
-            for communication_type in graph_edge.get_communication_types() {
-                writer.write_string(communication_type).unwrap();
-            }
-            writer.step_out().unwrap();
-            
-            writer.step_out().unwrap();
+            writer.write_blob(graph_edge.encode()).unwrap();
         }
         writer.step_out().unwrap();
 
@@ -122,10 +99,7 @@ impl Decoder for NetworkGraphDTO {
         let elements = binary_user_reader.read_all_elements().unwrap();
         let mut graph_nodes = Vec::<GraphNodeDTO>::with_capacity(elements.capacity());
         for element in elements {
-            let graph_node = element.as_struct().unwrap();
-            let node_id = graph_node.get("node_id").unwrap().as_text().unwrap();
-            let agent_id = graph_node.get("agent_id").unwrap().as_text().unwrap();
-            graph_nodes.push(GraphNodeDTO::new(node_id, agent_id));
+            graph_nodes.push(GraphNodeDTO::decode(element.as_blob().unwrap()));
         }
         binary_user_reader.step_out().unwrap();
 
@@ -134,13 +108,7 @@ impl Decoder for NetworkGraphDTO {
         let elements = binary_user_reader.read_all_elements().unwrap();
         let mut graph_edges = Vec::<GraphEdgeDTO>::with_capacity(elements.capacity());
         for element in elements {
-            let graph_edge = element.as_struct().unwrap();
-            let src_id = graph_edge.get("src_id").unwrap().as_text().unwrap();
-            let dst_id = graph_edge.get("dst_id").unwrap().as_text().unwrap();
-            let ct = graph_edge.get("communication_types").unwrap().as_sequence().unwrap();
-            let mut communication_types = Vec::<String>::with_capacity(ct.len());
-            ct.elements().for_each(|el| communication_types.push(el.as_text().unwrap().to_string()));
-            graph_edges.push(GraphEdgeDTO::new(src_id, dst_id, communication_types.as_slice()));
+            graph_edges.push(GraphEdgeDTO::decode(element.as_blob().unwrap()));
         }
         binary_user_reader.step_out().unwrap();
 
@@ -166,6 +134,7 @@ impl Typed for NetworkGraphDTO {
 
 #[cfg(test)]
 mod tests {
+    use ion_rs::element::reader::ElementReader;
     use ion_rs::IonType;
     use ion_rs::IonReader;
     use ion_rs::ReaderBuilder;
@@ -181,7 +150,6 @@ mod tests {
 
 
     #[test]
-    #[should_panic]
     fn reader_correctly_read_encoded_graph_edge() {
         const FIRST_NODE_ID: &str = "0.0.0.0:0000";
         const FIRST_NODE_AGENT_ID: &str = "some first node agent id";
@@ -196,9 +164,11 @@ mod tests {
 
         let graph_edge: GraphEdgeDTO = GraphEdgeDTO::new(SRC_ID, DST_ID, communication_types.as_slice());
 
+        let graph_nodes = vec![first_graph_node, second_graph_node];
+        let graph_edges = vec![graph_edge];
         let network_graph = NetworkGraphDTO::new(
-            &[first_graph_node, second_graph_node],
-            &[graph_edge],
+            graph_nodes.as_slice(),
+            graph_edges.as_slice(),
         );
 
         let mut binary_user_reader = ReaderBuilder::new().build(network_graph.encode()).unwrap();
@@ -208,30 +178,14 @@ mod tests {
         
         assert_eq!(StreamItem::Value(IonType::List), binary_user_reader.next().unwrap());
         assert_eq!("graph_nodes", binary_user_reader.field_name().unwrap());
-        
+
         binary_user_reader.step_in().unwrap();
 
-        assert_eq!(StreamItem::Value(IonType::Struct), binary_user_reader.next().unwrap());
-        binary_user_reader.step_in().unwrap();
-        assert_eq!(StreamItem::Value(IonType::String), binary_user_reader.next().unwrap());
-        assert_eq!("node_id", binary_user_reader.field_name().unwrap());
-        assert_eq!(FIRST_NODE_ID,  binary_user_reader.read_string().unwrap().text());
+        let endeced_graph_nodes: Vec<GraphNodeDTO> = binary_user_reader.read_all_elements().unwrap().iter().map(|element| {
+            GraphNodeDTO::decode(element.as_blob().unwrap())
+        }).collect();
 
-        assert_eq!(StreamItem::Value(IonType::String), binary_user_reader.next().unwrap());
-        assert_eq!("agent_id", binary_user_reader.field_name().unwrap());
-        assert_eq!(FIRST_NODE_AGENT_ID, binary_user_reader.read_string().unwrap().text());
-        binary_user_reader.step_out().unwrap();
-
-        assert_eq!(StreamItem::Value(IonType::Struct), binary_user_reader.next().unwrap());
-        binary_user_reader.step_in().unwrap();
-        assert_eq!(StreamItem::Value(IonType::String), binary_user_reader.next().unwrap());
-        assert_eq!("node_id", binary_user_reader.field_name().unwrap());
-        assert_eq!(SECOND_NODE_ID,  binary_user_reader.read_string().unwrap().text());
-        
-        assert_eq!(StreamItem::Value(IonType::String), binary_user_reader.next().unwrap());
-        assert_eq!("agent_id", binary_user_reader.field_name().unwrap());
-        assert_eq!(SECOND_NODE_AGENT_ID, binary_user_reader.read_string().unwrap().text());
-        binary_user_reader.step_out().unwrap();
+        assert_eq!(endeced_graph_nodes, graph_nodes);
 
         binary_user_reader.step_out().unwrap();
         
@@ -240,33 +194,13 @@ mod tests {
 
         binary_user_reader.step_in().unwrap();
 
-        assert_eq!(StreamItem::Value(IonType::Struct), binary_user_reader.next().unwrap());
-        binary_user_reader.step_in().unwrap();
-        assert_eq!(StreamItem::Value(IonType::String), binary_user_reader.next().unwrap());
-        assert_eq!("src_id", binary_user_reader.field_name().unwrap());
-        assert_eq!(SRC_ID,  binary_user_reader.read_string().unwrap().text());
-        assert_eq!(StreamItem::Value(IonType::String), binary_user_reader.next().unwrap());
-        assert_eq!("dst_id", binary_user_reader.field_name().unwrap());
-        assert_eq!(DST_ID,  binary_user_reader.read_string().unwrap().text());
+        let encoded_graph_edges: Vec<GraphEdgeDTO> = binary_user_reader.read_all_elements().unwrap().iter().map(|element| {
+            GraphEdgeDTO::decode(element.as_blob().unwrap())
+        }).collect();
 
-        assert_eq!(StreamItem::Value(IonType::List), binary_user_reader.next().unwrap());
-        assert_eq!("communication_types", binary_user_reader.field_name().unwrap());
+        assert_eq!(encoded_graph_edges, graph_edges);
 
-        binary_user_reader.step_in().unwrap();
-
-        assert_eq!(StreamItem::Value(IonType::String), binary_user_reader.next().unwrap());
-        assert_eq!(communication_types.get(0).unwrap(), binary_user_reader.read_string().unwrap().text());
-
-        assert_eq!(StreamItem::Value(IonType::String), binary_user_reader.next().unwrap());
-        assert_eq!(communication_types.get(1).unwrap(), binary_user_reader.read_string().unwrap().text());
-
-        assert_eq!(StreamItem::Value(IonType::String), binary_user_reader.next().unwrap());
-        assert_eq!(communication_types.get(2).unwrap(), binary_user_reader.read_string().unwrap().text());
         binary_user_reader.step_out().unwrap();
-        binary_user_reader.step_out().unwrap();
-        binary_user_reader.step_out().unwrap();
-        binary_user_reader.step_out().unwrap();
-        // should panic here
         binary_user_reader.step_out().unwrap();
     }
 

@@ -67,26 +67,7 @@ impl Encoder for DashboardDTO {
         writer.step_in(IonType::List).unwrap();
 
         self.charts.iter().for_each(|chart| {
-            writer.step_in(IonType::Struct).unwrap();
-            writer.set_field_name("group_id");
-            match chart.get_group_id() {
-                Ok(id) => writer.write_string(id).unwrap(),
-                Err(_) => writer.write_null(IonType::String).unwrap(),
-            };
-
-            writer.set_field_name("agent_id");
-            match chart.get_agent_id() {
-                Ok(id) => writer.write_string(id).unwrap(),
-                Err(_) => writer.write_null(IonType::String).unwrap(),
-            };
-
-            writer.set_field_name("type");
-            writer.write_string(chart.get_type()).unwrap();
-
-            writer.set_field_name("data");
-            writer.write_blob(chart.get_data()).unwrap();
-
-            writer.step_out().unwrap();
+            writer.write_blob(chart.encode()).unwrap();
         });
         writer.step_out().unwrap();
 
@@ -109,14 +90,8 @@ impl Decoder for DashboardDTO {
 
         let charts_raw = binary_user_reader.read_all_elements().unwrap();
         let mut charts: Vec<Envelope> = Vec::with_capacity(charts_raw.len());
-
         charts_raw.iter().for_each(|element| {
-            let raw_structure = element.as_struct().unwrap();
-            let agent_id = raw_structure.get("agent_id").unwrap().as_string();
-            let group_id = raw_structure.get("group_id").unwrap().as_string();
-            let ty = raw_structure.get("type").unwrap().as_string().unwrap();
-            let data = raw_structure.get("data").unwrap().as_blob().unwrap();
-            charts.push(Envelope::new(group_id, agent_id, ty, data));
+            charts.push(Envelope::decode(element.as_blob().unwrap()));
         });
         binary_user_reader.step_out().unwrap();
 
@@ -152,7 +127,7 @@ mod tests {
     use crate::api::dashboard::dashboard::DashboardDTO;
 
     #[test]
-    fn reader_correctly_read_encoded_ng_request() {
+    fn reader_correctly_read_encoded_dashboard() {
         let group_id: Option<&str> = Some("some-group-id");
         let agent_id: Option<&str> = Some("some-agent-id");
 
@@ -184,32 +159,10 @@ mod tests {
         assert_eq!("charts", binary_user_reader.field_name().unwrap());
         binary_user_reader.step_in().unwrap();
 
-        let binding = binary_user_reader.read_all_elements().unwrap();
-
-        let raw_element_1 = binding[0].as_struct().unwrap();
-        assert_eq!(raw_element_1.get("group_id").unwrap().as_string(), group_id);
-        assert_eq!(raw_element_1.get("agent_id").unwrap().as_string(), None);
-        assert_eq!(raw_element_1.get("type").unwrap().as_string().unwrap(), TYPE1);
-        assert_eq!(raw_element_1.get("data").unwrap().as_blob().unwrap(), data1);
-
-
-        let raw_element_2 = binding[1].as_struct().unwrap();
-        assert_eq!(raw_element_2.get("group_id").unwrap().as_string(), None);
-        assert_eq!(raw_element_2.get("agent_id").unwrap().as_string(), agent_id);
-        assert_eq!(raw_element_2.get("type").unwrap().as_string().unwrap(), TYPE2);
-        assert_eq!(raw_element_2.get("data").unwrap().as_blob().unwrap(), data2);
-
-        let raw_element_3 = binding[2].as_struct().unwrap();
-        assert_eq!(raw_element_3.get("group_id").unwrap().as_string(), None);
-        assert_eq!(raw_element_3.get("agent_id").unwrap().as_string(), None);
-        assert_eq!(raw_element_3.get("type").unwrap().as_string().unwrap(), TYPE3);
-        assert_eq!(raw_element_3.get("data").unwrap().as_blob().unwrap(), data3);
-
-        let raw_element_4 = binding[3].as_struct().unwrap();
-        assert_eq!(raw_element_4.get("group_id").unwrap().as_string(), group_id);
-        assert_eq!(raw_element_4.get("agent_id").unwrap().as_string(), agent_id);
-        assert_eq!(raw_element_4.get("type").unwrap().as_string().unwrap(), TYPE4);
-        assert_eq!(raw_element_4.get("data").unwrap().as_blob().unwrap(), data4);
+        let endeced_charts: Vec<Envelope> = binary_user_reader.read_all_elements().unwrap().iter().map(|element| {
+            Envelope::decode(element.as_blob().unwrap())
+        }).collect();
+        assert_eq!(endeced_charts, charts);
 
         binary_user_reader.step_out().unwrap();
 
