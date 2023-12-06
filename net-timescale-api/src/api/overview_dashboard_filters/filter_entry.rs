@@ -202,21 +202,21 @@ mod tests {
 
     #[test]
     fn endec_graph_edge() {
-        const endpoint: &str = "0.0.0.0:0000";
+        const ENDPOINT: &str = "0.0.0.0:0000";
         let protocols: Vec<String> = vec!["fac1".to_string(), "fac2".to_string(), "fac3".to_string()];
         let bytes_rec = 1000;
         let bytes_sent = 500;
-        let filter_entry = FilterEntryDTO::new(endpoint, &protocols, bytes_rec, bytes_sent);
+        let filter_entry = FilterEntryDTO::new(ENDPOINT, &protocols, bytes_rec, bytes_sent);
         assert_eq!(filter_entry, FilterEntryDTO::decode(&filter_entry.encode()));
     }
 
     #[test]
     fn test_getting_data_types() {
-        const endpoint: &str = "0.0.0.0:0000";
+        const ENDPOINT: &str = "0.0.0.0:0000";
         let protocols: Vec<String> = vec!["fac1".to_string(), "fac2".to_string(), "fac3".to_string()];
         let bytes_rec = 1000;
         let bytes_sent = 500;
-        let filter_entry = FilterEntryDTO::new(endpoint, &protocols, bytes_rec, bytes_sent);
+        let filter_entry = FilterEntryDTO::new(ENDPOINT, &protocols, bytes_rec, bytes_sent);
         assert_eq!(filter_entry.get_type(), FilterEntryDTO::get_data_type());
         assert_eq!(filter_entry.get_type(), super::DATA_TYPE);
     }
