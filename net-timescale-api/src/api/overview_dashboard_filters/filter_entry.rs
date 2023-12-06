@@ -159,10 +159,8 @@ mod tests {
 
     use crate::api::overview_dashboard_filters::filter_entry::FilterEntryDTO;
 
-
-
     #[test]
-    fn reader_correctly_read_encoded_graph_edge() {
+    fn reader_correctly_read_encoded_filter_entry() {
         const ENDPOINT: &str = "0.0.0.0:0000";
         let protocols: Vec<String> = vec!["fac1".to_string(), "fac2".to_string(), "fac3".to_string()];
         let bytes_rec = 1000;
@@ -201,7 +199,7 @@ mod tests {
     }
 
     #[test]
-    fn endec_graph_edge() {
+    fn endec_filter_entry() {
         const ENDPOINT: &str = "0.0.0.0:0000";
         let protocols: Vec<String> = vec!["fac1".to_string(), "fac2".to_string(), "fac3".to_string()];
         let bytes_rec = 1000;

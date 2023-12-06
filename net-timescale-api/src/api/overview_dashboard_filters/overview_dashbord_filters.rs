@@ -172,7 +172,7 @@ mod tests {
     }
 
     #[test]
-    fn endec_graph_edge() {
+    fn endec_filters() {
         let filters = get_filters();
         assert_eq!(filters, OverviewDashboardFiltersDTO::decode(&filters.encode()));
     }

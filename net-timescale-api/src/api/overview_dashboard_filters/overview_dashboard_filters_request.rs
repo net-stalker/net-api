@@ -118,8 +118,9 @@ mod tests {
 
     use crate::api::overview_dashboard_filters::overview_dashboard_filters_request::OverviewDashboardFiltersRequestDTO;
 
+    // ovdf - overview dashboard filters
     #[test]
-    fn reader_correctly_read_encoded_ng_request() {
+    fn reader_correctly_read_encoded_ovdf_request() {
         const START_DATE_TIME: i64 = i64::MIN;
         const END_DATE_TIME: i64 = i64::MAX;
 
@@ -143,7 +144,7 @@ mod tests {
     }
 
     #[test]
-    fn endec_ng_request() {
+    fn endec_ovdf_request() {
         const START_DATE_TIME: i64 = i64::MIN;
         const END_DATE_TIME: i64 = i64::MAX;
 
