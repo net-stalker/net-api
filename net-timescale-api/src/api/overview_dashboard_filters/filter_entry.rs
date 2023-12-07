@@ -161,7 +161,7 @@ mod tests {
 
     #[test]
     fn reader_correctly_read_encoded_filter_entry() {
-        const ENDPOINT: &str = "0.0.0.0:0000";
+        const ENDPOINT: &str = "0.0.0.0:0001";
         let protocols: Vec<String> = vec!["fac1".to_string(), "fac2".to_string(), "fac3".to_string()];
         let bytes_rec = 1000;
         let bytes_sent = 500;
