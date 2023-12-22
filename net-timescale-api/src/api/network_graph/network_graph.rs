@@ -5,10 +5,7 @@ use ion_rs::IonType;
 use ion_rs::IonWriter;
 
 use ion_rs::ReaderBuilder;
-use ion_rs::TextWriterBuilder;
-
 use ion_rs::element::reader::ElementReader;
-use ion_rs::element::writer::TextKind;
 
 use net_proto_api::api::API;
 use net_proto_api::encoder_api::Encoder;
@@ -49,21 +46,9 @@ impl Encoder for NetworkGraphDTO {
     fn encode(&self) -> Vec<u8> {
         let buffer: Vec<u8> = Vec::new();
 
-        #[cfg(feature = "ion-binary")]
         let binary_writer_builder = ion_rs::BinaryWriterBuilder::new();
-        #[cfg(feature = "ion-text")]
-        let text_writer_builder = TextWriterBuilder::new(TextKind::Compact); 
-
-        #[cfg(feature = "ion-binary")]
-        #[allow(unused_variables)]
-        #[allow(unused_mut)]
         let mut writer = binary_writer_builder.build(buffer.clone()).unwrap();
         
-        #[cfg(feature = "ion-text")]
-        #[allow(unused_variables)]
-        #[allow(unused_mut)]
-        let mut writer = text_writer_builder.build(buffer).unwrap();
-
         writer.step_in(IonType::Struct).expect("Error while creating an ion struct");
 
         writer.set_field_name("graph_nodes");
