@@ -8,12 +8,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 <!-- [START AUTO UPDATE] -->
 <!-- Please keep comment here to allow auto-update -->
+<!-- [END AUTO UPDATE] -->
 ## [0.1.2-0de1605] - 2023-11-22
 
 feature/CU-86932v6mc: removed manual reading/writing from decode/encode methods in composed dto structures (#14)
 
 * removed manual reading/writing from decode/encode methods in composed dto structures
-<!-- [END AUTO UPDATE] -->
 ## [0.1.2-f7e482d] - 2023-10-26
 
 feature/CU-86930959c: Add missing APIs + refactor (#13)
