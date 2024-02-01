@@ -42,7 +42,7 @@ impl FilterEntryDTO {
     }
 
     pub fn get_protocols(&self) -> &[String] {
-        &self.protocols.as_slice()
+        self.protocols.as_slice()
     }
 
     pub fn get_bytes_received(&self) -> i64 {
@@ -157,7 +157,7 @@ mod tests {
     use net_proto_api::encoder_api::Encoder;
     use net_proto_api::typed_api::Typed;
 
-    use crate::api::overview_dashboard_filters::filter_entry::FilterEntryDTO;
+    use crate::api::network_overview_dashboard_filters::filter_entry::FilterEntryDTO;
 
     #[test]
     fn reader_correctly_read_encoded_filter_entry() {
