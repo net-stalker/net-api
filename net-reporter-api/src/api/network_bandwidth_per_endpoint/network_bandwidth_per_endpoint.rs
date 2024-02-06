@@ -13,18 +13,18 @@ use net_core_api::encoder_api::Encoder;
 use net_core_api::decoder_api::Decoder;
 use net_core_api::typed_api::Typed;
 
-use crate::api::bandwidth_per_endpoint::endpoint::EndpointDTO;
+use crate::api::network_bandwidth_per_endpoint::endpoint::EndpointDTO;
 
 
 const DATA_TYPE: &str = "bandwidth-per-endpoint";
 
 #[derive(Debug, PartialEq, Eq, Clone)]
-pub struct BandwidthPerEndpointDTO {
+pub struct NetworkBandwidthPerEndpointDTO {
     endpoints: Vec<EndpointDTO>,
 }
-impl API for  BandwidthPerEndpointDTO { }
+impl API for  NetworkBandwidthPerEndpointDTO { }
 
-impl BandwidthPerEndpointDTO {
+impl NetworkBandwidthPerEndpointDTO {
     pub fn new(endpoints: &[EndpointDTO]) -> Self {
         Self { endpoints: endpoints.to_vec() }
     }
@@ -38,7 +38,7 @@ impl BandwidthPerEndpointDTO {
     }
 }
 
-impl Encoder for BandwidthPerEndpointDTO {
+impl Encoder for NetworkBandwidthPerEndpointDTO {
     fn encode(&self) -> Vec<u8> {
         let buffer: Vec<u8> = Vec::new();
 
@@ -62,7 +62,7 @@ impl Encoder for BandwidthPerEndpointDTO {
     }
 }
 
-impl Decoder for BandwidthPerEndpointDTO {
+impl Decoder for NetworkBandwidthPerEndpointDTO {
     fn decode(data: &[u8]) -> Self where Self: Sized {
         let mut binary_user_reader = ReaderBuilder::new().build(data).unwrap();
         binary_user_reader.next().unwrap();
@@ -82,7 +82,7 @@ impl Decoder for BandwidthPerEndpointDTO {
     }
 }
 
-impl Typed for BandwidthPerEndpointDTO {
+impl Typed for NetworkBandwidthPerEndpointDTO {
     fn get_data_type() -> &'static str where Self: Sized {
         DATA_TYPE
     }
@@ -102,8 +102,8 @@ mod tests {
     use net_core_api::decoder_api::Decoder;
     use net_core_api::typed_api::Typed;
 
-    use crate::api::bandwidth_per_endpoint::endpoint::EndpointDTO;
-    use crate::api::bandwidth_per_endpoint::bandwidth_per_endpoint::BandwidthPerEndpointDTO;
+    use crate::api::network_bandwidth_per_endpoint::endpoint::EndpointDTO;
+    use crate::api::network_bandwidth_per_endpoint::network_bandwidth_per_endpoint::NetworkBandwidthPerEndpointDTO;
 
     #[test]
     fn test_correctly_read_encoded_bandwidth_per_endpoint() {
@@ -129,7 +129,7 @@ mod tests {
             EndpointDTO::new(ID3, BYTES_RECEIVED_3, BYTES_SENT_3),
         ];
 
-        let bandwidth_per_endpoint = BandwidthPerEndpointDTO::new(endpoints.as_slice());
+        let bandwidth_per_endpoint = NetworkBandwidthPerEndpointDTO::new(endpoints.as_slice());
 
         let mut binary_user_reader = ReaderBuilder::new().build(bandwidth_per_endpoint.encode()).unwrap();
 
@@ -174,9 +174,9 @@ mod tests {
             EndpointDTO::new(ID3, BYTES_RECEIVED_3, BYTES_SENT_3),
         ];
 
-        let bandwidth_per_endpoint = BandwidthPerEndpointDTO::new(endpoints.as_slice());
+        let bandwidth_per_endpoint = NetworkBandwidthPerEndpointDTO::new(endpoints.as_slice());
 
-        assert_eq!(bandwidth_per_endpoint, BandwidthPerEndpointDTO::decode(bandwidth_per_endpoint.encode().as_slice()));
+        assert_eq!(bandwidth_per_endpoint, NetworkBandwidthPerEndpointDTO::decode(bandwidth_per_endpoint.encode().as_slice()));
     }
 
     #[test]
@@ -203,8 +203,8 @@ mod tests {
             EndpointDTO::new(ID3, BYTES_RECEIVED_3, BYTES_SENT_3),
         ];
 
-        let bandwidth_per_endpoint = BandwidthPerEndpointDTO::new(endpoints.as_slice());
-        assert_eq!(bandwidth_per_endpoint.get_type(), BandwidthPerEndpointDTO::get_data_type());
+        let bandwidth_per_endpoint = NetworkBandwidthPerEndpointDTO::new(endpoints.as_slice());
+        assert_eq!(bandwidth_per_endpoint.get_type(), NetworkBandwidthPerEndpointDTO::get_data_type());
         assert_eq!(bandwidth_per_endpoint.get_type(), super::DATA_TYPE);
     }
 }

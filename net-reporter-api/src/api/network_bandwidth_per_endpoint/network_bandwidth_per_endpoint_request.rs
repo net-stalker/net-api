@@ -15,7 +15,7 @@ use net_core_api::typed_api::Typed;
 const DATA_TYPE: &str = "bandwidth-per-endpoint-request";
 
 #[derive(Debug, PartialEq, Eq, Clone)]
-pub struct BandwidthPerEndpointRequestDTO {
+pub struct NetworkBandwidthPerEndpointRequestDTO {
     start_date_time: i64,
     end_date_time: i64,
     // may be expandable in future
@@ -24,11 +24,11 @@ pub struct BandwidthPerEndpointRequestDTO {
     // TODO: add filters here
     // TODO: add filtering factor (a string)
 }
-impl API for BandwidthPerEndpointRequestDTO { }
+impl API for NetworkBandwidthPerEndpointRequestDTO { }
 
-impl BandwidthPerEndpointRequestDTO {
+impl NetworkBandwidthPerEndpointRequestDTO {
     pub fn new(start_date_time: i64, end_date_time: i64) -> Self {
-        BandwidthPerEndpointRequestDTO {
+        NetworkBandwidthPerEndpointRequestDTO {
             start_date_time,
             end_date_time,
         }
@@ -42,7 +42,7 @@ impl BandwidthPerEndpointRequestDTO {
     }
 }
 
-impl Encoder for BandwidthPerEndpointRequestDTO {
+impl Encoder for NetworkBandwidthPerEndpointRequestDTO {
     fn encode(&self) -> Vec<u8> {
         let buffer: Vec<u8> = Vec::new();
 
@@ -65,7 +65,7 @@ impl Encoder for BandwidthPerEndpointRequestDTO {
     }
 }
 
-impl Decoder for BandwidthPerEndpointRequestDTO {
+impl Decoder for NetworkBandwidthPerEndpointRequestDTO {
     fn decode(data: &[u8]) -> Self where Self: Sized {
         let mut binary_user_reader = ReaderBuilder::new().build(data).unwrap();
         binary_user_reader.next().unwrap();
@@ -77,14 +77,14 @@ impl Decoder for BandwidthPerEndpointRequestDTO {
         binary_user_reader.next().unwrap();
         let end_date_time = binary_user_reader.read_i64().unwrap();
 
-        BandwidthPerEndpointRequestDTO::new(
+        NetworkBandwidthPerEndpointRequestDTO::new(
             start_date_time,
             end_date_time
         )
     }
 }
 
-impl Typed for BandwidthPerEndpointRequestDTO {
+impl Typed for NetworkBandwidthPerEndpointRequestDTO {
     fn get_data_type() -> &'static str {
         DATA_TYPE
     }
@@ -106,14 +106,14 @@ mod tests {
     use net_core_api::decoder_api::Decoder;
     use net_core_api::typed_api::Typed;
 
-    use crate::api::bandwidth_per_endpoint::bandwidth_per_endpoint_request::BandwidthPerEndpointRequestDTO;
+    use crate::api::network_bandwidth_per_endpoint::network_bandwidth_per_endpoint_request::NetworkBandwidthPerEndpointRequestDTO;
 
     #[test]
     fn reader_correctly_read_encoded_bandwidth_per_endpoint_request() {
         const START_DATE_TIME: i64 = i64::MIN;
         const END_DATE_TIME: i64 = i64::MAX;
 
-        let bandwidth_per_endpoint_request = BandwidthPerEndpointRequestDTO::new(
+        let bandwidth_per_endpoint_request = NetworkBandwidthPerEndpointRequestDTO::new(
             START_DATE_TIME,
             END_DATE_TIME,
         );
@@ -137,11 +137,11 @@ mod tests {
         const START_DATE_TIME: i64 = i64::MIN;
         const END_DATE_TIME: i64 = i64::MAX;
 
-        let bandwidth_per_endpoint_request = BandwidthPerEndpointRequestDTO::new(
+        let bandwidth_per_endpoint_request = NetworkBandwidthPerEndpointRequestDTO::new(
             START_DATE_TIME,
             END_DATE_TIME,
         );
-        assert_eq!(bandwidth_per_endpoint_request, BandwidthPerEndpointRequestDTO::decode(&bandwidth_per_endpoint_request.encode()));
+        assert_eq!(bandwidth_per_endpoint_request, NetworkBandwidthPerEndpointRequestDTO::decode(&bandwidth_per_endpoint_request.encode()));
     }
 
     #[test]
@@ -149,11 +149,11 @@ mod tests {
         const START_DATE_TIME: i64 = i64::MIN;
         const END_DATE_TIME: i64 = i64::MAX;
 
-        let bandwidth_per_endpoint_request = BandwidthPerEndpointRequestDTO::new(
+        let bandwidth_per_endpoint_request = NetworkBandwidthPerEndpointRequestDTO::new(
             START_DATE_TIME,
             END_DATE_TIME,
         );
-        assert_eq!(bandwidth_per_endpoint_request.get_type(), BandwidthPerEndpointRequestDTO::get_data_type());
+        assert_eq!(bandwidth_per_endpoint_request.get_type(), NetworkBandwidthPerEndpointRequestDTO::get_data_type());
         assert_eq!(bandwidth_per_endpoint_request.get_type(), super::DATA_TYPE);
     }
 }

@@ -1,0 +1,11 @@
+[package]
+name = "net-reporter-api"
+version = "0.1.2"
+edition = "2021"
+description = "This crate defines types for the api used in the net-stalker project. Amazon Ion is used as the serialization format."
+license = "Apache-2.0"
+
+[dependencies]
+net-core-api.workspace = true
+
+ion-rs = "0.18.1"

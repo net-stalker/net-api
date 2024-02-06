@@ -2,7 +2,8 @@
 
 members = [
 	"net-agent-api",
-	"net-timescale-api",
+	"net-inserter-api",
+	"net-reporter-api",
 ]
 
 [workspace.dependencies]
