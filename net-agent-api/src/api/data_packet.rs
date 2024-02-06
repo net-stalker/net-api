@@ -6,9 +6,10 @@ use ion_rs::IonWriter;
 
 use ion_rs::ReaderBuilder;
 
-use net_proto_api::api::API;
-use net_proto_api::encoder_api::Encoder;
-use net_proto_api::decoder_api::Decoder;
+use net_core_api::api::API;
+use net_core_api::encoder_api::Encoder;
+use net_core_api::decoder_api::Decoder;
+use net_core_api::typed_api::Typed;
 
 
 const DATA_TYPE: &str = "data_packet";
@@ -68,7 +69,7 @@ impl Decoder for DataPacketDTO {
     }
 }
 
-impl net_proto_api::typed_api::Typed for DataPacketDTO {
+impl Typed for DataPacketDTO {
     fn get_data_type() -> &'static str {
         DATA_TYPE
     }
@@ -86,9 +87,9 @@ mod tests {
     use ion_rs::ReaderBuilder;
     use ion_rs::StreamItem;
 
-    use net_proto_api::decoder_api::Decoder;
-    use net_proto_api::encoder_api::Encoder;
-    use net_proto_api::typed_api::Typed;
+    use net_core_api::decoder_api::Decoder;
+    use net_core_api::encoder_api::Encoder;
+    use net_core_api::typed_api::Typed;
 
 
     use crate::api::data_packet::DataPacketDTO;

@@ -6,6 +6,6 @@ description = "This crate defines types for the api used in the net-stalker proj
 license = "Apache-2.0"
 
 [dependencies]
-net-proto-api.workspace = true
+net-core-api.workspace = true
 
 ion-rs = "0.18.1"
