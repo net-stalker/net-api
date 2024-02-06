@@ -5,9 +5,6 @@ use ion_rs::IonType;
 use ion_rs::IonWriter;
 
 use ion_rs::ReaderBuilder;
-use ion_rs::TextWriterBuilder;
-
-use ion_rs::element::writer::TextKind;
 
 use net_proto_api::api::API;
 use net_proto_api::encoder_api::Encoder;
@@ -38,20 +35,10 @@ impl Encoder for DataPacketDTO {
     fn encode(&self) -> Vec<u8> {
         let buffer: Vec<u8> = Vec::new();
 
-        #[cfg(feature = "ion-binary")]
         let binary_writer_builder = ion_rs::BinaryWriterBuilder::new();
-        #[cfg(feature = "ion-text")]
-        let text_writer_builder = TextWriterBuilder::new(TextKind::Compact); 
-
-        #[cfg(feature = "ion-binary")]
-        #[allow(unused_mut)]
-        #[allow(unused_variables)]
+        
         let mut writer = binary_writer_builder.build(buffer.clone()).unwrap();
-        #[cfg(feature = "ion-text")]
-        #[allow(unused_mut)]
-        #[allow(unused_variables)]
-        let mut writer = text_writer_builder.build(buffer).unwrap();
-
+        
         writer.step_in(IonType::Struct).expect("Error while creating an ion struct");
 
         writer.set_field_name("data");
@@ -107,7 +94,7 @@ mod tests {
     use crate::api::data_packet::DataPacketDTO;
 
     #[test]
-    fn reader_correctly_read_encoded_graph_edge() {
+    fn reader_correctly_read_encoded_data_packet() {
         const DATA: &[u8] = "SOME_RAW_PCAP".as_bytes();
         let data_packet: DataPacketDTO = DataPacketDTO::new(DATA);
         let mut binary_user_reader = ReaderBuilder::new().build(data_packet.encode()).unwrap();
@@ -121,7 +108,7 @@ mod tests {
     }
 
     #[test]
-    fn endec_graph_edge() {
+    fn endec_data_packet() {
         const DATA: &[u8] = "SOME_RAW_PCAP".as_bytes();
         let data_packet: DataPacketDTO = DataPacketDTO::new(DATA);
         assert_eq!(data_packet, DataPacketDTO::decode(&data_packet.encode()));

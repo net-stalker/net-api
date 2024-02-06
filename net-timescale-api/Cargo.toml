@@ -8,9 +8,3 @@ edition = "2021"
 net-proto-api.workspace = true
 
 ion-rs = "0.18.1"
-
-[features]
-ion-text = []
-ion-binary = []
-
-default = ["ion-text"]
