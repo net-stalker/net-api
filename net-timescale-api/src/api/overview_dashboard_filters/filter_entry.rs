@@ -39,7 +39,7 @@ impl FilterEntryDTO {
     }
 
     pub fn get_protocols(&self) -> &[String] {
-        &self.protocols.as_slice()
+        &self.protocols
     }
 
     pub fn get_bytes_received(&self) -> i64 {
