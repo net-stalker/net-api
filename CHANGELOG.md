@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 <!-- [START AUTO UPDATE] -->
 <!-- Please keep comment here to allow auto-update -->
+## [0.1.2-d1bc25c] - 2024-02-06
+
+feature/CU-8693cxbcn: deleted ion text feature due to its uselessness (#17)
+
+* Delete ion text feature due to its uselessness
 <!-- [END AUTO UPDATE] -->
 ## [0.1.2-0de1605] - 2023-11-22
 
