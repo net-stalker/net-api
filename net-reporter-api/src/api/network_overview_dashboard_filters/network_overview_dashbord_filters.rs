@@ -15,17 +15,17 @@ use net_core_api::typed_api::Typed;
 use super::filter_entry::FilterEntryDTO;
 
 
-const DATA_TYPE: &str = "overview-dashboard-filters";
+const DATA_TYPE: &str = "network-overview-dashboard-filters";
 
 #[derive(Debug, PartialEq, Eq, Clone)]
-pub struct OverviewDashboardFiltersDTO {
+pub struct NetworkOverviewDashboardFiltersDTO {
     entries: Vec<FilterEntryDTO>,
 }
-impl API for OverviewDashboardFiltersDTO { }
+impl API for NetworkOverviewDashboardFiltersDTO { }
 
-impl OverviewDashboardFiltersDTO {
+impl NetworkOverviewDashboardFiltersDTO {
     pub fn new(entries: &[FilterEntryDTO]) -> Self {
-        OverviewDashboardFiltersDTO {
+        NetworkOverviewDashboardFiltersDTO {
             entries: entries.to_vec(),
         }
     }
@@ -35,7 +35,7 @@ impl OverviewDashboardFiltersDTO {
     }
 }
 
-impl Encoder for OverviewDashboardFiltersDTO {
+impl Encoder for NetworkOverviewDashboardFiltersDTO {
     fn encode(&self) -> Vec<u8> {
         let buffer: Vec<u8> = Vec::new();
 
@@ -58,7 +58,7 @@ impl Encoder for OverviewDashboardFiltersDTO {
     }
 }
 
-impl Decoder for OverviewDashboardFiltersDTO {
+impl Decoder for NetworkOverviewDashboardFiltersDTO {
     fn decode(data: &[u8]) -> Self {
 
         let mut binary_user_reader = ReaderBuilder::new().build(data).unwrap();
@@ -76,13 +76,13 @@ impl Decoder for OverviewDashboardFiltersDTO {
 
         binary_user_reader.step_out().unwrap();
 
-        OverviewDashboardFiltersDTO::new(
+        NetworkOverviewDashboardFiltersDTO::new(
             entries.as_slice(),
         )
     }
 }
 
-impl Typed for OverviewDashboardFiltersDTO {
+impl Typed for NetworkOverviewDashboardFiltersDTO {
     fn get_data_type() -> &'static str {
         DATA_TYPE
     }
@@ -104,32 +104,29 @@ mod tests {
     use net_core_api::decoder_api::Decoder;
     use net_core_api::typed_api::Typed;
 
-    use crate::api::overview_dashboard_filters::filter_entry::FilterEntryDTO;
-    use crate::api::overview_dashboard_filters::overview_dashbord_filters::OverviewDashboardFiltersDTO;
+    use crate::api::network_overview_dashboard_filters::filter_entry::FilterEntryDTO;
+    use crate::api::network_overview_dashboard_filters::network_overview_dashbord_filters::NetworkOverviewDashboardFiltersDTO;
 
-    fn get_filters() -> OverviewDashboardFiltersDTO {
+    fn get_filters() -> NetworkOverviewDashboardFiltersDTO {
         const ENDPOINT_1: &str = "0.0.0.0:0000";
         let protocols_1: Vec<String> = vec!["fac1_1".to_string(), "fac2_1".to_string(), "fac3_1".to_string()];
-        let bytes_rec_1 = 1000;
-        let bytes_sent_1 = 500;
-
+        let total_bytes_1 = 1000;
+        
         const ENDPOINT_2: &str = "1.1.1.1:1111";
         let protocols_2: Vec<String> = vec!["fac1_2".to_string(), "fac2_2".to_string(), "fac3_2".to_string()];
-        let bytes_rec_2 = 2000;
-        let bytes_sent_2 = 1000;
-
+        let total_bytes_2 = 2000;
+        
         const ENDPOINT_3: &str = "2.2.2.2:2222";
         let protocols_3: Vec<String> = vec!["fac1_3".to_string(), "fac2_3".to_string(), "fac3_3".to_string()];
-        let bytes_rec_3 = 3000;
-        let bytes_sent_3 = 1500;
-
+        let total_bytes_3 = 3000;
+        
         let filter_entries = vec![
-            FilterEntryDTO::new(ENDPOINT_1, protocols_1.as_slice(), bytes_rec_1, bytes_sent_1),
-            FilterEntryDTO::new(ENDPOINT_2, protocols_2.as_slice(), bytes_rec_2, bytes_sent_2),
-            FilterEntryDTO::new(ENDPOINT_3, protocols_3.as_slice(), bytes_rec_3, bytes_sent_3),
+            FilterEntryDTO::new(ENDPOINT_1, protocols_1.as_slice(), total_bytes_1),
+            FilterEntryDTO::new(ENDPOINT_2, protocols_2.as_slice(), total_bytes_2),
+            FilterEntryDTO::new(ENDPOINT_3, protocols_3.as_slice(), total_bytes_3),
         ];
 
-        OverviewDashboardFiltersDTO::new(filter_entries.as_slice())
+        NetworkOverviewDashboardFiltersDTO::new(filter_entries.as_slice())
     }
 
     #[test]
@@ -159,13 +156,13 @@ mod tests {
     #[test]
     fn endec_filters() {
         let filters = get_filters();
-        assert_eq!(filters, OverviewDashboardFiltersDTO::decode(&filters.encode()));
+        assert_eq!(filters, NetworkOverviewDashboardFiltersDTO::decode(&filters.encode()));
     }
 
     #[test]
     fn test_getting_data_types() {
         let filters = get_filters();
-        assert_eq!(filters.get_type(), OverviewDashboardFiltersDTO::get_data_type());
+        assert_eq!(filters.get_type(), NetworkOverviewDashboardFiltersDTO::get_data_type());
         assert_eq!(filters.get_type(), super::DATA_TYPE);
     }
 }

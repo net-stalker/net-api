@@ -2,7 +2,6 @@ use ion_rs;
 
 use ion_rs::IonReader;
 use ion_rs::IonType;
-
 use ion_rs::IonWriter;
 use ion_rs::ReaderBuilder;
 
@@ -11,19 +10,18 @@ use net_core_api::encoder_api::Encoder;
 use net_core_api::decoder_api::Decoder;
 use net_core_api::typed_api::Typed;
 
-
-const DATA_TYPE: &str = "overview-dashboard-filters-request";
+const DATA_TYPE: &str = "network-overview-dashboard-filters-request";
 
 #[derive(Debug, PartialEq, Eq)]
-pub struct OverviewDashboardFiltersRequestDTO {
+pub struct NetworkOverviewDashboardFiltersRequestDTO {
     start_date_time: i64,
     end_date_time: i64,
 }
-impl API for OverviewDashboardFiltersRequestDTO { }
+impl API for NetworkOverviewDashboardFiltersRequestDTO { }
 
-impl OverviewDashboardFiltersRequestDTO {
+impl NetworkOverviewDashboardFiltersRequestDTO {
     pub fn new (start_date_time: i64, end_date_time: i64) -> Self {
-        OverviewDashboardFiltersRequestDTO {
+        NetworkOverviewDashboardFiltersRequestDTO {
             start_date_time,
             end_date_time,
         }
@@ -38,14 +36,13 @@ impl OverviewDashboardFiltersRequestDTO {
     }
 }
 
-impl Encoder for OverviewDashboardFiltersRequestDTO {
+impl Encoder for NetworkOverviewDashboardFiltersRequestDTO {
     fn encode(&self) -> Vec<u8> {
         let buffer: Vec<u8> = Vec::new();
 
         let binary_writer_builder = ion_rs::BinaryWriterBuilder::new();
-        let mut writer = binary_writer_builder.build(buffer.clone()).unwrap();
-        
-        
+        let mut writer = binary_writer_builder.build(buffer.clone()).unwrap();    
+
         writer.step_in(IonType::Struct).expect("Error while creating an ion struct");
         
         writer.set_field_name("start_date_time");
@@ -61,7 +58,7 @@ impl Encoder for OverviewDashboardFiltersRequestDTO {
     }
 }
 
-impl Decoder for OverviewDashboardFiltersRequestDTO {
+impl Decoder for NetworkOverviewDashboardFiltersRequestDTO {
     fn decode(data: &[u8]) -> Self {
 
         let mut binary_user_reader = ReaderBuilder::new().build(data).unwrap();
@@ -74,14 +71,14 @@ impl Decoder for OverviewDashboardFiltersRequestDTO {
         binary_user_reader.next().unwrap();
         let end_date_time = binary_user_reader.read_i64().unwrap();
 
-        OverviewDashboardFiltersRequestDTO::new(
+        NetworkOverviewDashboardFiltersRequestDTO::new(
             start_date_time,
             end_date_time
         )
     }
 }
 
-impl Typed for OverviewDashboardFiltersRequestDTO {
+impl Typed for NetworkOverviewDashboardFiltersRequestDTO {
     fn get_data_type() -> &'static str {
         DATA_TYPE
     }
@@ -102,7 +99,7 @@ mod tests {
     use net_core_api::encoder_api::Encoder;
     use net_core_api::decoder_api::Decoder;
 
-    use crate::api::overview_dashboard_filters::overview_dashboard_filters_request::OverviewDashboardFiltersRequestDTO;
+    use crate::api::network_overview_dashboard_filters::network_overview_dashboard_filters_request::NetworkOverviewDashboardFiltersRequestDTO;
 
     // ovdf - overview dashboard filters
     #[test]
@@ -110,7 +107,7 @@ mod tests {
         const START_DATE_TIME: i64 = i64::MIN;
         const END_DATE_TIME: i64 = i64::MAX;
 
-        let network_bandwidth_request = OverviewDashboardFiltersRequestDTO::new(
+        let network_bandwidth_request = NetworkOverviewDashboardFiltersRequestDTO::new(
             START_DATE_TIME,
             END_DATE_TIME
         );
@@ -134,10 +131,10 @@ mod tests {
         const START_DATE_TIME: i64 = i64::MIN;
         const END_DATE_TIME: i64 = i64::MAX;
 
-        let network_bandwidth_request = OverviewDashboardFiltersRequestDTO::new(
+        let network_bandwidth_request = NetworkOverviewDashboardFiltersRequestDTO::new(
             START_DATE_TIME,
             END_DATE_TIME
         );
-        assert_eq!(network_bandwidth_request, OverviewDashboardFiltersRequestDTO::decode(&network_bandwidth_request.encode()));
+        assert_eq!(network_bandwidth_request, NetworkOverviewDashboardFiltersRequestDTO::decode(&network_bandwidth_request.encode()));
     }
 }
