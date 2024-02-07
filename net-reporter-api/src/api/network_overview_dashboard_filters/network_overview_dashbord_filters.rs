@@ -110,23 +110,20 @@ mod tests {
     fn get_filters() -> NetworkOverviewDashboardFiltersDTO {
         const ENDPOINT_1: &str = "0.0.0.0:0000";
         let protocols_1: Vec<String> = vec!["fac1_1".to_string(), "fac2_1".to_string(), "fac3_1".to_string()];
-        let bytes_rec_1 = 1000;
-        let bytes_sent_1 = 500;
-
+        let total_bytes_1 = 1000;
+        
         const ENDPOINT_2: &str = "1.1.1.1:1111";
         let protocols_2: Vec<String> = vec!["fac1_2".to_string(), "fac2_2".to_string(), "fac3_2".to_string()];
-        let bytes_rec_2 = 2000;
-        let bytes_sent_2 = 1000;
-
+        let total_bytes_2 = 2000;
+        
         const ENDPOINT_3: &str = "2.2.2.2:2222";
         let protocols_3: Vec<String> = vec!["fac1_3".to_string(), "fac2_3".to_string(), "fac3_3".to_string()];
-        let bytes_rec_3 = 3000;
-        let bytes_sent_3 = 1500;
-
+        let total_bytes_3 = 3000;
+        
         let filter_entries = vec![
-            FilterEntryDTO::new(ENDPOINT_1, protocols_1.as_slice(), bytes_rec_1, bytes_sent_1),
-            FilterEntryDTO::new(ENDPOINT_2, protocols_2.as_slice(), bytes_rec_2, bytes_sent_2),
-            FilterEntryDTO::new(ENDPOINT_3, protocols_3.as_slice(), bytes_rec_3, bytes_sent_3),
+            FilterEntryDTO::new(ENDPOINT_1, protocols_1.as_slice(), total_bytes_1),
+            FilterEntryDTO::new(ENDPOINT_2, protocols_2.as_slice(), total_bytes_2),
+            FilterEntryDTO::new(ENDPOINT_3, protocols_3.as_slice(), total_bytes_3),
         ];
 
         NetworkOverviewDashboardFiltersDTO::new(filter_entries.as_slice())

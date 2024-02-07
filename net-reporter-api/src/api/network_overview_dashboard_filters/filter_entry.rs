@@ -12,25 +12,22 @@ use net_core_api::encoder_api::Encoder;
 use net_core_api::decoder_api::Decoder;
 use net_core_api::typed_api::Typed;
 
-
 const DATA_TYPE: &str = "filter-entry";
 
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct FilterEntryDTO {
     endpoint: String,
     protocols: Vec<String>,
-    bytes_rec: i64,
-    bytes_sent: i64,
+    total_bytes: i64,
 }
 impl API for FilterEntryDTO { }
 
 impl FilterEntryDTO {
-    pub fn new(endpoint: &str, protocols: &[String], bytes_rec: i64, bytes_sent: i64) -> Self {
+    pub fn new(endpoint: &str, protocols: &[String], total_bytes: i64) -> Self {
         FilterEntryDTO {
             endpoint: endpoint.into(),
             protocols: protocols.to_vec(),
-            bytes_rec,
-            bytes_sent,
+            total_bytes,
         }
     }
 
@@ -42,12 +39,8 @@ impl FilterEntryDTO {
         &self.protocols
     }
 
-    pub fn get_bytes_received(&self) -> i64 {
-        self.bytes_rec
-    }
-
-    pub fn get_bytes_sent(&self) -> i64 {
-        self.bytes_sent
+    pub fn get_total_bytes(&self) -> i64 {
+        self.total_bytes
     }
 }
 
@@ -70,11 +63,8 @@ impl Encoder for FilterEntryDTO {
         }
         writer.step_out().unwrap();
 
-        writer.set_field_name("bytes_rec");
-        writer.write_i64(self.bytes_rec).unwrap();
-
-        writer.set_field_name("bytes_sent");
-        writer.write_i64(self.bytes_sent).unwrap();
+        writer.set_field_name("total_bytes");
+        writer.write_i64(self.total_bytes).unwrap();
 
         writer.step_out().unwrap();
         writer.flush().unwrap();
@@ -104,18 +94,14 @@ impl Decoder for FilterEntryDTO {
         binary_user_reader.step_out().unwrap();
 
         binary_user_reader.next().unwrap();
-        let bytes_rec = binary_user_reader.read_i64().unwrap();
+        let total_bytes = binary_user_reader.read_i64().unwrap();
 
-        binary_user_reader.next().unwrap();
-        let bytes_sent = binary_user_reader.read_i64().unwrap();
-        
         binary_user_reader.step_out().unwrap();
 
         FilterEntryDTO::new(
             endpoint,
             protocols.as_slice(),
-            bytes_rec,
-            bytes_sent
+            total_bytes,
         )
     }
 }
@@ -148,9 +134,8 @@ mod tests {
     fn reader_correctly_read_encoded_filter_entry() {
         const ENDPOINT: &str = "0.0.0.0:0000";
         let protocols: Vec<String> = vec!["fac1".to_string(), "fac2".to_string(), "fac3".to_string()];
-        let bytes_rec = 1000;
-        let bytes_sent = 500;
-        let filter_entry = FilterEntryDTO::new(ENDPOINT, &protocols, bytes_rec, bytes_sent);
+        let total_bytes = 1000;
+        let filter_entry = FilterEntryDTO::new(ENDPOINT, &protocols, total_bytes);
         let mut binary_user_reader = ReaderBuilder::new().build(filter_entry.encode()).unwrap();
 
         assert_eq!(StreamItem::Value(IonType::Struct), binary_user_reader.next().unwrap());
@@ -173,12 +158,8 @@ mod tests {
         binary_user_reader.step_out().unwrap();
 
         assert_eq!(StreamItem::Value(IonType::Int), binary_user_reader.next().unwrap());
-        assert_eq!("bytes_rec", binary_user_reader.field_name().unwrap());
-        assert_eq!(bytes_rec,  binary_user_reader.read_i64().unwrap());
-
-        assert_eq!(StreamItem::Value(IonType::Int), binary_user_reader.next().unwrap());
-        assert_eq!("bytes_sent", binary_user_reader.field_name().unwrap());
-        assert_eq!(bytes_sent,  binary_user_reader.read_i64().unwrap());
+        assert_eq!("total_bytes", binary_user_reader.field_name().unwrap());
+        assert_eq!(total_bytes,  binary_user_reader.read_i64().unwrap());
 
         binary_user_reader.step_out().unwrap();
     }
@@ -187,9 +168,8 @@ mod tests {
     fn endec_filter_entry() {
         const ENDPOINT: &str = "0.0.0.0:0000";
         let protocols: Vec<String> = vec!["fac1".to_string(), "fac2".to_string(), "fac3".to_string()];
-        let bytes_rec = 1000;
-        let bytes_sent = 500;
-        let filter_entry = FilterEntryDTO::new(ENDPOINT, &protocols, bytes_rec, bytes_sent);
+        let total_bytes = 1000;
+        let filter_entry = FilterEntryDTO::new(ENDPOINT, &protocols, total_bytes);
         assert_eq!(filter_entry, FilterEntryDTO::decode(&filter_entry.encode()));
     }
 
@@ -197,9 +177,8 @@ mod tests {
     fn test_getting_data_types() {
         const ENDPOINT: &str = "0.0.0.0:0000";
         let protocols: Vec<String> = vec!["fac1".to_string(), "fac2".to_string(), "fac3".to_string()];
-        let bytes_rec = 1000;
-        let bytes_sent = 500;
-        let filter_entry = FilterEntryDTO::new(ENDPOINT, &protocols, bytes_rec, bytes_sent);
+        let total_bytes = 1000;
+        let filter_entry = FilterEntryDTO::new(ENDPOINT, &protocols, total_bytes);
         assert_eq!(filter_entry.get_type(), FilterEntryDTO::get_data_type());
         assert_eq!(filter_entry.get_type(), super::DATA_TYPE);
     }
