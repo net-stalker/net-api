@@ -5,10 +5,6 @@ use ion_rs::IonType;
 use ion_rs::IonWriter;
 
 use ion_rs::ReaderBuilder;
-<<<<<<<< HEAD:net-timescale-api/src/api/network_overview_dashboard_filters/network_overview_dashbord_filters.rs
-
-========
->>>>>>>> develop:net-reporter-api/src/api/overview_dashboard_filters/overview_dashbord_filters.rs
 use ion_rs::element::reader::ElementReader;
 
 use net_core_api::api::API;
@@ -44,14 +40,8 @@ impl Encoder for NetworkOverviewDashboardFiltersDTO {
         let buffer: Vec<u8> = Vec::new();
 
         let binary_writer_builder = ion_rs::BinaryWriterBuilder::new();
-<<<<<<<< HEAD:net-timescale-api/src/api/network_overview_dashboard_filters/network_overview_dashbord_filters.rs
-        
-        let mut writer = binary_writer_builder.build(buffer.clone()).unwrap();
-
-========
         let mut writer = binary_writer_builder.build(buffer.clone()).unwrap();
         
->>>>>>>> develop:net-reporter-api/src/api/overview_dashboard_filters/overview_dashbord_filters.rs
         writer.step_in(IonType::Struct).expect("Error while creating an ion struct");
         
         writer.set_field_name("entries");

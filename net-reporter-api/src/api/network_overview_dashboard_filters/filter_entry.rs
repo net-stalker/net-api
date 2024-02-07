@@ -39,11 +39,7 @@ impl FilterEntryDTO {
     }
 
     pub fn get_protocols(&self) -> &[String] {
-<<<<<<<< HEAD:net-timescale-api/src/api/network_overview_dashboard_filters/filter_entry.rs
-        self.protocols.as_slice()
-========
         &self.protocols
->>>>>>>> develop:net-reporter-api/src/api/overview_dashboard_filters/filter_entry.rs
     }
 
     pub fn get_bytes_received(&self) -> i64 {
