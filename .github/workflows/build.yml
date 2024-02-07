@@ -31,20 +31,12 @@ jobs:
             ~/.cargo/git/db/
             target/
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: ${{ runner.os }}-cargo-
+          restore-keys: ${{ runner.os }}-cargo-  
 
       - name: Update platform
         run: |
           sudo apt-get update
           sudo apt-get install libpcap-dev libzmq3-dev tshark build-essential cmake capnproto tree
-
-      - name: Set up GIT credentials
-        run: |
-          git config --global credential.helper store
-          echo "https://${{ secrets.BOT_USER_NAME }}:${{ secrets.BOT_PAT }}@github.com" > ~/.git-credentials
-          touch ~/.cargo/config
-          echo "[net]" > ~/.cargo/config
-          echo "git-fetch-with-cli = true" >> ~/.cargo/config
 
       - name: Clippy check
         run:
@@ -54,4 +46,4 @@ jobs:
         env:
           CARGO_MANIFEST_DIR: ${{ github.workspace }}
         run: |
-          cargo test
+          cargo test --all-features

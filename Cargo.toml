@@ -1,12 +1,13 @@
 [workspace]
 
 members = [
-	"net-timescale-api",
 	"net-agent-api",
+	"net-inserter-api",
+	"net-reporter-api",
 ]
 
 [workspace.dependencies]
-net-proto-api = { version = "=0.1.1-5e33a0b", registry = "net-registry" }
+net-core-api = "0.1.0"
 
 log = "0.4.17"
 log4rs = "1.2.0"
