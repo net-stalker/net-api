@@ -2,65 +2,56 @@ use ion_rs;
 
 use ion_rs::IonReader;
 use ion_rs::IonType;
-
 use ion_rs::IonWriter;
+
 use ion_rs::ReaderBuilder;
 
-<<<<<<<< HEAD:net-timescale-api/src/api/network_overview_dashboard_filters/network_overview_dashboard_filters_request.rs
-use net_proto_api::api::API;
-use net_proto_api::encoder_api::Encoder;
-use net_proto_api::decoder_api::Decoder;
-use net_proto_api::typed_api::Typed;
-========
 use net_core_api::api::API;
 use net_core_api::encoder_api::Encoder;
 use net_core_api::decoder_api::Decoder;
 use net_core_api::typed_api::Typed;
->>>>>>>> develop:net-reporter-api/src/api/overview_dashboard_filters/overview_dashboard_filters_request.rs
 
 
-const DATA_TYPE: &str = "network-overview-dashboard-filters-request";
+const DATA_TYPE: &str = "bandwidth-per-endpoint-request";
 
-#[derive(Debug, PartialEq, Eq)]
-pub struct NetworkOverviewDashboardFiltersRequestDTO {
+#[derive(Debug, PartialEq, Eq, Clone)]
+pub struct NetworkBandwidthPerEndpointRequestDTO {
     start_date_time: i64,
     end_date_time: i64,
+    // may be expandable in future
+    // factors can be added here to make it possible to add charts
+    // to dashboard with filters at once
+    // TODO: add filters here
+    // TODO: add filtering factor (a string)
 }
-impl API for NetworkOverviewDashboardFiltersRequestDTO { }
+impl API for NetworkBandwidthPerEndpointRequestDTO { }
 
-impl NetworkOverviewDashboardFiltersRequestDTO {
-    pub fn new (start_date_time: i64, end_date_time: i64) -> Self {
-        NetworkOverviewDashboardFiltersRequestDTO {
+impl NetworkBandwidthPerEndpointRequestDTO {
+    pub fn new(start_date_time: i64, end_date_time: i64) -> Self {
+        NetworkBandwidthPerEndpointRequestDTO {
             start_date_time,
             end_date_time,
         }
     }
-
-    pub fn get_start_date_time (&self) -> i64 {
+    pub fn get_start_date_time(&self) -> i64 {
         self.start_date_time
     }
 
-    pub fn get_end_date_time (&self) -> i64 {
+    pub fn get_end_date_time(&self) -> i64 {
         self.end_date_time
     }
 }
 
-impl Encoder for NetworkOverviewDashboardFiltersRequestDTO {
+impl Encoder for NetworkBandwidthPerEndpointRequestDTO {
     fn encode(&self) -> Vec<u8> {
         let buffer: Vec<u8> = Vec::new();
 
         let binary_writer_builder = ion_rs::BinaryWriterBuilder::new();
-<<<<<<<< HEAD:net-timescale-api/src/api/network_overview_dashboard_filters/network_overview_dashboard_filters_request.rs
         
         let mut writer = binary_writer_builder.build(buffer.clone()).unwrap();
-
-========
-        let mut writer = binary_writer_builder.build(buffer.clone()).unwrap();
         
-        
->>>>>>>> develop:net-reporter-api/src/api/overview_dashboard_filters/overview_dashboard_filters_request.rs
         writer.step_in(IonType::Struct).expect("Error while creating an ion struct");
-        
+
         writer.set_field_name("start_date_time");
         writer.write_i64(self.start_date_time).unwrap();
 
@@ -74,27 +65,26 @@ impl Encoder for NetworkOverviewDashboardFiltersRequestDTO {
     }
 }
 
-impl Decoder for NetworkOverviewDashboardFiltersRequestDTO {
-    fn decode(data: &[u8]) -> Self {
-
+impl Decoder for NetworkBandwidthPerEndpointRequestDTO {
+    fn decode(data: &[u8]) -> Self where Self: Sized {
         let mut binary_user_reader = ReaderBuilder::new().build(data).unwrap();
         binary_user_reader.next().unwrap();
         binary_user_reader.step_in().unwrap();
 
         binary_user_reader.next().unwrap();
         let start_date_time = binary_user_reader.read_i64().unwrap();
-        
+
         binary_user_reader.next().unwrap();
         let end_date_time = binary_user_reader.read_i64().unwrap();
 
-        NetworkOverviewDashboardFiltersRequestDTO::new(
+        NetworkBandwidthPerEndpointRequestDTO::new(
             start_date_time,
             end_date_time
         )
     }
 }
 
-impl Typed for NetworkOverviewDashboardFiltersRequestDTO {
+impl Typed for NetworkBandwidthPerEndpointRequestDTO {
     fn get_data_type() -> &'static str {
         DATA_TYPE
     }
@@ -114,21 +104,21 @@ mod tests {
 
     use net_core_api::encoder_api::Encoder;
     use net_core_api::decoder_api::Decoder;
+    use net_core_api::typed_api::Typed;
 
-    use crate::api::network_overview_dashboard_filters::network_overview_dashboard_filters_request::NetworkOverviewDashboardFiltersRequestDTO;
+    use crate::api::network_bandwidth_per_endpoint::network_bandwidth_per_endpoint_request::NetworkBandwidthPerEndpointRequestDTO;
 
-    // ovdf - overview dashboard filters
     #[test]
-    fn reader_correctly_read_encoded_ovdf_request() {
+    fn reader_correctly_read_encoded_bandwidth_per_endpoint_request() {
         const START_DATE_TIME: i64 = i64::MIN;
         const END_DATE_TIME: i64 = i64::MAX;
 
-        let network_bandwidth_request = NetworkOverviewDashboardFiltersRequestDTO::new(
+        let bandwidth_per_endpoint_request = NetworkBandwidthPerEndpointRequestDTO::new(
             START_DATE_TIME,
-            END_DATE_TIME
+            END_DATE_TIME,
         );
-        
-        let mut binary_user_reader = ReaderBuilder::new().build(network_bandwidth_request.encode()).unwrap();
+
+        let mut binary_user_reader = ReaderBuilder::new().build(bandwidth_per_endpoint_request.encode()).unwrap();
 
         assert_eq!(StreamItem::Value(IonType::Struct), binary_user_reader.next().unwrap());
         binary_user_reader.step_in().unwrap();
@@ -136,21 +126,34 @@ mod tests {
         assert_eq!(StreamItem::Value(IonType::Int), binary_user_reader.next().unwrap());
         assert_eq!("start_date_time", binary_user_reader.field_name().unwrap());
         assert_eq!(START_DATE_TIME, binary_user_reader.read_i64().unwrap());
-        
+
         assert_eq!(StreamItem::Value(IonType::Int), binary_user_reader.next().unwrap());
         assert_eq!("end_date_time", binary_user_reader.field_name().unwrap());
         assert_eq!(END_DATE_TIME,  binary_user_reader.read_i64().unwrap());
     }
 
     #[test]
-    fn endec_ovdf_request() {
+    fn endec_bandwidth_per_endpoint_request() {
         const START_DATE_TIME: i64 = i64::MIN;
         const END_DATE_TIME: i64 = i64::MAX;
 
-        let network_bandwidth_request = NetworkOverviewDashboardFiltersRequestDTO::new(
+        let bandwidth_per_endpoint_request = NetworkBandwidthPerEndpointRequestDTO::new(
             START_DATE_TIME,
-            END_DATE_TIME
+            END_DATE_TIME,
         );
-        assert_eq!(network_bandwidth_request, NetworkOverviewDashboardFiltersRequestDTO::decode(&network_bandwidth_request.encode()));
+        assert_eq!(bandwidth_per_endpoint_request, NetworkBandwidthPerEndpointRequestDTO::decode(&bandwidth_per_endpoint_request.encode()));
+    }
+
+    #[test]
+    fn test_getting_data_types() {
+        const START_DATE_TIME: i64 = i64::MIN;
+        const END_DATE_TIME: i64 = i64::MAX;
+
+        let bandwidth_per_endpoint_request = NetworkBandwidthPerEndpointRequestDTO::new(
+            START_DATE_TIME,
+            END_DATE_TIME,
+        );
+        assert_eq!(bandwidth_per_endpoint_request.get_type(), NetworkBandwidthPerEndpointRequestDTO::get_data_type());
+        assert_eq!(bandwidth_per_endpoint_request.get_type(), super::DATA_TYPE);
     }
 }

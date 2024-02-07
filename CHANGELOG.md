@@ -8,7 +8,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 <!-- [START AUTO UPDATE] -->
 <!-- Please keep comment here to allow auto-update -->
+## [0.1.2-cc0dc49] - 2024-02-07
+
+Feature/NS-50/managing-crates-to-be-pushed-to-cratesio (#20)
+
+* Added att the essentials for publishing on crates.io
+
+* Split timescale-api into two parts
 <!-- [END AUTO UPDATE] -->
+## [0.1.2-d1bc25c] - 2024-02-06
+
+feature/CU-8693cxbcn: deleted ion text feature due to its uselessness (#17)
+
+* Delete ion text feature due to its uselessness
 ## [0.1.2-0de1605] - 2023-11-22
 
 feature/CU-86932v6mc: removed manual reading/writing from decode/encode methods in composed dto structures (#14)
