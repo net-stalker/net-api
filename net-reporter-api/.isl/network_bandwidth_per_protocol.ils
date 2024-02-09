@@ -1,0 +1,25 @@
+schema_header::{}
+
+type::{
+    name: protocol,
+    type: struct,
+    fields: {
+        name: string,
+        total_bytes: int,
+    },
+}
+
+type::{
+    name: network_bandwidth_per_protocol,
+    type: struct,
+    fields: {
+        protocols: {
+            type: list,
+            element: {
+                type: protocol
+            },
+        },
+    },
+}
+
+schema_footer::{}
