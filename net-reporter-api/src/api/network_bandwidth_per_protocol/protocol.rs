@@ -72,7 +72,7 @@ impl Decoder for ProtocolDTO {
         let total_bytes = binary_user_reader.read_i64().unwrap();
 
         ProtocolDTO::new(
-            &name,
+            name,
             total_bytes,
         )
     }
