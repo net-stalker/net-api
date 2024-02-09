@@ -2,8 +2,8 @@
 
 pub mod dashboard;
 
-//TODO: Add network prefix
 pub mod network_bandwidth_per_endpoint;
+pub mod network_bandwidth_per_protocol;
 
 pub mod network_overview_dashboard_filters;
 
