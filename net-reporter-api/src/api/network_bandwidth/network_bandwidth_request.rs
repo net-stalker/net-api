@@ -29,7 +29,7 @@ impl NetworkBandwidthRequestDTO {
         NetworkBandwidthRequestDTO {
             start_date_time,
             end_date_time,
-            filters: filters.map_or(None, |filters| Some(filters.into())),
+            filters: filters.map(|filters| filters.into()),
         }
     }
 
