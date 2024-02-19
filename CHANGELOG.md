@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 <!-- [START AUTO UPDATE] -->
 <!-- Please keep comment here to allow auto-update -->
+<!-- [END AUTO UPDATE] -->
 ## [0.1.2-0b799f0] - 2024-02-07
 
 NS-57/network-overview-dashboard-filters (#18)
@@ -17,7 +18,6 @@ NS-57/network-overview-dashboard-filters (#18)
 * updated net-reporter-api version
 
 * removed bytes_rec and bytes_sent to a single field total_bytes
-<!-- [END AUTO UPDATE] -->
 ## [0.1.2-cc0dc49] - 2024-02-07
 
 Feature/NS-50/managing-crates-to-be-pushed-to-cratesio (#20)
