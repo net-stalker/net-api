@@ -140,6 +140,17 @@ impl Typed for NetworkBandwidthFiltersDTO {
     }
 }
 
+impl From<&NetworkBandwidthFiltersDTO> for NetworkBandwidthFiltersDTO {
+    fn from(item: &NetworkBandwidthFiltersDTO) -> Self {
+        NetworkBandwidthFiltersDTO::new(
+            item.get_protocols(),
+            item.is_include_protocols_mode(),
+            item.get_endpoints(),
+            item.is_include_endpints_mode()
+        )
+    }
+}
+
 
 #[cfg(test)]
 mod tests {
@@ -155,7 +166,7 @@ mod tests {
     use crate::api::network_bandwidth::network_bandwidth_filters::NetworkBandwidthFiltersDTO;
     
     #[test]
-    fn reader_correctly_read_encoded_ng_request() {
+    fn reader_correctly_read_encoded_nb_filters() {
         let protocols = vec!["TCP".to_string(), "UDP".to_string()];
         const INCLUDE_PROTOCOLS_MODE: bool = false;
         let endpoints = vec!["0.0.0.0".to_string(), "1.1.1.1".to_string()];
@@ -207,7 +218,7 @@ mod tests {
     }
 
     #[test]
-    fn endec_ng_request() {
+    fn endec_nb_filters() {
         let protocols = vec!["TCP".to_string(), "UDP".to_string()];
         const INCLUDE_PROTOCOLS_MODE: bool = false;
         let endpoints = vec!["0.0.0.0".to_string(), "1.1.1.1".to_string()];
