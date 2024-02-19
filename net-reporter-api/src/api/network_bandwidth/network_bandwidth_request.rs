@@ -17,6 +17,8 @@ const DATA_TYPE: &str = "network_bandwidth_request";
 pub struct NetworkBandwidthRequestDTO {
     start_date_time: i64,
     end_date_time: i64,
+    // Add filters here as an Option
+    // it must be a standalone strcture, not Envelope
 }
 impl API for NetworkBandwidthRequestDTO { }
 
