@@ -8,6 +8,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 <!-- [START AUTO UPDATE] -->
 <!-- Please keep comment here to allow auto-update -->
+## [0.1.2-fa31716] - 2024-02-19
+
+NS-83/network-bandwidth-per-protocol (#21)
+
+* Add network_bandwidth_per_protocol .is file
+
+* Add ProtocolDTO
+
+* Add NetworkBandwidthPerProtocolDTO
+
+* Add NetworkBandwidthPerProtocolRequestDTO
 <!-- [END AUTO UPDATE] -->
 ## [0.1.2-0b799f0] - 2024-02-07
 
