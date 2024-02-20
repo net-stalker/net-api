@@ -136,9 +136,9 @@ mod tests {
     fn get_test_filters() -> NetworkBandwidthFiltersDTO {
         NetworkBandwidthFiltersDTO::new(
             &["TCP".to_string(), "UDP".to_string()],
-            true,
+            Some(true),
             &["0.0.0.0".to_string(), "1.1.1.1".to_string()],
-            false,
+            Some(false),
         )
     }
 
