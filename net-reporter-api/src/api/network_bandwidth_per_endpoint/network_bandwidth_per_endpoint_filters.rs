@@ -14,7 +14,7 @@ use net_core_api::typed_api::Typed;
 
 const DATA_TYPE: &str = "network_bandwidth_per_endpoint_filters";
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub struct NetworkBandwidthPerEndpointFiltersDTO {
     protocols: Vec<String>,
     include_protocols_mode: Option<bool>,
