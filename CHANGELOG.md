@@ -8,6 +8,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 <!-- [START AUTO UPDATE] -->
 <!-- Please keep comment here to allow auto-update -->
+## [0.1.2-b6a7954] - 2024-02-21
+
+Ns 102/add filters chart requests: added filters structure for network bandwidth  (#22)
+
+* implemented network bandwidth filters dto structures
+
+* added network bandwidth filters structure into network bandwidth request
+
+* updated structures by adding Option to filters modes
+
+* updated request network bandwidth structure
+
+* updated net-reporter-api version to 0.1.31
 <!-- [END AUTO UPDATE] -->
 ## [0.1.2-fa31716] - 2024-02-19
 
