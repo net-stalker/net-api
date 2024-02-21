@@ -20,7 +20,6 @@ pub struct NetworkBandwidthPerEndpointFiltersDTO {
     include_protocols_mode: Option<bool>,
     endpoints: Vec<String>,
     include_endpoints_mode: Option<bool>,
-    // TODO: need to add bytes interval here
     bytes_lower_bound: Option<i64>,
     bytes_upper_bound: Option<i64>,
 }
