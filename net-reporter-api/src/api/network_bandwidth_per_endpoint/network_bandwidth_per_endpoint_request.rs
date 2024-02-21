@@ -11,6 +11,8 @@ use net_core_api::encoder_api::Encoder;
 use net_core_api::decoder_api::Decoder;
 use net_core_api::typed_api::Typed;
 
+use super::network_bandwidth_per_endpoint_filters::NetworkBandwidthPerEndpointFiltersDTO;
+
 
 const DATA_TYPE: &str = "bandwidth-per-endpoint-request";
 
@@ -18,19 +20,16 @@ const DATA_TYPE: &str = "bandwidth-per-endpoint-request";
 pub struct NetworkBandwidthPerEndpointRequestDTO {
     start_date_time: i64,
     end_date_time: i64,
-    // may be expandable in future
-    // factors can be added here to make it possible to add charts
-    // to dashboard with filters at once
-    // TODO: add filters here
-    // TODO: add filtering factor (a string)
+    filters: NetworkBandwidthPerEndpointFiltersDTO,
 }
 impl API for NetworkBandwidthPerEndpointRequestDTO { }
 
 impl NetworkBandwidthPerEndpointRequestDTO {
-    pub fn new(start_date_time: i64, end_date_time: i64) -> Self {
+    pub fn new(start_date_time: i64, end_date_time: i64, filters: NetworkBandwidthPerEndpointFiltersDTO) -> Self {
         NetworkBandwidthPerEndpointRequestDTO {
             start_date_time,
             end_date_time,
+            filters,
         }
     }
     pub fn get_start_date_time(&self) -> i64 {
@@ -39,6 +38,10 @@ impl NetworkBandwidthPerEndpointRequestDTO {
 
     pub fn get_end_date_time(&self) -> i64 {
         self.end_date_time
+    }
+
+    pub fn get_filters(&self) -> &NetworkBandwidthPerEndpointFiltersDTO {
+        &self.filters
     }
 }
 
@@ -57,6 +60,9 @@ impl Encoder for NetworkBandwidthPerEndpointRequestDTO {
 
         writer.set_field_name("end_date_time");
         writer.write_i64(self.end_date_time).unwrap();
+
+        writer.set_field_name("filters");
+        writer.write_blob(self.filters.encode()).unwrap();
 
         writer.step_out().unwrap();
         writer.flush().unwrap();
@@ -77,9 +83,15 @@ impl Decoder for NetworkBandwidthPerEndpointRequestDTO {
         binary_user_reader.next().unwrap();
         let end_date_time = binary_user_reader.read_i64().unwrap();
 
+        binary_user_reader.next().unwrap();
+        let filters = NetworkBandwidthPerEndpointFiltersDTO::decode(
+            binary_user_reader.read_blob().unwrap().as_slice()
+        );
+
         NetworkBandwidthPerEndpointRequestDTO::new(
             start_date_time,
-            end_date_time
+            end_date_time,
+            filters
         )
     }
 }
@@ -106,7 +118,26 @@ mod tests {
     use net_core_api::decoder_api::Decoder;
     use net_core_api::typed_api::Typed;
 
+    use crate::api::network_bandwidth_per_endpoint::network_bandwidth_per_endpoint_filters::NetworkBandwidthPerEndpointFiltersDTO;
     use crate::api::network_bandwidth_per_endpoint::network_bandwidth_per_endpoint_request::NetworkBandwidthPerEndpointRequestDTO;
+
+    fn get_test_filters() -> NetworkBandwidthPerEndpointFiltersDTO {
+        let protocols = vec!["TCP".to_string(), "UDP".to_string()];
+        const INCLUDE_PROTOCOLS_MODE: bool = false;
+        let endpoints = vec!["0.0.0.0".to_string(), "1.1.1.1".to_string()];
+        const INCLUDE_ENDPOINTS_MODE: bool = true;
+        let bytes_lower_bound = Some(100);
+        let bytes_upper_bound = Some(1000);
+
+        NetworkBandwidthPerEndpointFiltersDTO::new(
+            &protocols,
+            Some(INCLUDE_PROTOCOLS_MODE),
+            &endpoints,
+            Some(INCLUDE_ENDPOINTS_MODE),
+            bytes_lower_bound,
+            bytes_upper_bound
+        )
+    }
 
     #[test]
     fn reader_correctly_read_encoded_bandwidth_per_endpoint_request() {
@@ -116,6 +147,7 @@ mod tests {
         let bandwidth_per_endpoint_request = NetworkBandwidthPerEndpointRequestDTO::new(
             START_DATE_TIME,
             END_DATE_TIME,
+            get_test_filters(),
         );
 
         let mut binary_user_reader = ReaderBuilder::new().build(bandwidth_per_endpoint_request.encode()).unwrap();
@@ -130,6 +162,10 @@ mod tests {
         assert_eq!(StreamItem::Value(IonType::Int), binary_user_reader.next().unwrap());
         assert_eq!("end_date_time", binary_user_reader.field_name().unwrap());
         assert_eq!(END_DATE_TIME,  binary_user_reader.read_i64().unwrap());
+
+        assert_eq!(StreamItem::Value(IonType::Blob), binary_user_reader.next().unwrap());
+        assert_eq!("filters", binary_user_reader.field_name().unwrap());
+        assert_eq!(get_test_filters(),  NetworkBandwidthPerEndpointFiltersDTO::decode(binary_user_reader.read_blob().unwrap().as_slice()));
     }
 
     #[test]
@@ -140,6 +176,7 @@ mod tests {
         let bandwidth_per_endpoint_request = NetworkBandwidthPerEndpointRequestDTO::new(
             START_DATE_TIME,
             END_DATE_TIME,
+            get_test_filters(),
         );
         assert_eq!(bandwidth_per_endpoint_request, NetworkBandwidthPerEndpointRequestDTO::decode(&bandwidth_per_endpoint_request.encode()));
     }
@@ -152,6 +189,7 @@ mod tests {
         let bandwidth_per_endpoint_request = NetworkBandwidthPerEndpointRequestDTO::new(
             START_DATE_TIME,
             END_DATE_TIME,
+            get_test_filters(),
         );
         assert_eq!(bandwidth_per_endpoint_request.get_type(), NetworkBandwidthPerEndpointRequestDTO::get_data_type());
         assert_eq!(bandwidth_per_endpoint_request.get_type(), super::DATA_TYPE);
