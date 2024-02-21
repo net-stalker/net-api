@@ -12,10 +12,10 @@ use net_core_api::encoder_api::Encoder;
 use net_core_api::decoder_api::Decoder;
 use net_core_api::typed_api::Typed;
 
-const DATA_TYPE: &str = "network_bandwidth_per_endpoint_filters";
+const DATA_TYPE: &str = "network_graph_filters";
 
 #[derive(Debug, PartialEq, Eq, Clone)]
-pub struct NetworkBandwidthPerEndpointFiltersDTO {
+pub struct NetworkGraphFiltersDTO {
     protocols: Vec<String>,
     include_protocols_mode: Option<bool>,
     endpoints: Vec<String>,
@@ -23,9 +23,9 @@ pub struct NetworkBandwidthPerEndpointFiltersDTO {
     bytes_lower_bound: Option<i64>,
     bytes_upper_bound: Option<i64>,
 }
-impl API for NetworkBandwidthPerEndpointFiltersDTO { }
+impl API for NetworkGraphFiltersDTO { }
 
-impl NetworkBandwidthPerEndpointFiltersDTO {
+impl NetworkGraphFiltersDTO {
     pub fn new(
         protocols: &[String],
         include_protocols_mode: Option<bool>,
@@ -34,7 +34,7 @@ impl NetworkBandwidthPerEndpointFiltersDTO {
         bytes_lower_bound: Option<i64>,
         bytes_upper_bound: Option<i64>,
     ) -> Self {
-        NetworkBandwidthPerEndpointFiltersDTO {
+        NetworkGraphFiltersDTO {
             protocols: protocols.to_vec(),
             include_protocols_mode,
             endpoints: endpoints.to_vec(),
@@ -69,7 +69,7 @@ impl NetworkBandwidthPerEndpointFiltersDTO {
     }
 }
 
-impl Encoder for NetworkBandwidthPerEndpointFiltersDTO {
+impl Encoder for NetworkGraphFiltersDTO {
     fn encode(&self) -> Vec<u8> {
         let buffer: Vec<u8> = Vec::new();
 
@@ -125,7 +125,7 @@ impl Encoder for NetworkBandwidthPerEndpointFiltersDTO {
     }
 }
 
-impl Decoder for NetworkBandwidthPerEndpointFiltersDTO {
+impl Decoder for NetworkGraphFiltersDTO {
     fn decode(data: &[u8]) -> Self {
 
         let mut binary_user_reader = ReaderBuilder::new().build(data).unwrap();
@@ -184,7 +184,7 @@ impl Decoder for NetworkBandwidthPerEndpointFiltersDTO {
             _ => None,
         };
 
-        NetworkBandwidthPerEndpointFiltersDTO::new(
+        NetworkGraphFiltersDTO::new(
             protocols.as_slice(),
             include_protocols,
             endpoints.as_slice(),
@@ -195,7 +195,7 @@ impl Decoder for NetworkBandwidthPerEndpointFiltersDTO {
     }
 }
 
-impl Typed for NetworkBandwidthPerEndpointFiltersDTO {
+impl Typed for NetworkGraphFiltersDTO {
     fn get_data_type() -> &'static str {
         DATA_TYPE
     }
@@ -216,16 +216,15 @@ mod tests {
     use net_core_api::encoder_api::Encoder;
     use net_core_api::decoder_api::Decoder;
 
-    use crate::api::network_bandwidth_per_endpoint::network_bandwidth_per_endpoint_filters::NetworkBandwidthPerEndpointFiltersDTO;
-
+    use crate::api::network_graph::network_graph_filters::NetworkGraphFiltersDTO; 
     
     #[test]
-    fn reader_correctly_read_encoded_nbpe_filters_0() {
+    fn reader_correctly_read_encoded_ng_filters_0() {
         let endpoints = vec!["0.0.0.0".to_string(), "1.1.1.1".to_string()];
         const INCLUDE_ENDPOINTS_MODE: bool = true;
         let bytes_lower_bound = Some(100);
         
-        let network_bandwidth_filters = NetworkBandwidthPerEndpointFiltersDTO::new(
+        let network_graph_filters = NetworkGraphFiltersDTO::new(
             &[],
             None,
             &endpoints,
@@ -234,7 +233,7 @@ mod tests {
             None,
         );
         
-        let mut binary_user_reader = ReaderBuilder::new().build(network_bandwidth_filters.encode()).unwrap();
+        let mut binary_user_reader = ReaderBuilder::new().build(network_graph_filters.encode()).unwrap();
 
         assert_eq!(StreamItem::Value(IonType::Struct), binary_user_reader.next().unwrap());
         binary_user_reader.step_in().unwrap();
@@ -269,13 +268,13 @@ mod tests {
 
     
     #[test]
-    fn reader_correctly_read_encoded_nbpe_filters_1() {
+    fn reader_correctly_read_encoded_ng_filters_1() {
         let protocols = vec!["TCP".to_string(), "UDP".to_string()];
         const INCLUDE_PROTOCOLS_MODE: bool = false;
         let endpoints = vec![];
         let bytes_upper_bound = Some(100);
         
-        let network_bandwidth_filters = NetworkBandwidthPerEndpointFiltersDTO::new(
+        let network_graph_filters = NetworkGraphFiltersDTO::new(
             &protocols,
             Some(INCLUDE_PROTOCOLS_MODE),
             &endpoints,
@@ -284,7 +283,7 @@ mod tests {
             bytes_upper_bound,
         );
         
-        let mut binary_user_reader = ReaderBuilder::new().build(network_bandwidth_filters.encode()).unwrap();
+        let mut binary_user_reader = ReaderBuilder::new().build(network_graph_filters.encode()).unwrap();
 
         assert_eq!(StreamItem::Value(IonType::Struct), binary_user_reader.next().unwrap());
         binary_user_reader.step_in().unwrap();
@@ -318,13 +317,13 @@ mod tests {
     }
 
     #[test]
-    fn reader_correctly_read_encoded_nbpe_filters_2() {
+    fn reader_correctly_read_encoded_ng_filters_2() {
         let protocols = vec!["TCP".to_string(), "UDP".to_string()];
         const INCLUDE_PROTOCOLS_MODE: bool = false;
         let endpoints = vec!["0.0.0.0".to_string(), "1.1.1.1".to_string()];
         const INCLUDE_ENDPOINTS_MODE: bool = true;
         
-        let network_bandwidth_filters = NetworkBandwidthPerEndpointFiltersDTO::new(
+        let network_bandwidth_filters = NetworkGraphFiltersDTO::new(
             &protocols,
             Some(INCLUDE_PROTOCOLS_MODE),
             &endpoints,
@@ -388,7 +387,7 @@ mod tests {
         let bytes_lower_bound = Some(100);
         let bytes_upper_bound = Some(1000);
 
-        let network_bandwidth_filters = NetworkBandwidthPerEndpointFiltersDTO::new(
+        let network_bandwidth_filters = NetworkGraphFiltersDTO::new(
             &protocols,
             Some(INCLUDE_PROTOCOLS_MODE),
             &endpoints,
@@ -396,6 +395,6 @@ mod tests {
             bytes_lower_bound,
             bytes_upper_bound
         );
-        assert_eq!(network_bandwidth_filters, NetworkBandwidthPerEndpointFiltersDTO::decode(&network_bandwidth_filters.encode()));
+        assert_eq!(network_bandwidth_filters, NetworkGraphFiltersDTO::decode(&network_bandwidth_filters.encode()));
     }
 }

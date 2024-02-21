@@ -137,18 +137,15 @@ mod tests {
     #[test]
     fn reader_correctly_read_encoded_graph_edge() {
         const FIRST_NODE_ID: &str = "0.0.0.0:0000";
-        const FIRST_NODE_AGENT_ID: &str = "some first node agent id";
-        let first_graph_node = GraphNodeDTO::new(FIRST_NODE_ID, FIRST_NODE_AGENT_ID);
+        let first_graph_node = GraphNodeDTO::new(FIRST_NODE_ID);
         const SECOND_NODE_ID: &str = "0.0.0.0:5656";
-        const SECOND_NODE_AGENT_ID: &str = "some second node agent id";
-        let second_graph_node = GraphNodeDTO::new(SECOND_NODE_ID, SECOND_NODE_AGENT_ID);
+        let second_graph_node = GraphNodeDTO::new(SECOND_NODE_ID);
 
         const SRC_ID: &str = "0.0.0.0:0000";
         const DST_ID: &str = "0.0.0.0:5656";
-        let communication_types: Vec<String> = vec!["fac1".to_string(), "fac2".to_string(), "fac3".to_string()];
-
-        let graph_edge: GraphEdgeDTO = GraphEdgeDTO::new(SRC_ID, DST_ID, communication_types.as_slice());
-
+        const VALUE: i64 = 123;
+        let graph_edge: GraphEdgeDTO = GraphEdgeDTO::new(SRC_ID, DST_ID, VALUE);
+        
         let graph_nodes = vec![first_graph_node, second_graph_node];
         let graph_edges = vec![graph_edge];
         let network_graph = NetworkGraphDTO::new(
@@ -192,19 +189,15 @@ mod tests {
     #[test]
     fn endec_network_graph() {
         const FIRST_NODE_ID: &str = "0.0.0.0:0000";
-        const FIRST_NODE_AGENT_ID: &str = "first node agent id";
-        let first_graph_node = GraphNodeDTO::new(FIRST_NODE_ID, FIRST_NODE_AGENT_ID);
+        let first_graph_node = GraphNodeDTO::new(FIRST_NODE_ID);
         const SECOND_NODE_ID: &str = "0.0.0.0:5656";
-        const SECOND_NODE_AGENT_ID: &str = "second node agent id";
-        let second_graph_node = GraphNodeDTO::new(SECOND_NODE_ID, SECOND_NODE_AGENT_ID);
+        let second_graph_node = GraphNodeDTO::new(SECOND_NODE_ID);
 
         const SRC_ID: &str = "0.0.0.0:0000";
         const DST_ID: &str = "0.0.0.0:5656";
-
-        let communication_types: Vec<String> = vec!["fac1".to_string(), "fac2".to_string(), "fac3".to_string()];
-
-        let graph_edge: GraphEdgeDTO = GraphEdgeDTO::new(SRC_ID, DST_ID, communication_types.as_slice());
-
+        const VALUE: i64 = 123;
+        let graph_edge: GraphEdgeDTO = GraphEdgeDTO::new(SRC_ID, DST_ID, VALUE);
+        
         let network_graph = NetworkGraphDTO::new(
             &[first_graph_node, second_graph_node],
             &[graph_edge],
@@ -216,19 +209,16 @@ mod tests {
     #[test]
     fn test_getting_data_types() {
         const FIRST_NODE_ID: &str = "0.0.0.0:0000";
-        const FIRST_NODE_AGENT_ID: &str = "first node agent id";
-        let first_graph_node = GraphNodeDTO::new(FIRST_NODE_ID, FIRST_NODE_AGENT_ID);
+        let first_graph_node = GraphNodeDTO::new(FIRST_NODE_ID);
         const SECOND_NODE_ID: &str = "0.0.0.0:5656";
-        const SECOND_NODE_AGENT_ID: &str = "second node agent id";
-        let second_graph_node = GraphNodeDTO::new(SECOND_NODE_ID, SECOND_NODE_AGENT_ID);
+        let second_graph_node = GraphNodeDTO::new(SECOND_NODE_ID);
 
         const SRC_ID: &str = "0.0.0.0:0000";
         const DST_ID: &str = "0.0.0.0:5656";
 
-        let communication_types: Vec<String> = vec!["fac1".to_string(), "fac2".to_string(), "fac3".to_string()];
-
-        let graph_edge: GraphEdgeDTO = GraphEdgeDTO::new(SRC_ID, DST_ID, communication_types.as_slice());
-
+        const VALUE: i64 = 123;
+        let graph_edge: GraphEdgeDTO = GraphEdgeDTO::new(SRC_ID, DST_ID, VALUE);
+        
         let network_graph = NetworkGraphDTO::new(
             &[first_graph_node, second_graph_node],
             &[graph_edge],

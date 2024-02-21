@@ -16,24 +16,16 @@ const DATA_TYPE: &str = "graph_node";
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct GraphNodeDTO {
     node_id: String,
-    agent_id: String,
 }
 impl API for GraphNodeDTO { }
 
 impl GraphNodeDTO {
-    pub fn new(node_id: &str, agent_id: &str) -> Self {
-        GraphNodeDTO {
-            node_id: node_id.into(),
-            agent_id: agent_id.into(),
-        }
+    pub fn new(node_id: &str) -> Self {
+        GraphNodeDTO { node_id: node_id.into() }
     }
 
     pub fn get_node_id(&self) -> &str {
         &self.node_id
-    }
-
-    pub fn get_agent_id(&self) -> &str {
-        &self.agent_id
     }
 }
 
@@ -48,9 +40,6 @@ impl Encoder for GraphNodeDTO {
         
         writer.set_field_name("node_id");
         writer.write_string(&self.node_id).unwrap();
-
-        writer.set_field_name("agent_id");
-        writer.write_string(&self.agent_id).unwrap();
 
         writer.step_out().unwrap();
         writer.flush().unwrap();
@@ -70,14 +59,7 @@ impl Decoder for GraphNodeDTO {
         let binding = binary_user_reader.read_string().unwrap();
         let node_id = binding.text();
 
-        binary_user_reader.next().unwrap();
-        let binding = binary_user_reader.read_string().unwrap();
-        let agent_id = binding.text();
-
-        GraphNodeDTO::new(
-            node_id,
-            agent_id
-        )
+        GraphNodeDTO::new(node_id)
     }
 }
 
@@ -109,9 +91,8 @@ mod tests {
     #[test]
     fn reader_correctly_read_encoded_graph_node() {
         const NODE_ID: &str = "0.0.0.0:0000";
-        const AGENT_ID: &str = "some-agent-id";
 
-        let graph_node = GraphNodeDTO::new(NODE_ID, AGENT_ID);
+        let graph_node = GraphNodeDTO::new(NODE_ID);
         let mut binary_user_reader = ReaderBuilder::new().build(graph_node.encode()).unwrap();
 
         assert_eq!(StreamItem::Value(IonType::Struct), binary_user_reader.next().unwrap());
@@ -120,27 +101,21 @@ mod tests {
         assert_eq!(StreamItem::Value(IonType::String), binary_user_reader.next().unwrap());
         assert_eq!("node_id", binary_user_reader.field_name().unwrap());
         assert_eq!(NODE_ID, binary_user_reader.read_string().unwrap().text());
-
-        assert_eq!(StreamItem::Value(IonType::String), binary_user_reader.next().unwrap());
-        assert_eq!("agent_id", binary_user_reader.field_name().unwrap());
-        assert_eq!(AGENT_ID, binary_user_reader.read_string().unwrap().text());
     }
 
     #[test]
     fn endec_graph_node() {
         const NODE_ID: &str = "0.0.0.0:0000";
-        const AGENT_ID: &str = "some-agent-id";
 
-        let graph_node = GraphNodeDTO::new(NODE_ID, AGENT_ID);
+        let graph_node = GraphNodeDTO::new(NODE_ID);
         assert_eq!(graph_node, GraphNodeDTO::decode(&graph_node.encode()));
     }
 
     #[test]
     fn test_getting_data_types() {
         const NODE_ID: &str = "0.0.0.0:0000";
-        const AGENT_ID: &str = "some-agent-id";
 
-        let graph_node = GraphNodeDTO::new(NODE_ID, AGENT_ID);
+        let graph_node = GraphNodeDTO::new(NODE_ID);
         assert_eq!(graph_node.get_type(), GraphNodeDTO::get_data_type());
         assert_eq!(graph_node.get_type(), super::DATA_TYPE);
     }

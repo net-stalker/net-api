@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 <!-- [START AUTO UPDATE] -->
 <!-- Please keep comment here to allow auto-update -->
+<!-- [END AUTO UPDATE] -->
 ## [0.1.2-8babb55] - 2024-02-21
 
 Ns 110/add filters for bpe: added DTO structure for bandwidth per endpoint filters  (#23)
@@ -17,7 +18,7 @@ Ns 110/add filters for bpe: added DTO structure for bandwidth per endpoint filte
 * added filters for bandwidth per endpoint
 
 * updated net-reporter-api version to 0.1.32
-<!-- [END AUTO UPDATE] -->
+
 ## [0.1.2-b6a7954] - 2024-02-21
 
 Ns 102/add filters chart requests: added filters structure for network bandwidth  (#22)
