@@ -8,6 +8,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 <!-- [START AUTO UPDATE] -->
 <!-- Please keep comment here to allow auto-update -->
+## [0.1.2-3d11b49] - 2024-02-21
+
+Ns 111/add filters for network graph (#24)
+
+* implemented filter structure for network graph
+
+* added network graph filters to network graph request structure
+
+* updated graph_edge and graph_node dto structures, removed unused fields and added value property for edge
+
+* updated net-reporter-api version to 0.2.0
 <!-- [END AUTO UPDATE] -->
 ## [0.1.2-8babb55] - 2024-02-21
 
