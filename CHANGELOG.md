@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 <!-- [START AUTO UPDATE] -->
 <!-- Please keep comment here to allow auto-update -->
+<!-- [END AUTO UPDATE] -->
 ## [0.1.2-3d11b49] - 2024-02-21
 
 Ns 111/add filters for network graph (#24)
@@ -19,7 +20,6 @@ Ns 111/add filters for network graph (#24)
 * updated graph_edge and graph_node dto structures, removed unused fields and added value property for edge
 
 * updated net-reporter-api version to 0.2.0
-<!-- [END AUTO UPDATE] -->
 ## [0.1.2-8babb55] - 2024-02-21
 
 Ns 110/add filters for bpe: added DTO structure for bandwidth per endpoint filters  (#23)
