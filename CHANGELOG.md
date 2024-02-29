@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 <!-- [START AUTO UPDATE] -->
 <!-- Please keep comment here to allow auto-update -->
+<!-- [END AUTO UPDATE] -->
 ## [0.1.2-6d41626] - 2024-02-24
 
 NS-112/add-filters-to-bpp: filters for network bandwidth per protocol chart API (#25)
@@ -15,7 +16,6 @@ NS-112/add-filters-to-bpp: filters for network bandwidth per protocol chart API 
 * implemented filters for network bandwidth per protocol chart api, added the strcuture to request dto structure
 
 * modified net-reporter-api version to 0.3.0
-<!-- [END AUTO UPDATE] -->
 ## [0.1.2-3d11b49] - 2024-02-21
 
 Ns 111/add filters for network graph (#24)

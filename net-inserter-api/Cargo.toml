@@ -1,6 +1,6 @@
 [package]
 name = "net-inserter-api"
-version = "0.1.2"
+version = "0.1.3"
 edition = "2021"
 description = "This crate defines types for the api used in the net-stalker project. Amazon Ion is used as the serialization format."
 license = "Apache-2.0"
