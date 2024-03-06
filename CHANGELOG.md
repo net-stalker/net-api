@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 <!-- [START AUTO UPDATE] -->
 <!-- Please keep comment here to allow auto-update -->
+## [0.1.3-2d469ad] - 2024-03-06
+
+NS-199/request-request-result-dto (#29)
+
+* NS-199/request-request-result-dto: Add RequestResultDTO struct
 <!-- [END AUTO UPDATE] -->
 ## [0.1.3-ea364d9] - 2024-03-06
 
