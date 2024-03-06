@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 <!-- [START AUTO UPDATE] -->
 <!-- Please keep comment here to allow auto-update -->
+<!-- [END AUTO UPDATE] -->
 ## [0.1.3-7e2d812] - 2024-02-29
 
 Update net core api to 0.2.0 (#27)
@@ -15,7 +16,6 @@ Update net core api to 0.2.0 (#27)
 * upated net-core-api to 0.2.0
 
 * updated inner crates version
-<!-- [END AUTO UPDATE] -->
 ## [0.1.2-6d41626] - 2024-02-24
 
 NS-112/add-filters-to-bpp: filters for network bandwidth per protocol chart API (#25)
