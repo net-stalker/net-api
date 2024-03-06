@@ -220,7 +220,7 @@ mod tests {
 
     
     #[test]
-    fn reader_correctly_read_encoded_nbpe_filters_0() {
+    fn reader_correctly_read_encoded_thr_filters_0() {
         let endpoints = vec!["0.0.0.0".to_string(), "1.1.1.1".to_string()];
         const INCLUDE_ENDPOINTS_MODE: bool = true;
         let bytes_lower_bound = Some(100);
@@ -269,7 +269,7 @@ mod tests {
 
     
     #[test]
-    fn reader_correctly_read_encoded_nbpe_filters_1() {
+    fn reader_correctly_read_encoded_thr_filters_1() {
         let http_methods = vec!["GET".to_string(), "POST".to_string()];
         const INCLUDE_PROTOCOLS_MODE: bool = false;
         let endpoints = vec![];
@@ -318,7 +318,7 @@ mod tests {
     }
 
     #[test]
-    fn reader_correctly_read_encoded_nbpe_filters_2() {
+    fn reader_correctly_read_encoded_thr_filters_2() {
         let http_methods = vec!["GET".to_string(), "POST".to_string()];
         const INCLUDE_PROTOCOLS_MODE: bool = false;
         let endpoints = vec!["0.0.0.0".to_string(), "1.1.1.1".to_string()];
@@ -380,7 +380,7 @@ mod tests {
 
 
     #[test]
-    fn endec_nbpe_filters() {
+    fn endec_thr_filters() {
         let http_methods = vec!["GET".to_string(), "POST".to_string()];
         const INCLUDE_PROTOCOLS_MODE: bool = false;
         let endpoints = vec!["0.0.0.0".to_string(), "1.1.1.1".to_string()];

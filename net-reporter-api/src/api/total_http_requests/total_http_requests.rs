@@ -106,7 +106,7 @@ mod tests {
 
 
     #[test]
-    fn reader_correctly_read_encoded_graph_edge() {
+    fn reader_correctly_read_total_http_requests() {
         const FIRST_BUCKET_TIMESTAMP: i64 = i64::MAX;
         const FIRST_TOTAL_REQUESTS: i64 = i64::MAX;
 
@@ -152,7 +152,7 @@ mod tests {
     }
 
     #[test]
-    fn endec_network_bandwidth() {
+    fn endec_total_http_requests() {
         const FIRST_BUCKET_TIMESTAMP: i64 = i64::MAX;
         const FIRST_TOTAL_REQUESTS: i64 = i64::MAX;
 

@@ -136,7 +136,7 @@ mod tests {
     }
 
     #[test]
-    fn reader_correctly_read_encoded_nb_request_some_filters() {
+    fn reader_correctly_read_encoded_thr_request_some_filters() {
         const START_DATE_TIME: i64 = i64::MIN;
         const END_DATE_TIME: i64 = i64::MAX;
 
@@ -167,7 +167,7 @@ mod tests {
     }
 
     #[test]
-    fn endec_ng_request() {
+    fn endec_thr_request() {
         const START_DATE_TIME: i64 = i64::MIN;
         const END_DATE_TIME: i64 = i64::MAX;
 

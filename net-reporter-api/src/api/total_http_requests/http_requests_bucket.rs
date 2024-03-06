@@ -102,7 +102,7 @@ mod tests {
     use crate::api::total_http_requests::http_requests_bucket::HttpRequestsBucketDTO;
 
     #[test]
-    fn reader_correctly_read_encoded_bandwidth_bucket() {
+    fn reader_correctly_read_encoded_requests_bucket() {
         const BUCKET_TIMESTAMP: i64 = i64::MAX;
         const TOTAL_REQUESTS: i64 = i64::MAX;
 
@@ -127,7 +127,7 @@ mod tests {
     }
 
     #[test]
-    fn endec_bandwidth_bucket() {
+    fn endec_requests_bucket() {
         const BUCKET_TIMESTAMP: i64 = i64::MAX;
         const TOTAL_REQUESTS: i64 = i64::MAX;
 
