@@ -8,12 +8,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 <!-- [START AUTO UPDATE] -->
 <!-- Please keep comment here to allow auto-update -->
+<!-- [END AUTO UPDATE] -->
 ## [0.1.3-ea364d9] - 2024-03-06
 
 Ns 162/dto for total http requests (#28)
 
 * implemented api for total_http_requests chart
-<!-- [END AUTO UPDATE] -->
 ## [0.1.3-7e2d812] - 2024-02-29
 
 Update net core api to 0.2.0 (#27)
