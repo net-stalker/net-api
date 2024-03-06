@@ -8,3 +8,5 @@ pub mod network_overview_dashboard_filters;
 pub mod network_bandwidth;
 pub mod network_graph;
 pub mod total_http_requests;
+
+pub mod request_result;
