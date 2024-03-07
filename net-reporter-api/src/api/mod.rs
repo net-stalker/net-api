@@ -1,5 +1,5 @@
 //TODO: Rewrite all the inbound ion structs encode to `write_blob(*.encode())`
-
+pub mod http_responses;
 pub mod network_bandwidth_per_endpoint;
 pub mod network_bandwidth_per_protocol;
 
