@@ -30,7 +30,7 @@ impl HttpResponsesDTO {
         }
     }
 
-    pub fn get_http_clients(&self) -> &[HttpResponseDTO] {
+    pub fn get_http_responses(&self) -> &[HttpResponseDTO] {
         &self.http_responses
     }
 }
