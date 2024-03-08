@@ -35,7 +35,7 @@ impl HttpResponsesBucketDTO {
         self.bucket_timestamp
     }
 
-    pub fn get_resnpose_code(&self) -> i64 {
+    pub fn get_response_code(&self) -> i64 {
         self.response_code
     }
 
