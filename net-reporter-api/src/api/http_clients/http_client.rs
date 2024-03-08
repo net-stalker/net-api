@@ -18,16 +18,16 @@ const DATA_TYPE: &str = "http_client";
 pub struct HttpClientDTO {
     endpoint: String,
     user_agent: Option<String>,
-    request: String,
+    requests_amount: i64,
 }
 impl API for HttpClientDTO { }
 
 impl HttpClientDTO {
-    pub fn new(endpoint: &str, user_agent: Option<&str>, request: &str) -> Self {
+    pub fn new(endpoint: &str, user_agent: Option<&str>, requests_amount: i64) -> Self {
         HttpClientDTO {
             endpoint: endpoint.to_string(),
             user_agent: user_agent.map(|user_agent| user_agent.to_string()),
-            request: request.to_string(),
+            requests_amount,
         }
     }
 
@@ -39,8 +39,8 @@ impl HttpClientDTO {
         self.user_agent.as_deref()
     }
 
-    pub fn get_request(&self) -> &str {
-        &self.request
+    pub fn get_request(&self) -> i64 {
+        self.requests_amount
     }
 }
 
@@ -62,8 +62,8 @@ impl Encoder for HttpClientDTO {
             None => writer.write_null(IonType::String).unwrap(),
         }
 
-        writer.set_field_name("request");
-        writer.write_string(&self.request).unwrap();
+        writer.set_field_name("requests_amount");
+        writer.write_i64(self.requests_amount).unwrap();
 
         writer.step_out().unwrap();
         writer.flush().unwrap();
@@ -93,12 +93,11 @@ impl Decoder for HttpClientDTO {
         };
 
         binary_user_reader.next().unwrap();
-        let binding = binary_user_reader.read_string().unwrap();
-        let request = binding.text();
+        let requests_amount = binary_user_reader.read_i64().unwrap();
 
         binary_user_reader.step_out().unwrap();
 
-        HttpClientDTO::new(endpoint, user_agent.as_deref(), request)
+        HttpClientDTO::new(endpoint, user_agent.as_deref(), requests_amount)
     }
 }
 
@@ -128,8 +127,8 @@ mod tests {
     fn reader_correctly_read_encoded_http_client() {
         const ENDPOINT: &str = "0.0.0.0";
         const USER_AGENT: &str = "Mozilla/5.0";
-        const REQUEST: &str = "GET";
-        let http_client = HttpClientDTO::new(ENDPOINT, Some(USER_AGENT), REQUEST);
+        const REQUESTS_AMOUNT: i64 = 123123;
+        let http_client = HttpClientDTO::new(ENDPOINT, Some(USER_AGENT), REQUESTS_AMOUNT);
         let mut binary_user_reader = ReaderBuilder::new().build(http_client.encode()).unwrap();
 
         assert_eq!(StreamItem::Value(IonType::Struct), binary_user_reader.next().unwrap());
@@ -143,9 +142,9 @@ mod tests {
         assert_eq!("user_agent", binary_user_reader.field_name().unwrap());
         assert_eq!(USER_AGENT,  binary_user_reader.read_string().unwrap());
 
-        assert_eq!(StreamItem::Value(IonType::String), binary_user_reader.next().unwrap());
-        assert_eq!("request", binary_user_reader.field_name().unwrap());
-        assert_eq!(REQUEST,  binary_user_reader.read_string().unwrap());
+        assert_eq!(StreamItem::Value(IonType::Int), binary_user_reader.next().unwrap());
+        assert_eq!("requests_amount", binary_user_reader.field_name().unwrap());
+        assert_eq!(REQUESTS_AMOUNT,  binary_user_reader.read_i64().unwrap());
 
         binary_user_reader.step_out().unwrap();
     }
@@ -153,8 +152,9 @@ mod tests {
     #[test]
     fn endec_http_client() {
         const ENDPOINT: &str = "0.0.0.0";
-        const REQUEST: &str = "GET";
-        let http_client = HttpClientDTO::new(ENDPOINT, None, REQUEST);
+        const USER_AGENT: &str = "Mozilla/5.0";
+        const REQUESTS_AMOUNT: i64 = 123123;
+        let http_client = HttpClientDTO::new(ENDPOINT, Some(USER_AGENT), REQUESTS_AMOUNT);
         assert_eq!(http_client, HttpClientDTO::decode(&http_client.encode()));
     }
 }

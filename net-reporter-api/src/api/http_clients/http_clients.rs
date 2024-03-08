@@ -110,9 +110,9 @@ mod tests {
     fn reader_correctly_read_total_http_clients() {
         const ENDPOINT: &str = "0.0.0.0";
         const USER_AGENT: &str = "Mozilla/5.0";
-        const REQUEST: &str = "GET";
-        let http_client = HttpClientDTO::new(ENDPOINT, Some(USER_AGENT), REQUEST);
-
+        const REQUESTS_AMOUNT: i64 = 123123;
+        let http_client = HttpClientDTO::new(ENDPOINT, Some(USER_AGENT), REQUESTS_AMOUNT);
+       
         let http_clients = vec![
             http_client.clone(),
             http_client.clone(),
@@ -144,9 +144,9 @@ mod tests {
     fn endec_total_http_clients() {
         const ENDPOINT: &str = "0.0.0.0";
         const USER_AGENT: &str = "Mozilla/5.0";
-        const REQUEST: &str = "GET";
-        let http_client = HttpClientDTO::new(ENDPOINT, Some(USER_AGENT), REQUEST);
-
+        const REQUESTS_AMOUNT: i64 = 123123;
+        let http_client = HttpClientDTO::new(ENDPOINT, Some(USER_AGENT), REQUESTS_AMOUNT);
+       
         let http_clients = vec![
             http_client.clone(),
             http_client.clone(),
