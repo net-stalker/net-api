@@ -39,7 +39,7 @@ impl HttpClientDTO {
         self.user_agent.as_deref()
     }
 
-    pub fn get_request(&self) -> i64 {
+    pub fn get_requests_amount(&self) -> i64 {
         self.requests_amount
     }
 }
