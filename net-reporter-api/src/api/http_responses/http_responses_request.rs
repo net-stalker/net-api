@@ -16,16 +16,16 @@ use super::http_responses_filters::HttpResponsesFiltersDTO;
 const DATA_TYPE: &str = "http_responses_request";
 
 #[derive(Debug, PartialEq, Eq)]
-pub struct HttpClientsRequestDTO {
+pub struct HttpResponsesRequestDTO {
     start_date_time: i64,
     end_date_time: i64,
     filters: HttpResponsesFiltersDTO,
 }
-impl API for HttpClientsRequestDTO { }
+impl API for HttpResponsesRequestDTO { }
 
-impl HttpClientsRequestDTO {
+impl HttpResponsesRequestDTO {
     pub fn new(start_date_time: i64, end_date_time: i64, filters: HttpResponsesFiltersDTO) -> Self {
-        HttpClientsRequestDTO {
+        HttpResponsesRequestDTO {
             start_date_time,
             end_date_time,
             filters,
@@ -45,7 +45,7 @@ impl HttpClientsRequestDTO {
     }
 }
 
-impl Encoder for HttpClientsRequestDTO {
+impl Encoder for HttpResponsesRequestDTO {
     fn encode(&self) -> Vec<u8> {
         let buffer: Vec<u8> = Vec::new();
 
@@ -70,7 +70,7 @@ impl Encoder for HttpClientsRequestDTO {
     }
 }
 
-impl Decoder for HttpClientsRequestDTO {
+impl Decoder for HttpResponsesRequestDTO {
     fn decode(data: &[u8]) -> Self {
         let mut binary_user_reader = ReaderBuilder::new().build(data).unwrap();
         binary_user_reader.next().unwrap();
@@ -87,7 +87,7 @@ impl Decoder for HttpClientsRequestDTO {
         let data = binary_user_reader.read_blob().unwrap();
         let filters = HttpResponsesFiltersDTO::decode(data.as_slice());
         
-        HttpClientsRequestDTO::new(
+        HttpResponsesRequestDTO::new(
             start_date_time,
             end_date_time,
             filters,
@@ -95,7 +95,7 @@ impl Decoder for HttpClientsRequestDTO {
     }
 }
 
-impl Typed for HttpClientsRequestDTO {
+impl Typed for HttpResponsesRequestDTO {
     fn get_data_type() -> &'static str {
         DATA_TYPE
     }
@@ -116,7 +116,7 @@ mod tests {
     use net_core_api::encoder_api::Encoder;
     use net_core_api::decoder_api::Decoder;
 
-    use crate::api::http_responses::http_responses_request::HttpClientsRequestDTO;
+    use crate::api::http_responses::http_responses_request::HttpResponsesRequestDTO;
     use crate::api::http_responses::http_responses_filters::HttpResponsesFiltersDTO;
 
     fn get_test_filters() -> HttpResponsesFiltersDTO {
@@ -140,7 +140,7 @@ mod tests {
         const START_DATE_TIME: i64 = i64::MIN;
         const END_DATE_TIME: i64 = i64::MAX;
 
-        let network_bandwidth_request = HttpClientsRequestDTO::new(
+        let network_bandwidth_request = HttpResponsesRequestDTO::new(
             START_DATE_TIME,
             END_DATE_TIME,
             get_test_filters(),
@@ -171,11 +171,11 @@ mod tests {
         const START_DATE_TIME: i64 = i64::MIN;
         const END_DATE_TIME: i64 = i64::MAX;
 
-        let network_bandwidth_request = HttpClientsRequestDTO::new(
+        let network_bandwidth_request = HttpResponsesRequestDTO::new(
             START_DATE_TIME,
             END_DATE_TIME,
             get_test_filters(),
         );
-        assert_eq!(network_bandwidth_request, HttpClientsRequestDTO::decode(&network_bandwidth_request.encode()));
+        assert_eq!(network_bandwidth_request, HttpResponsesRequestDTO::decode(&network_bandwidth_request.encode()));
     }
 }
