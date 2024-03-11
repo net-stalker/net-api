@@ -45,7 +45,7 @@ impl HttpResponsesFiltersDTO {
         }
     }
 
-    pub fn get_http_reponses(&self) -> &[i64] {
+    pub fn get_http_responses(&self) -> &[i64] {
         self.http_responses.as_slice()
     }
 
