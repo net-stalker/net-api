@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 <!-- [START AUTO UPDATE] -->
 <!-- Please keep comment here to allow auto-update -->
+## [0.1.3-4774ab9] - 2024-03-12
+
+NS-175/dto-http-clients-table: implemented dto for http_clients chart (#32)
+
+* implemented dto for http_clients chart
 <!-- [END AUTO UPDATE] -->
 ## [0.1.3-0d48d38] - 2024-03-12
 
