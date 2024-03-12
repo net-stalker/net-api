@@ -12,19 +12,19 @@ use net_core_api::decoder_api::Decoder;
 use net_core_api::typed_api::Typed;
 
 
-const DATA_TYPE: &str = "http_responses_bucket";
+const DATA_TYPE: &str = "http_responses_distribution_bucket";
 
 #[derive(Debug, PartialEq, Eq, Clone)]
-pub struct HttpResponsesBucketDTO {
+pub struct HttpResponsesDistributionBucketDTO {
     bucket_timestamp: i64,
     response_code: i64,
     amount: i64,
 }
-impl API for HttpResponsesBucketDTO { }
+impl API for HttpResponsesDistributionBucketDTO { }
 
-impl HttpResponsesBucketDTO {
+impl HttpResponsesDistributionBucketDTO {
     pub fn new(bucket_timestamp: i64, response_code: i64, amount: i64) -> Self {
-        HttpResponsesBucketDTO {
+        HttpResponsesDistributionBucketDTO {
             bucket_timestamp,
             response_code,
             amount,
@@ -44,7 +44,7 @@ impl HttpResponsesBucketDTO {
     }
 }
 
-impl Encoder for HttpResponsesBucketDTO {
+impl Encoder for HttpResponsesDistributionBucketDTO {
     fn encode(&self) -> Vec<u8> {
         let buffer: Vec<u8> = Vec::new();
 
@@ -69,7 +69,7 @@ impl Encoder for HttpResponsesBucketDTO {
     }
 }
 
-impl Decoder for HttpResponsesBucketDTO {
+impl Decoder for HttpResponsesDistributionBucketDTO {
     fn decode(data: &[u8]) -> Self {
 
         let mut binary_user_reader = ReaderBuilder::new().build(data).unwrap();
@@ -85,7 +85,7 @@ impl Decoder for HttpResponsesBucketDTO {
         binary_user_reader.next().unwrap();
         let amount = binary_user_reader.read_i64().unwrap();
 
-        HttpResponsesBucketDTO::new(
+        HttpResponsesDistributionBucketDTO::new(
             bucket_timestamp,
             response_code,
             amount,
@@ -93,7 +93,7 @@ impl Decoder for HttpResponsesBucketDTO {
     }
 }
 
-impl Typed for HttpResponsesBucketDTO {
+impl Typed for HttpResponsesDistributionBucketDTO {
     fn get_data_type() -> &'static str {
         DATA_TYPE
     }
@@ -113,7 +113,7 @@ mod tests {
     use net_core_api::encoder_api::Encoder;
     use net_core_api::decoder_api::Decoder;
 
-    use crate::api::http_responses_dist::http_responses_bucket::HttpResponsesBucketDTO;
+    use crate::api::http_responses_distribution::http_responses_distribution_bucket::HttpResponsesDistributionBucketDTO;
 
     #[test]
     fn reader_correctly_read_encoded_http_responses_bucket() {
@@ -121,7 +121,7 @@ mod tests {
         const RESPONSE_CODE: i64 = i64::MIN;
         const AMOUNT: i64 = 0;
 
-        let http_response_bucket = HttpResponsesBucketDTO::new(
+        let http_response_bucket = HttpResponsesDistributionBucketDTO::new(
             BUCKET_TIMESTAMP,
             RESPONSE_CODE,
             AMOUNT,
@@ -152,12 +152,12 @@ mod tests {
         const RESPONSE_CODE: i64 = i64::MIN;
         const AMOUNT: i64 = 0;
 
-        let http_response_bucket = HttpResponsesBucketDTO::new(
+        let http_response_bucket = HttpResponsesDistributionBucketDTO::new(
             BUCKET_TIMESTAMP,
             RESPONSE_CODE,
             AMOUNT,
         );
-        assert_eq!(http_response_bucket, HttpResponsesBucketDTO::decode(&http_response_bucket.encode()));
+        assert_eq!(http_response_bucket, HttpResponsesDistributionBucketDTO::decode(&http_response_bucket.encode()));
     }
 }
 

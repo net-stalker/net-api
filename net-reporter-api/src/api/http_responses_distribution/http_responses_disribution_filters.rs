@@ -12,25 +12,25 @@ use net_core_api::encoder_api::Encoder;
 use net_core_api::decoder_api::Decoder;
 use net_core_api::typed_api::Typed;
 
-const DATA_TYPE: &str = "http_responses_dist_filters";
+const DATA_TYPE: &str = "http_responses_distribution_filters";
 
 #[derive(Debug, PartialEq, Eq, Clone)]
-pub struct HttpResponsesDistFiltersDTO {
+pub struct HttpResponsesDistributionFiltersDTO {
     endpoints: Vec<String>,
     include_endpoints_mode: Option<bool>,
     bytes_lower_bound: Option<i64>,
     bytes_upper_bound: Option<i64>,
 }
-impl API for HttpResponsesDistFiltersDTO { }
+impl API for HttpResponsesDistributionFiltersDTO { }
 
-impl HttpResponsesDistFiltersDTO {
+impl HttpResponsesDistributionFiltersDTO {
     pub fn new(
         endpoints: &[String],
         include_endpoints_mode: Option<bool>,
         bytes_lower_bound: Option<i64>,
         bytes_upper_bound: Option<i64>,
     ) -> Self {
-        HttpResponsesDistFiltersDTO {
+        HttpResponsesDistributionFiltersDTO {
             endpoints: endpoints.to_vec(),
             include_endpoints_mode,
             bytes_lower_bound,
@@ -55,7 +55,7 @@ impl HttpResponsesDistFiltersDTO {
     }
 }
 
-impl Encoder for HttpResponsesDistFiltersDTO {
+impl Encoder for HttpResponsesDistributionFiltersDTO {
     fn encode(&self) -> Vec<u8> {
         let buffer: Vec<u8> = Vec::new();
 
@@ -97,7 +97,7 @@ impl Encoder for HttpResponsesDistFiltersDTO {
     }
 }
 
-impl Decoder for HttpResponsesDistFiltersDTO {
+impl Decoder for HttpResponsesDistributionFiltersDTO {
     fn decode(data: &[u8]) -> Self {
 
         let mut binary_user_reader = ReaderBuilder::new().build(data).unwrap();
@@ -135,7 +135,7 @@ impl Decoder for HttpResponsesDistFiltersDTO {
             _ => None,
         };
 
-        HttpResponsesDistFiltersDTO::new(
+        HttpResponsesDistributionFiltersDTO::new(
             endpoints.as_slice(),
             include_endpoints,
             bytes_lower_bound,
@@ -144,7 +144,7 @@ impl Decoder for HttpResponsesDistFiltersDTO {
     }
 }
 
-impl Typed for HttpResponsesDistFiltersDTO {
+impl Typed for HttpResponsesDistributionFiltersDTO {
     fn get_data_type() -> &'static str {
         DATA_TYPE
     }
@@ -165,7 +165,7 @@ mod tests {
     use net_core_api::encoder_api::Encoder;
     use net_core_api::decoder_api::Decoder;
 
-    use crate::api::http_responses_dist::http_responses_filters::HttpResponsesDistFiltersDTO;
+    use crate::api::http_responses_distribution::http_responses_disribution_filters::HttpResponsesDistributionFiltersDTO;
 
     
     #[test]
@@ -174,7 +174,7 @@ mod tests {
         const INCLUDE_ENDPOINTS_MODE: bool = true;
         let bytes_lower_bound = Some(100);
         
-        let filters = HttpResponsesDistFiltersDTO::new(
+        let filters = HttpResponsesDistributionFiltersDTO::new(
             &endpoints,
             Some(INCLUDE_ENDPOINTS_MODE),
             bytes_lower_bound,
@@ -217,7 +217,7 @@ mod tests {
         let endpoints = vec![];
         let bytes_upper_bound = Some(100);
         
-        let filters = HttpResponsesDistFiltersDTO::new(
+        let filters = HttpResponsesDistributionFiltersDTO::new(
             &endpoints,
             None,
             None,
@@ -247,7 +247,7 @@ mod tests {
         let endpoints = vec!["0.0.0.0".to_string(), "1.1.1.1".to_string()];
         const INCLUDE_ENDPOINTS_MODE: bool = true;
         
-        let filters = HttpResponsesDistFiltersDTO::new(
+        let filters = HttpResponsesDistributionFiltersDTO::new(
             &endpoints,
             Some(INCLUDE_ENDPOINTS_MODE),
             None,
@@ -290,13 +290,13 @@ mod tests {
         let endpoints = vec!["0.0.0.0".to_string(), "1.1.1.1".to_string()];
         const INCLUDE_ENDPOINTS_MODE: bool = true;
         
-        let filters: HttpResponsesDistFiltersDTO = HttpResponsesDistFiltersDTO::new(
+        let filters: HttpResponsesDistributionFiltersDTO = HttpResponsesDistributionFiltersDTO::new(
             &endpoints,
             Some(INCLUDE_ENDPOINTS_MODE),
             None,
             None,
         );
         
-        assert_eq!(filters, HttpResponsesDistFiltersDTO::decode(&filters.encode()));
+        assert_eq!(filters, HttpResponsesDistributionFiltersDTO::decode(&filters.encode()));
     }
 }

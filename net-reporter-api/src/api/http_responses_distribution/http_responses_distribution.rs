@@ -12,28 +12,28 @@ use net_core_api::encoder_api::Encoder;
 use net_core_api::decoder_api::Decoder;
 use net_core_api::typed_api::Typed;
 
-use super::http_responses_bucket::HttpResponsesBucketDTO;
+use super::http_responses_distribution_bucket::HttpResponsesDistributionBucketDTO;
 
 
-const DATA_TYPE: &str = "http_responses_dist";
+const DATA_TYPE: &str = "http_responses_distribution";
 
 #[derive(Debug, PartialEq, Eq, Clone)]
-pub struct HttpResponsesDistDTO {
-    http_responses_buckets: Vec<HttpResponsesBucketDTO>,
+pub struct HttpResponsesDistributionDTO {
+    http_responses_buckets: Vec<HttpResponsesDistributionBucketDTO>,
 }
-impl API for HttpResponsesDistDTO { }
+impl API for HttpResponsesDistributionDTO { }
 
-impl HttpResponsesDistDTO {
-    pub fn new(http_responses_buckets: &[HttpResponsesBucketDTO]) -> Self {
-        HttpResponsesDistDTO { http_responses_buckets: http_responses_buckets.to_vec() }
+impl HttpResponsesDistributionDTO {
+    pub fn new(http_responses_buckets: &[HttpResponsesDistributionBucketDTO]) -> Self {
+        HttpResponsesDistributionDTO { http_responses_buckets: http_responses_buckets.to_vec() }
     }
 
-    pub fn get_http_responses_buckets(&self) -> &[HttpResponsesBucketDTO] {
+    pub fn get_http_responses_buckets(&self) -> &[HttpResponsesDistributionBucketDTO] {
         &self.http_responses_buckets
     }
 }
 
-impl Encoder for HttpResponsesDistDTO {
+impl Encoder for HttpResponsesDistributionDTO {
     fn encode(&self) -> Vec<u8> {
         let buffer: Vec<u8> = Vec::new();
 
@@ -57,7 +57,7 @@ impl Encoder for HttpResponsesDistDTO {
     }
 }
 
-impl Decoder for HttpResponsesDistDTO {
+impl Decoder for HttpResponsesDistributionDTO {
     fn decode(data: &[u8]) -> Self {
         let mut binary_user_reader = ReaderBuilder::new().build(data).unwrap();
         binary_user_reader.next().unwrap();
@@ -69,7 +69,7 @@ impl Decoder for HttpResponsesDistDTO {
         let mut http_responses_buckets = Vec::with_capacity(http_responses_buckets_elements.len());
         http_responses_buckets_elements.iter().for_each(|element| {
             let data = element.as_blob().unwrap();
-            let http_responses_bucket = HttpResponsesBucketDTO::decode(data);
+            let http_responses_bucket = HttpResponsesDistributionBucketDTO::decode(data);
             http_responses_buckets.push(http_responses_bucket);
         });
 
@@ -77,7 +77,7 @@ impl Decoder for HttpResponsesDistDTO {
     }
 }
 
-impl Typed for HttpResponsesDistDTO {
+impl Typed for HttpResponsesDistributionDTO {
     fn get_data_type() -> &'static str {
         DATA_TYPE
     }
@@ -99,8 +99,8 @@ mod tests {
     use net_core_api::encoder_api::Encoder;
     use net_core_api::decoder_api::Decoder;
 
-    use crate::api::http_responses_dist::http_responses_dist::HttpResponsesDistDTO;
-    use crate::api::http_responses_dist::http_responses_bucket::HttpResponsesBucketDTO;
+    use crate::api::http_responses_distribution::http_responses_distribution::HttpResponsesDistributionDTO;
+    use crate::api::http_responses_distribution::http_responses_distribution_bucket::HttpResponsesDistributionBucketDTO;
 
 
     #[test]
@@ -109,7 +109,7 @@ mod tests {
         const RESPONSE_CODE: i64 = i64::MIN;
         const AMOUNT: i64 = 0;
 
-        let http_response_bucket = HttpResponsesBucketDTO::new(
+        let http_response_bucket = HttpResponsesDistributionBucketDTO::new(
             BUCKET_TIMESTAMP,
             RESPONSE_CODE,
             AMOUNT,
@@ -117,7 +117,7 @@ mod tests {
 
         let http_responses_buckets = vec![http_response_bucket];
 
-        let http_responses_dist = HttpResponsesDistDTO::new(
+        let http_responses_dist = HttpResponsesDistributionDTO::new(
             &http_responses_buckets,
         );
 
@@ -132,7 +132,7 @@ mod tests {
         let elements = binary_user_reader.read_all_elements().unwrap();
         assert_eq!(elements.len(), http_responses_buckets.len());
         for (element, http_response_bucket_core) in elements.iter().zip(http_responses_buckets.as_slice()) {
-            let encoded_http_responses_bucket = HttpResponsesBucketDTO::decode(element.as_blob().unwrap());
+            let encoded_http_responses_bucket = HttpResponsesDistributionBucketDTO::decode(element.as_blob().unwrap());
             assert_eq!(encoded_http_responses_bucket, *http_response_bucket_core);
         }
         binary_user_reader.step_out().unwrap();
@@ -146,7 +146,7 @@ mod tests {
         const RESPONSE_CODE: i64 = i64::MIN;
         const AMOUNT: i64 = 0;
 
-        let http_response_bucket = HttpResponsesBucketDTO::new(
+        let http_response_bucket = HttpResponsesDistributionBucketDTO::new(
             BUCKET_TIMESTAMP,
             RESPONSE_CODE,
             AMOUNT,
@@ -154,10 +154,10 @@ mod tests {
 
         let http_responses_buckets = vec![http_response_bucket];
 
-        let http_responses_dist = HttpResponsesDistDTO::new(
+        let http_responses_dist = HttpResponsesDistributionDTO::new(
             &http_responses_buckets,
         );
 
-        assert_eq!(http_responses_dist, HttpResponsesDistDTO::decode(&http_responses_dist.encode()));
+        assert_eq!(http_responses_dist, HttpResponsesDistributionDTO::decode(&http_responses_dist.encode()));
     }
 }

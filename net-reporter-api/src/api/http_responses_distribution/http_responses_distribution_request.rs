@@ -10,22 +10,22 @@ use net_core_api::encoder_api::Encoder;
 use net_core_api::decoder_api::Decoder;
 use net_core_api::typed_api::Typed;
 
-use super::http_responses_filters::HttpResponsesDistFiltersDTO;
+use super::http_responses_disribution_filters::HttpResponsesDistributionFiltersDTO;
 
 
-const DATA_TYPE: &str = "request_http_responses_dist";
+const DATA_TYPE: &str = "http_responses_distribution_request";
 
 #[derive(Debug, PartialEq, Eq)]
-pub struct HttpResponsesDistRequestDTO {
+pub struct HttpResponsesDistributionRequestDTO {
     start_date_time: i64,
     end_date_time: i64,
-    filters: HttpResponsesDistFiltersDTO,
+    filters: HttpResponsesDistributionFiltersDTO,
 }
-impl API for HttpResponsesDistRequestDTO { }
+impl API for HttpResponsesDistributionRequestDTO { }
 
-impl HttpResponsesDistRequestDTO {
-    pub fn new(start_date_time: i64, end_date_time: i64, filters: HttpResponsesDistFiltersDTO) -> Self {
-        HttpResponsesDistRequestDTO {
+impl HttpResponsesDistributionRequestDTO {
+    pub fn new(start_date_time: i64, end_date_time: i64, filters: HttpResponsesDistributionFiltersDTO) -> Self {
+        HttpResponsesDistributionRequestDTO {
             start_date_time,
             end_date_time,
             filters,
@@ -40,12 +40,12 @@ impl HttpResponsesDistRequestDTO {
         self.end_date_time
     }
 
-    pub fn get_filters(&self) -> &HttpResponsesDistFiltersDTO {
+    pub fn get_filters(&self) -> &HttpResponsesDistributionFiltersDTO {
         &self.filters
     }
 }
 
-impl Encoder for HttpResponsesDistRequestDTO {
+impl Encoder for HttpResponsesDistributionRequestDTO {
     fn encode(&self) -> Vec<u8> {
         let buffer: Vec<u8> = Vec::new();
 
@@ -70,7 +70,7 @@ impl Encoder for HttpResponsesDistRequestDTO {
     }
 }
 
-impl Decoder for HttpResponsesDistRequestDTO {
+impl Decoder for HttpResponsesDistributionRequestDTO {
     fn decode(data: &[u8]) -> Self {
 
         let mut binary_user_reader = ReaderBuilder::new().build(data).unwrap();
@@ -84,9 +84,9 @@ impl Decoder for HttpResponsesDistRequestDTO {
         let end_date_time = binary_user_reader.read_i64().unwrap();
 
         binary_user_reader.next().unwrap();
-        let filters = HttpResponsesDistFiltersDTO::decode(binary_user_reader.read_blob().unwrap().as_slice());
+        let filters = HttpResponsesDistributionFiltersDTO::decode(binary_user_reader.read_blob().unwrap().as_slice());
 
-        HttpResponsesDistRequestDTO::new(
+        HttpResponsesDistributionRequestDTO::new(
             start_date_time,
             end_date_time,
             filters
@@ -94,7 +94,7 @@ impl Decoder for HttpResponsesDistRequestDTO {
     }
 }
 
-impl Typed for HttpResponsesDistRequestDTO {
+impl Typed for HttpResponsesDistributionRequestDTO {
     fn get_data_type() -> &'static str {
         DATA_TYPE
     }
@@ -116,16 +116,16 @@ mod tests {
     use net_core_api::decoder_api::Decoder;
     use net_core_api::typed_api::Typed;
 
-    use crate::api::http_responses_dist::http_responses_dist_request;
-    use crate::api::http_responses_dist::http_responses_dist_request::HttpResponsesDistRequestDTO;
-    use crate::api::http_responses_dist::http_responses_filters::HttpResponsesDistFiltersDTO;
+    use crate::api::http_responses_distribution::http_responses_distribution_request;
+    use crate::api::http_responses_distribution::http_responses_distribution_request::HttpResponsesDistributionRequestDTO;
+    use crate::api::http_responses_distribution::http_responses_disribution_filters::HttpResponsesDistributionFiltersDTO;
 
-    fn get_test_filters() -> HttpResponsesDistFiltersDTO {
+    fn get_test_filters() -> HttpResponsesDistributionFiltersDTO {
         let endpoints = vec!["0.0.0.0".to_string(), "1.1.1.1".to_string()];
         const INCLUDE_ENDPOINTS_MODE: bool = true;
         let bytes_lower_bound = Some(100);
         
-        HttpResponsesDistFiltersDTO::new(
+        HttpResponsesDistributionFiltersDTO::new(
             &endpoints,
             Some(INCLUDE_ENDPOINTS_MODE),
             bytes_lower_bound,
@@ -138,7 +138,7 @@ mod tests {
         const START_DATE_TIME: i64 = i64::MIN;
         const END_DATE_TIME: i64 = i64::MAX;
 
-        let http_responses_dist_request = HttpResponsesDistRequestDTO::new(
+        let http_responses_dist_request = HttpResponsesDistributionRequestDTO::new(
             START_DATE_TIME,
             END_DATE_TIME,
             get_test_filters(),
@@ -159,7 +159,7 @@ mod tests {
 
         assert_eq!(StreamItem::Value(IonType::Blob), binary_user_reader.next().unwrap());
         assert_eq!("filters", binary_user_reader.field_name().unwrap());
-        assert_eq!(get_test_filters(), HttpResponsesDistFiltersDTO::decode(binary_user_reader.read_blob().unwrap().as_slice()));
+        assert_eq!(get_test_filters(), HttpResponsesDistributionFiltersDTO::decode(binary_user_reader.read_blob().unwrap().as_slice()));
     }
 
     #[test]
@@ -167,24 +167,24 @@ mod tests {
         const START_DATE_TIME: i64 = i64::MIN;
         const END_DATE_TIME: i64 = i64::MAX;
 
-        let network_graph_request = HttpResponsesDistRequestDTO::new(
+        let network_graph_request = HttpResponsesDistributionRequestDTO::new(
             START_DATE_TIME,
             END_DATE_TIME,
             get_test_filters(),
         );
-        assert_eq!(network_graph_request, HttpResponsesDistRequestDTO::decode(&network_graph_request.encode()));
+        assert_eq!(network_graph_request, HttpResponsesDistributionRequestDTO::decode(&network_graph_request.encode()));
     }
     #[test]
     fn test_getting_data_types() {
         const START_DATE_TIME: i64 = i64::MIN;
         const END_DATE_TIME: i64 = i64::MAX;
 
-        let network_graph_request = HttpResponsesDistRequestDTO::new(
+        let network_graph_request = HttpResponsesDistributionRequestDTO::new(
             START_DATE_TIME,
             END_DATE_TIME,
             get_test_filters(),
         );
-        assert_eq!(network_graph_request.get_type(), HttpResponsesDistRequestDTO::get_data_type());
-        assert_eq!(network_graph_request.get_type(), http_responses_dist_request::DATA_TYPE);
+        assert_eq!(network_graph_request.get_type(), HttpResponsesDistributionRequestDTO::get_data_type());
+        assert_eq!(network_graph_request.get_type(), http_responses_distribution_request::DATA_TYPE);
     }
 }
