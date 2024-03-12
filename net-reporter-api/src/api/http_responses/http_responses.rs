@@ -112,7 +112,7 @@ mod tests {
         const CLIENT: &str = "0.0.0.0";
         const SERVER: &str = "1.1.1.1";
         const RESPONSE: i64 = 200;
-        let http_response = HttpResponseDTO::new(Some(BUCKET_TIMESTAMP), CLIENT, SERVER, RESPONSE);
+        let http_response = HttpResponseDTO::new(BUCKET_TIMESTAMP, CLIENT, SERVER, RESPONSE);
 
         let http_responses = vec![
             http_response.clone(),
@@ -143,10 +143,11 @@ mod tests {
 
     #[test]
     fn endec_total_http_responses() {
+        const BUCKET_TIMESTAMP: i64 = 123456789;
         const CLIENT: &str = "0.0.0.0";
         const SERVER: &str = "1.1.1.1";
         const RESPONSE: i64 = 200;
-        let http_response = HttpResponseDTO::new(None, CLIENT, SERVER, RESPONSE);
+        let http_response = HttpResponseDTO::new(BUCKET_TIMESTAMP, CLIENT, SERVER, RESPONSE);
 
         let http_responses = vec![
             http_response.clone(),
