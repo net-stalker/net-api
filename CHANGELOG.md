@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 <!-- [START AUTO UPDATE] -->
 <!-- Please keep comment here to allow auto-update -->
 <!-- [END AUTO UPDATE] -->
+## [0.1.3-0d48d38] - 2024-03-12
+
+NS-171/dto-for-http-responses-dist-chart: implemented dto for http responses dist chart (#31)
+
+* implemented dto for http responses distribution chart
+## [0.1.3-e54d23c] - 2024-03-12
+
+NS-203/dto-for-request-methods-dist-chart: implmeneted dto for htto request methods dist chart (#30)
+
+* implemented dto for htto request methods distribution chart
 ## [0.1.3-2d469ad] - 2024-03-06
 
 NS-199/request-request-result-dto (#29)
