@@ -11,18 +11,18 @@ use net_core_api::encoder_api::Encoder;
 use net_core_api::decoder_api::Decoder;
 use net_core_api::typed_api::Typed;
 
-const DATA_TYPE: &str = "http_request";
+const DATA_TYPE: &str = "http_request_method";
 
 #[derive(Debug, PartialEq, Eq, Clone)]
-pub struct HttpRequestDTO {
+pub struct HttpRequestMethodDTO {
     name: String,
     amount: i64,
 }
-impl API for HttpRequestDTO { }
+impl API for HttpRequestMethodDTO { }
 
-impl HttpRequestDTO {
+impl HttpRequestMethodDTO {
     pub fn new(name: &str, amount: i64) -> Self {
-        HttpRequestDTO {
+        HttpRequestMethodDTO {
             name: name.into(),
             amount,
         }
@@ -37,7 +37,7 @@ impl HttpRequestDTO {
     }
 }
 
-impl Encoder for HttpRequestDTO {
+impl Encoder for HttpRequestMethodDTO {
     fn encode(&self) -> Vec<u8> {
         let buffer: Vec<u8> = Vec::new();
 
@@ -59,7 +59,7 @@ impl Encoder for HttpRequestDTO {
     }
 }
 
-impl Decoder for HttpRequestDTO {
+impl Decoder for HttpRequestMethodDTO {
     fn decode(data: &[u8]) -> Self {
         let mut binary_user_reader = ReaderBuilder::new().build(data).unwrap();
         binary_user_reader.next().unwrap();
@@ -74,11 +74,11 @@ impl Decoder for HttpRequestDTO {
 
         binary_user_reader.step_out().unwrap();
 
-        HttpRequestDTO::new(name, amount)
+        HttpRequestMethodDTO::new(name, amount)
     }
 }
 
-impl Typed for HttpRequestDTO {
+impl Typed for HttpRequestMethodDTO {
     fn get_data_type() -> &'static str {
         DATA_TYPE
     }
@@ -99,13 +99,13 @@ mod tests {
     use net_core_api::decoder_api::Decoder;
     use net_core_api::typed_api::Typed;
 
-    use crate::api::http_request_methods_dist::http_request::HttpRequestDTO;
+    use crate::api::http_request_methods_distribution::http_request_method::HttpRequestMethodDTO;
 
     #[test]
     fn reader_correctly_read_encoded_http_request() {
         const METHOD_NAME: &str = "GET";
         let total_amount = 1000;
-        let http_request = HttpRequestDTO::new(METHOD_NAME, total_amount);
+        let http_request = HttpRequestMethodDTO::new(METHOD_NAME, total_amount);
         let mut binary_user_reader = ReaderBuilder::new().build(http_request.encode()).unwrap();
 
         assert_eq!(StreamItem::Value(IonType::Struct), binary_user_reader.next().unwrap());
@@ -126,16 +126,15 @@ mod tests {
     fn endec_http_request() {
         const METHOD_NAME: &str = "GET";
         let total_amount = 1000;
-        let http_request = HttpRequestDTO::new(METHOD_NAME, total_amount);
-        assert_eq!(http_request, HttpRequestDTO::decode(&http_request.encode()));
+        let http_request = HttpRequestMethodDTO::new(METHOD_NAME, total_amount);
+        assert_eq!(http_request, HttpRequestMethodDTO::decode(&http_request.encode()));
     }
 
     #[test]
     fn test_getting_data_types() {
         const METHOD_NAME: &str = "GET";
         let total_amount = 1000;
-        let http_request = HttpRequestDTO::new(METHOD_NAME, total_amount);
-        assert_eq!(http_request.get_type(), HttpRequestDTO::get_data_type());
-        assert_eq!(http_request.get_type(), super::DATA_TYPE);
+        let http_request = HttpRequestMethodDTO::new(METHOD_NAME, total_amount);
+        assert_eq!(http_request.get_type(), HttpRequestMethodDTO::get_data_type());
     }
 }

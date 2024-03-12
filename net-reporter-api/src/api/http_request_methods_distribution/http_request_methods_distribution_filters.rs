@@ -12,25 +12,25 @@ use net_core_api::encoder_api::Encoder;
 use net_core_api::decoder_api::Decoder;
 use net_core_api::typed_api::Typed;
 
-const DATA_TYPE: &str = "http_request_methods_filters";
+const DATA_TYPE: &str = "http_request_methods_distribution_filters";
 
 #[derive(Debug, PartialEq, Eq, Clone)]
-pub struct HttpRequestMethodsFiltersDTO {
+pub struct HttpRequestMethodsDisributionFiltersDTO {
     endpoints: Vec<String>,
     include_endpoints_mode: Option<bool>,
     bytes_lower_bound: Option<i64>,
     bytes_upper_bound: Option<i64>,
 }
-impl API for HttpRequestMethodsFiltersDTO { }
+impl API for HttpRequestMethodsDisributionFiltersDTO { }
 
-impl HttpRequestMethodsFiltersDTO {
+impl HttpRequestMethodsDisributionFiltersDTO {
     pub fn new(
         endpoints: &[String],
         include_endpoints_mode: Option<bool>,
         bytes_lower_bound: Option<i64>,
         bytes_upper_bound: Option<i64>,
     ) -> Self {
-        HttpRequestMethodsFiltersDTO {
+        HttpRequestMethodsDisributionFiltersDTO {
             endpoints: endpoints.to_vec(),
             include_endpoints_mode,
             bytes_lower_bound,
@@ -55,7 +55,7 @@ impl HttpRequestMethodsFiltersDTO {
     }
 }
 
-impl Encoder for HttpRequestMethodsFiltersDTO {
+impl Encoder for HttpRequestMethodsDisributionFiltersDTO {
     fn encode(&self) -> Vec<u8> {
         let buffer: Vec<u8> = Vec::new();
 
@@ -97,7 +97,7 @@ impl Encoder for HttpRequestMethodsFiltersDTO {
     }
 }
 
-impl Decoder for HttpRequestMethodsFiltersDTO {
+impl Decoder for HttpRequestMethodsDisributionFiltersDTO {
     fn decode(data: &[u8]) -> Self {
 
         let mut binary_user_reader = ReaderBuilder::new().build(data).unwrap();
@@ -135,7 +135,7 @@ impl Decoder for HttpRequestMethodsFiltersDTO {
             _ => None,
         };
 
-        HttpRequestMethodsFiltersDTO::new(
+        HttpRequestMethodsDisributionFiltersDTO::new(
             endpoints.as_slice(),
             include_endpoints,
             bytes_lower_bound,
@@ -144,7 +144,7 @@ impl Decoder for HttpRequestMethodsFiltersDTO {
     }
 }
 
-impl Typed for HttpRequestMethodsFiltersDTO {
+impl Typed for HttpRequestMethodsDisributionFiltersDTO {
     fn get_data_type() -> &'static str {
         DATA_TYPE
     }
@@ -165,7 +165,7 @@ mod tests {
     use net_core_api::encoder_api::Encoder;
     use net_core_api::decoder_api::Decoder;
 
-    use crate::api::http_request_methods_dist::http_request_methods_filters::HttpRequestMethodsFiltersDTO;
+    use crate::api::http_request_methods_distribution::http_request_methods_distribution_filters::HttpRequestMethodsDisributionFiltersDTO;
 
     
     #[test]
@@ -174,7 +174,7 @@ mod tests {
         const INCLUDE_ENDPOINTS_MODE: bool = true;
         let bytes_lower_bound = Some(100);
         
-        let filters = HttpRequestMethodsFiltersDTO::new(
+        let filters = HttpRequestMethodsDisributionFiltersDTO::new(
             &endpoints,
             Some(INCLUDE_ENDPOINTS_MODE),
             bytes_lower_bound,
@@ -217,7 +217,7 @@ mod tests {
         let endpoints = vec![];
         let bytes_upper_bound = Some(100);
         
-        let filters = HttpRequestMethodsFiltersDTO::new(
+        let filters = HttpRequestMethodsDisributionFiltersDTO::new(
             &endpoints,
             None,
             None,
@@ -247,7 +247,7 @@ mod tests {
         let endpoints = vec!["0.0.0.0".to_string(), "1.1.1.1".to_string()];
         const INCLUDE_ENDPOINTS_MODE: bool = true;
         
-        let filters = HttpRequestMethodsFiltersDTO::new(
+        let filters = HttpRequestMethodsDisributionFiltersDTO::new(
             &endpoints,
             Some(INCLUDE_ENDPOINTS_MODE),
             None,
@@ -290,13 +290,13 @@ mod tests {
         let endpoints = vec!["0.0.0.0".to_string(), "1.1.1.1".to_string()];
         const INCLUDE_ENDPOINTS_MODE: bool = true;
         
-        let filters: HttpRequestMethodsFiltersDTO = HttpRequestMethodsFiltersDTO::new(
+        let filters: HttpRequestMethodsDisributionFiltersDTO = HttpRequestMethodsDisributionFiltersDTO::new(
             &endpoints,
             Some(INCLUDE_ENDPOINTS_MODE),
             None,
             None,
         );
         
-        assert_eq!(filters, HttpRequestMethodsFiltersDTO::decode(&filters.encode()));
+        assert_eq!(filters, HttpRequestMethodsDisributionFiltersDTO::decode(&filters.encode()));
     }
 }

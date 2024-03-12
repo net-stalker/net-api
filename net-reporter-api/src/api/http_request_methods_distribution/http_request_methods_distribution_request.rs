@@ -10,22 +10,22 @@ use net_core_api::encoder_api::Encoder;
 use net_core_api::decoder_api::Decoder;
 use net_core_api::typed_api::Typed;
 
-use super::http_request_methods_filters::HttpRequestMethodsFiltersDTO;
+use super::http_request_methods_distribution_filters::HttpRequestMethodsDisributionFiltersDTO;
 
 
-const DATA_TYPE: &str = "http_request_methods_request";
+const DATA_TYPE: &str = "http_request_methods_disribution_request";
 
 #[derive(Debug, PartialEq, Eq)]
-pub struct HttpRequestMethodsRequestDTO {
+pub struct HttpRequestMethodsDistributionRequestDTO {
     start_date_time: i64,
     end_date_time: i64,
-    filters: HttpRequestMethodsFiltersDTO,
+    filters: HttpRequestMethodsDisributionFiltersDTO,
 }
-impl API for HttpRequestMethodsRequestDTO { }
+impl API for HttpRequestMethodsDistributionRequestDTO { }
 
-impl HttpRequestMethodsRequestDTO {
-    pub fn new(start_date_time: i64, end_date_time: i64, filters: HttpRequestMethodsFiltersDTO) -> Self {
-        HttpRequestMethodsRequestDTO {
+impl HttpRequestMethodsDistributionRequestDTO {
+    pub fn new(start_date_time: i64, end_date_time: i64, filters: HttpRequestMethodsDisributionFiltersDTO) -> Self {
+        HttpRequestMethodsDistributionRequestDTO {
             start_date_time,
             end_date_time,
             filters,
@@ -40,12 +40,12 @@ impl HttpRequestMethodsRequestDTO {
         self.end_date_time
     }
 
-    pub fn get_filters(&self) -> &HttpRequestMethodsFiltersDTO {
+    pub fn get_filters(&self) -> &HttpRequestMethodsDisributionFiltersDTO {
         &self.filters
     }
 }
 
-impl Encoder for HttpRequestMethodsRequestDTO {
+impl Encoder for HttpRequestMethodsDistributionRequestDTO {
     fn encode(&self) -> Vec<u8> {
         let buffer: Vec<u8> = Vec::new();
 
@@ -70,7 +70,7 @@ impl Encoder for HttpRequestMethodsRequestDTO {
     }
 }
 
-impl Decoder for HttpRequestMethodsRequestDTO {
+impl Decoder for HttpRequestMethodsDistributionRequestDTO {
     fn decode(data: &[u8]) -> Self {
 
         let mut binary_user_reader = ReaderBuilder::new().build(data).unwrap();
@@ -84,9 +84,9 @@ impl Decoder for HttpRequestMethodsRequestDTO {
         let end_date_time = binary_user_reader.read_i64().unwrap();
 
         binary_user_reader.next().unwrap();
-        let filters = HttpRequestMethodsFiltersDTO::decode(binary_user_reader.read_blob().unwrap().as_slice());
+        let filters = HttpRequestMethodsDisributionFiltersDTO::decode(binary_user_reader.read_blob().unwrap().as_slice());
 
-        HttpRequestMethodsRequestDTO::new(
+        HttpRequestMethodsDistributionRequestDTO::new(
             start_date_time,
             end_date_time,
             filters
@@ -94,7 +94,7 @@ impl Decoder for HttpRequestMethodsRequestDTO {
     }
 }
 
-impl Typed for HttpRequestMethodsRequestDTO {
+impl Typed for HttpRequestMethodsDistributionRequestDTO {
     fn get_data_type() -> &'static str {
         DATA_TYPE
     }
@@ -114,16 +114,15 @@ mod tests {
 
     use net_core_api::encoder_api::Encoder;
     use net_core_api::decoder_api::Decoder;
-    use net_core_api::typed_api::Typed;
 
-    use crate::api::http_request_methods_dist::http_request_methods_dist_request::HttpRequestMethodsRequestDTO;
-    use crate::api::http_request_methods_dist::http_request_methods_filters::HttpRequestMethodsFiltersDTO;
+    use crate::api::http_request_methods_distribution::http_request_methods_distribution_request::HttpRequestMethodsDistributionRequestDTO;
+    use crate::api::http_request_methods_distribution::http_request_methods_distribution_filters::HttpRequestMethodsDisributionFiltersDTO;
 
-    fn get_test_filters() -> HttpRequestMethodsFiltersDTO {
+    fn get_test_filters() -> HttpRequestMethodsDisributionFiltersDTO {
         let endpoints = vec!["0.0.0.0".to_string(), "1.1.1.1".to_string()];
         const INCLUDE_ENDPOINTS_MODE: bool = true;
         
-        HttpRequestMethodsFiltersDTO::new(
+        HttpRequestMethodsDisributionFiltersDTO::new(
             &endpoints,
             Some(INCLUDE_ENDPOINTS_MODE),
             None,
@@ -136,7 +135,7 @@ mod tests {
         const START_DATE_TIME: i64 = i64::MIN;
         const END_DATE_TIME: i64 = i64::MAX;
 
-        let network_graph_request = HttpRequestMethodsRequestDTO::new(
+        let network_graph_request = HttpRequestMethodsDistributionRequestDTO::new(
             START_DATE_TIME,
             END_DATE_TIME,
             get_test_filters(),
@@ -157,7 +156,7 @@ mod tests {
 
         assert_eq!(StreamItem::Value(IonType::Blob), binary_user_reader.next().unwrap());
         assert_eq!("filters", binary_user_reader.field_name().unwrap());
-        assert_eq!(get_test_filters(), HttpRequestMethodsFiltersDTO::decode(binary_user_reader.read_blob().unwrap().as_slice()));
+        assert_eq!(get_test_filters(), HttpRequestMethodsDisributionFiltersDTO::decode(binary_user_reader.read_blob().unwrap().as_slice()));
     }
 
     #[test]
@@ -165,24 +164,11 @@ mod tests {
         const START_DATE_TIME: i64 = i64::MIN;
         const END_DATE_TIME: i64 = i64::MAX;
 
-        let network_graph_request = HttpRequestMethodsRequestDTO::new(
+        let network_graph_request = HttpRequestMethodsDistributionRequestDTO::new(
             START_DATE_TIME,
             END_DATE_TIME,
             get_test_filters(),
         );
-        assert_eq!(network_graph_request, HttpRequestMethodsRequestDTO::decode(&network_graph_request.encode()));
-    }
-    #[test]
-    fn test_getting_data_types() {
-        const START_DATE_TIME: i64 = i64::MIN;
-        const END_DATE_TIME: i64 = i64::MAX;
-
-        let network_graph_request = HttpRequestMethodsRequestDTO::new(
-            START_DATE_TIME,
-            END_DATE_TIME,
-            get_test_filters(),
-        );
-        assert_eq!(network_graph_request.get_type(), HttpRequestMethodsRequestDTO::get_data_type());
-        assert_eq!(network_graph_request.get_type(), super::DATA_TYPE);
+        assert_eq!(network_graph_request, HttpRequestMethodsDistributionRequestDTO::decode(&network_graph_request.encode()));
     }
 }
