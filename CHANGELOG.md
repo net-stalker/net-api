@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 <!-- [START AUTO UPDATE] -->
 <!-- Please keep comment here to allow auto-update -->
+## [0.1.3-088baaa] - 2024-03-18
+
+NS-207/rewrite-api (#35)
+
+* NS-207/rewrite-api: Remove RequestResultDTO. Bad design. Will be moved to net-core-api as general ResultDTO
 <!-- [END AUTO UPDATE] -->
 ## [0.1.3-dcdab54] - 2024-03-15
 
