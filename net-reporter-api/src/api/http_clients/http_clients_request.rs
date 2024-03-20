@@ -5,10 +5,10 @@ use ion_rs::IonType;
 use ion_rs::IonWriter;
 use ion_rs::ReaderBuilder;
 
-use net_core_api::api::API;
-use net_core_api::encoder_api::Encoder;
-use net_core_api::decoder_api::Decoder;
-use net_core_api::typed_api::Typed;
+use net_core_api::core::api::API;
+use net_core_api::core::encoder_api::Encoder;
+use net_core_api::core::decoder_api::Decoder;
+use net_core_api::core::typed_api::Typed;
 
 use super::http_clients_filters::HttpClientsFiltersDTO;
 
@@ -113,8 +113,8 @@ mod tests {
     use ion_rs::ReaderBuilder;
     use ion_rs::StreamItem;
     
-    use net_core_api::encoder_api::Encoder;
-    use net_core_api::decoder_api::Decoder;
+    use net_core_api::core::encoder_api::Encoder;
+    use net_core_api::core::decoder_api::Decoder;
 
     use crate::api::http_clients::http_clients_request::HttpClientsRequestDTO;
     use crate::api::http_clients::http_clients_filters::HttpClientsFiltersDTO;

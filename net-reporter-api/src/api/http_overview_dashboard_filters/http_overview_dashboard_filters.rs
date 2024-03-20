@@ -7,10 +7,10 @@ use ion_rs::IonWriter;
 use ion_rs::ReaderBuilder;
 use ion_rs::element::reader::ElementReader;
 
-use net_core_api::api::API;
-use net_core_api::encoder_api::Encoder;
-use net_core_api::decoder_api::Decoder;
-use net_core_api::typed_api::Typed;
+use net_core_api::core::api::API;
+use net_core_api::core::encoder_api::Encoder;
+use net_core_api::core::decoder_api::Decoder;
+use net_core_api::core::typed_api::Typed;
 
 const DATA_TYPE: &str = "http_overview_dashboard_filters";
 
@@ -143,9 +143,9 @@ mod tests {
     use ion_rs::StreamItem;
     use ion_rs::element::reader::ElementReader;
     
-    use net_core_api::encoder_api::Encoder;
-    use net_core_api::decoder_api::Decoder;
-    use net_core_api::typed_api::Typed;
+    use net_core_api::core::encoder_api::Encoder;
+    use net_core_api::core::decoder_api::Decoder;
+    use net_core_api::core::typed_api::Typed;
 
     use crate::api::http_overview_dashboard_filters::http_overview_dashboard_filters::HttpOverviewDashboardFiltersDTO;
 
