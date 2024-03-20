@@ -5,12 +5,12 @@ use ion_rs::IonReader;
 use ion_rs::IonType;
 use ion_rs::IonWriter;
 use ion_rs::ReaderBuilder;
-
 use ion_rs::StreamItem;
-use net_core_api::api::API;
-use net_core_api::encoder_api::Encoder;
-use net_core_api::decoder_api::Decoder;
-use net_core_api::typed_api::Typed;
+
+use net_core_api::core::api::API;
+use net_core_api::core::encoder_api::Encoder;
+use net_core_api::core::decoder_api::Decoder;
+use net_core_api::core::typed_api::Typed;
 
 const DATA_TYPE: &str = "total_http_requests_filters";
 
@@ -213,8 +213,8 @@ mod tests {
     use ion_rs::ReaderBuilder;
     use ion_rs::StreamItem;
     
-    use net_core_api::encoder_api::Encoder;
-    use net_core_api::decoder_api::Decoder;
+    use net_core_api::core::encoder_api::Encoder;
+    use net_core_api::core::decoder_api::Decoder;
 
     use crate::api::total_http_requests::total_http_requests_filters::TotalHttpRequestsFiltersDTO;
 
