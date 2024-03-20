@@ -8,6 +8,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 <!-- [START AUTO UPDATE] -->
 <!-- Please keep comment here to allow auto-update -->
+## [0.1.4-8b2a671] - 2024-03-20
+
+Ns 225/fix net api (#36)
+
+* NS-225/fix-net-api: Update net-core lib version
+
+* NS-225/fix-net-api: Fix net-agent-api
+
+* NS-225/fix-net-api: Fix net-inserter-api
+
+* NS-225/fix-net-api: Fix net-reporter-api
 <!-- [END AUTO UPDATE] -->
 ## [0.1.3-088baaa] - 2024-03-18
 
