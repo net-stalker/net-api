@@ -14,7 +14,7 @@ use net_core_api::core::typed_api::Typed;
 
 const DATA_TYPE: &str = "data_packet";
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub struct DataPacketDTO {
     data: Vec<u8>
 }

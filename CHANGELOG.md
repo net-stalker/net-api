@@ -8,12 +8,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 <!-- [START AUTO UPDATE] -->
 <!-- Please keep comment here to allow auto-update -->
+<!-- [END AUTO UPDATE] -->
 ## [0.1.5-36924cd] - 2024-04-04
 
 NS-262/update-net-core-version: Update net-core lib version (#37)
 
 * NS-262/update-net-core-version: Update net-core lib version
-<!-- [END AUTO UPDATE] -->
 ## [0.1.4-8b2a671] - 2024-03-20
 
 Ns 225/fix net api (#36)
