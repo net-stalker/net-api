@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 <!-- [START AUTO UPDATE] -->
 <!-- Please keep comment here to allow auto-update -->
+## [0.1.6-1f26c88] - 2024-04-08
+
+Ns 271/add clone trait to the datapacketdto (#38)
+
+* NS-271/add-clone-trait-to-the-datapacketdto: Add Clone trait to the DataPacketDTO
 <!-- [END AUTO UPDATE] -->
 ## [0.1.5-36924cd] - 2024-04-04
 
