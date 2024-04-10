@@ -9,3 +9,4 @@ license = "Apache-2.0"
 net-core-api.workspace = true
 
 ion-rs = "0.18.1"
+thiserror = "1.0.58"
