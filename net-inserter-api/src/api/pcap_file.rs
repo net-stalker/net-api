@@ -21,13 +21,13 @@ use super::insert_request::InsertRequestDTO;
 const DATA_TYPE: &str = "pcap_file";
 
 #[derive(Debug, PartialEq, Eq, Clone)]
-pub struct PcapFileDTO {
+pub struct InsertPcapFileDTO {
     data: Vec<u8>
 }
 
-impl API for PcapFileDTO { }
+impl API for InsertPcapFileDTO { }
 
-impl InsertAPI for PcapFileDTO {
+impl InsertAPI for InsertPcapFileDTO {
     fn into_insert_request(&self) -> InsertRequestDTO {
         InsertRequestDTO::new(
             DATA_TYPE,
@@ -35,18 +35,18 @@ impl InsertAPI for PcapFileDTO {
         )
     }
 
-    fn into_insert_entity(request: InsertRequestDTO) -> Result<PcapFileDTO, Box<dyn Error + Send + Sync>> {
+    fn into_insert_entity(request: InsertRequestDTO) -> Result<InsertPcapFileDTO, Box<dyn Error + Send + Sync>> {
         if request.get_entity_type() != DATA_TYPE {
             return Err(Box::new(DecodeInsertEntityError::WrongInsertRequest));
         }
-        let pcap_file = PcapFileDTO::decode(request.get_entity());
+        let pcap_file = InsertPcapFileDTO::decode(request.get_entity());
         Ok(pcap_file)
     }
 }
 
-impl PcapFileDTO {
+impl InsertPcapFileDTO {
     pub fn new (data: &[u8]) -> Self {
-        PcapFileDTO {
+        InsertPcapFileDTO {
             data: data.into()
         }
     }
@@ -56,7 +56,7 @@ impl PcapFileDTO {
     }
 }
 
-impl Encoder for PcapFileDTO {
+impl Encoder for InsertPcapFileDTO {
     fn encode(&self) -> Vec<u8> {
         let buffer: Vec<u8> = Vec::new();
 
@@ -76,7 +76,7 @@ impl Encoder for PcapFileDTO {
     }
 }
 
-impl Decoder for PcapFileDTO {
+impl Decoder for InsertPcapFileDTO {
     fn decode(data: &[u8]) -> Self {
 
         let mut binary_user_reader = ReaderBuilder::new().build(data).unwrap();
@@ -87,13 +87,13 @@ impl Decoder for PcapFileDTO {
         let binding = binary_user_reader.read_blob().unwrap();
         let data = binding.as_slice();
 
-        PcapFileDTO::new(
+        InsertPcapFileDTO::new(
             data
         )
     }
 }
 
-impl Typed for PcapFileDTO {
+impl Typed for InsertPcapFileDTO {
     fn get_data_type() -> &'static str {
         DATA_TYPE
     }
@@ -118,12 +118,12 @@ mod tests {
 
     use crate::api::core::insert_api::InsertAPI;
     use crate::api::insert_request::InsertRequestDTO;
-    use crate::api::pcap_file::PcapFileDTO;
+    use crate::api::pcap_file::InsertPcapFileDTO;
 
     #[test]
     fn reader_correctly_read_encoded_data_packet() {
         const DATA: &[u8] = "SOME_RAW_PCAP".as_bytes();
-        let pcap_file: PcapFileDTO = PcapFileDTO::new(DATA);
+        let pcap_file: InsertPcapFileDTO = InsertPcapFileDTO::new(DATA);
         let mut binary_user_reader = ReaderBuilder::new().build(pcap_file.encode()).unwrap();
 
         assert_eq!(StreamItem::Value(IonType::Struct), binary_user_reader.next().unwrap());
@@ -137,33 +137,33 @@ mod tests {
     #[test]
     fn endec_data_packet() {
         const DATA: &[u8] = "SOME_RAW_PCAP".as_bytes();
-        let pcap_file: PcapFileDTO = PcapFileDTO::new(DATA);
-        assert_eq!(pcap_file, PcapFileDTO::decode(&pcap_file.encode()));
+        let pcap_file: InsertPcapFileDTO = InsertPcapFileDTO::new(DATA);
+        assert_eq!(pcap_file, InsertPcapFileDTO::decode(&pcap_file.encode()));
     }
 
     #[test]
     fn test_getting_data_types() {
         const DATA: &[u8] = "SOME_RAW_PCAP".as_bytes();
-        let pcap_file: PcapFileDTO = PcapFileDTO::new(DATA);
-        assert_eq!(pcap_file.get_type(), PcapFileDTO::get_data_type());
+        let pcap_file: InsertPcapFileDTO = InsertPcapFileDTO::new(DATA);
+        assert_eq!(pcap_file.get_type(), InsertPcapFileDTO::get_data_type());
         assert_eq!(pcap_file.get_type(), super::DATA_TYPE);
     }
 
     #[test]
     fn test_insert_api() {
         const DATA: &[u8] = "SOME_RAW_PCAP".as_bytes();
-        let pcap_file: PcapFileDTO = PcapFileDTO::new(DATA);
+        let pcap_file: InsertPcapFileDTO = InsertPcapFileDTO::new(DATA);
         let insert_request = pcap_file.into_insert_request();
-        let decoded_pcap_file = PcapFileDTO::into_insert_entity(insert_request).unwrap();
+        let decoded_pcap_file = InsertPcapFileDTO::into_insert_entity(insert_request).unwrap();
         assert_eq!(pcap_file, decoded_pcap_file);
     }
 
     #[test]
     fn test_pcap_file_with_insert_api_is_err() {
         const DATA: &[u8] = "SOME_RAW_PCAP".as_bytes();
-        let pcap_file: PcapFileDTO = PcapFileDTO::new(DATA);
+        let pcap_file: InsertPcapFileDTO = InsertPcapFileDTO::new(DATA);
         let insert_api = InsertRequestDTO::new("wrong_data_type", &pcap_file.encode());
 
-        assert!(PcapFileDTO::into_insert_entity(insert_api).is_err());
+        assert!(InsertPcapFileDTO::into_insert_entity(insert_api).is_err());
     }
 }
