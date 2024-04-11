@@ -29,7 +29,7 @@ pub struct InsertNetworkRequestDTO {
 impl API for InsertNetworkRequestDTO { }
 
 impl InsertAPI for InsertNetworkRequestDTO {
-    fn into_insert_request(&self) -> InsertRequestDTO {
+    fn into_insert_request(self) -> InsertRequestDTO {
         InsertRequestDTO::new(
             DATA_TYPE,
             &self.encode()
@@ -135,7 +135,7 @@ mod tests {
     use crate::api::network::InsertNetworkRequestDTO;
 
     #[test]
-    fn reader_correctly_read_encoded_data_packet() {
+    fn reader_correctly_read_encoded_insert_network_request() {
         const NAME: &str = "SOME_NAME";
         const COLOR: &str = "SOME_COLOR";
         let insert_network_request: InsertNetworkRequestDTO = InsertNetworkRequestDTO::new(NAME, COLOR);
@@ -154,7 +154,7 @@ mod tests {
     }
 
     #[test]
-    fn endec_data_packet() {
+    fn endec_insert_network_request() {
         const NAME: &str = "SOME_NAME";
         const COLOR: &str = "SOME_COLOR";
         let insert_network_request: InsertNetworkRequestDTO = InsertNetworkRequestDTO::new(NAME, COLOR);
@@ -175,13 +175,13 @@ mod tests {
         const NAME: &str = "SOME_NAME";
         const COLOR: &str = "SOME_COLOR";
         let insert_network_request: InsertNetworkRequestDTO = InsertNetworkRequestDTO::new(NAME, COLOR);
-        let insert_request = insert_network_request.into_insert_request();
+        let insert_request = insert_network_request.clone().into_insert_request();
         let decoded_insert_network_request = InsertNetworkRequestDTO::into_insert_entity(insert_request).unwrap();
         assert_eq!(insert_network_request, decoded_insert_network_request);
     }
 
     #[test]
-    fn test_pcap_file_with_insert_api_is_err() {
+    fn test_insert_network_request_with_insert_api_is_err() {
         const NAME: &str = "SOME_NAME";
         const COLOR: &str = "SOME_COLOR";
         let insert_network_request: InsertNetworkRequestDTO = InsertNetworkRequestDTO::new(NAME, COLOR);
