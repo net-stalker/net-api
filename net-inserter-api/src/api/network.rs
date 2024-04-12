@@ -1,5 +1,3 @@
-use std::error::Error;
-
 use ion_rs;
 
 use ion_rs::IonReader;
@@ -13,11 +11,6 @@ use net_core_api::core::encoder_api::Encoder;
 use net_core_api::core::decoder_api::Decoder;
 use net_core_api::core::typed_api::Typed;
 
-use super::core::error::DecodeInsertEntityError;
-use super::core::insert_api::InsertAPI;
-use super::insert_request::InsertRequestDTO;
-
-
 const DATA_TYPE: &str = "insert-network-request";
 
 #[derive(Debug, PartialEq, Eq, Clone)]
@@ -27,23 +20,6 @@ pub struct InsertNetworkRequestDTO {
 }
 
 impl API for InsertNetworkRequestDTO { }
-
-impl InsertAPI for InsertNetworkRequestDTO {
-    fn into_insert_request(self) -> InsertRequestDTO {
-        InsertRequestDTO::new(
-            DATA_TYPE,
-            &self.encode()
-        )
-    }
-
-    fn into_insert_entity(request: InsertRequestDTO) -> Result<InsertNetworkRequestDTO, Box<dyn Error + Send + Sync>> {
-        if request.get_entity_type() != DATA_TYPE {
-            return Err(Box::new(DecodeInsertEntityError::WrongInsertRequest));
-        }
-        let insert_network_request = InsertNetworkRequestDTO::decode(request.get_entity());
-        Ok(insert_network_request)
-    }
-}
 
 impl InsertNetworkRequestDTO {
     pub fn new(name: &str, color: &str) -> Self {
@@ -129,9 +105,6 @@ mod tests {
     use net_core_api::core::encoder_api::Encoder;
     use net_core_api::core::typed_api::Typed;
 
-
-    use crate::api::core::insert_api::InsertAPI;
-    use crate::api::insert_request::InsertRequestDTO;
     use crate::api::network::InsertNetworkRequestDTO;
 
     #[test]
@@ -168,25 +141,5 @@ mod tests {
         let insert_network_request: InsertNetworkRequestDTO = InsertNetworkRequestDTO::new(NAME, COLOR);
         assert_eq!(insert_network_request.get_type(), InsertNetworkRequestDTO::get_data_type());
         assert_eq!(insert_network_request.get_type(), super::DATA_TYPE);
-    }
-
-    #[test]
-    fn test_insert_api() {
-        const NAME: &str = "SOME_NAME";
-        const COLOR: &str = "SOME_COLOR";
-        let insert_network_request: InsertNetworkRequestDTO = InsertNetworkRequestDTO::new(NAME, COLOR);
-        let insert_request = insert_network_request.clone().into_insert_request();
-        let decoded_insert_network_request = InsertNetworkRequestDTO::into_insert_entity(insert_request).unwrap();
-        assert_eq!(insert_network_request, decoded_insert_network_request);
-    }
-
-    #[test]
-    fn test_insert_network_request_with_insert_api_is_err() {
-        const NAME: &str = "SOME_NAME";
-        const COLOR: &str = "SOME_COLOR";
-        let insert_network_request: InsertNetworkRequestDTO = InsertNetworkRequestDTO::new(NAME, COLOR);
-        let insert_api = InsertRequestDTO::new("wrong_data_type", &insert_network_request.encode());
-
-        assert!(InsertNetworkRequestDTO::into_insert_entity(insert_api).is_err());
     }
 }
