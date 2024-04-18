@@ -12,7 +12,7 @@ use net_core_api::core::decoder_api::Decoder;
 use net_core_api::core::typed_api::Typed;
 
 
-const DATA_TYPE: &str = "pcap_file";
+const DATA_TYPE: &str = "pcap-file";
 
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct InsertPcapFileDTO {
