@@ -8,12 +8,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 <!-- [START AUTO UPDATE] -->
 <!-- Please keep comment here to allow auto-update -->
+<!-- [END AUTO UPDATE] -->
 ## [0.1.6-72144ac] - 2024-04-16
 
 Ns 278/update net inserter api (#39)
 
 * implemented insert network request and pcap_file dto structures
-<!-- [END AUTO UPDATE] -->
 ## [0.1.6-1f26c88] - 2024-04-08
 
 Ns 271/add clone trait to the datapacketdto (#38)
