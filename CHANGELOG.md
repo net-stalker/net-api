@@ -8,12 +8,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 <!-- [START AUTO UPDATE] -->
 <!-- Please keep comment here to allow auto-update -->
+<!-- [END AUTO UPDATE] -->
 ## [0.2.0-16132f4] - 2024-04-26
 
 remove-net-agent-api-updated-net-inserter-api: rewored network packet (#40)
 
 * reworked network packet dto strucutre, deleted net-agent-api, updated data types of dto structures in net-isnerter to match a common pattern
-<!-- [END AUTO UPDATE] -->
 ## [0.1.6-72144ac] - 2024-04-16
 
 Ns 278/update net inserter api (#39)
