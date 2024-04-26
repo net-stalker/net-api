@@ -1,7 +1,6 @@
 [workspace]
 
 members = [
-	"net-agent-api",
 	"net-inserter-api",
 	"net-reporter-api",
 ]

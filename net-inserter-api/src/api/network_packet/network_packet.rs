@@ -1,5 +1,6 @@
 use ion_rs;
 
+use ion_rs::element::reader::ElementReader;
 use ion_rs::IonReader;
 use ion_rs::IonType;
 use ion_rs::IonWriter;
@@ -11,44 +12,59 @@ use net_core_api::core::encoder_api::Encoder;
 use net_core_api::core::decoder_api::Decoder;
 use net_core_api::core::typed_api::Typed;
 
-
-const DATA_TYPE: &str = "network_packet";
+const DATA_TYPE: &str = "network-packet";
 
 #[derive(Debug, PartialEq, Eq)]
 pub struct NetworkPacketDTO {
+    id: i64,
     frame_time: i64,
-
-    src_addr: String,
-    dst_addr: String,
-
-    network_packet_data: Vec<u8>,
+    src: String,
+    dst: String,
+    protocols: Vec<String>,
+    json_data: Vec<u8>,
 }
 impl API for NetworkPacketDTO { }
 
 impl NetworkPacketDTO {
-    pub fn new(frame_time: i64, src_addr: &str, dst_addr: &str, network_packet_data: &[u8]) -> Self {
+    pub fn new(
+        id: i64,
+        frame_time: i64,
+        src: &str,
+        dst: &str,
+        protocols: &[String],
+        json_data: &[u8],
+    ) -> Self {
         NetworkPacketDTO { 
+            id,
             frame_time, 
-            src_addr: src_addr.into(), 
-            dst_addr: dst_addr.into(), 
-            network_packet_data: network_packet_data.into()
+            src: src.into(), 
+            dst: dst.into(), 
+            protocols: protocols.to_vec(),
+            json_data: json_data.into()
         }
+    }
+    pub fn get_id(&self) -> i64 {
+        self.id
     }
 
     pub fn get_frame_time(&self) -> i64 {
         self.frame_time
     }
 
-    pub fn get_src_addr(&self) -> &str {
-        &self.src_addr
+    pub fn get_src(&self) -> &str {
+        &self.src
     }
 
-    pub fn get_dst_addr(&self) -> &str {
-        &self.dst_addr
+    pub fn get_dst(&self) -> &str {
+        &self.dst
     }
 
-    pub fn get_network_packet_data(&self) -> &[u8] {
-        &self.network_packet_data
+    pub fn get_protocols(&self) -> &[String] {
+        &self.protocols
+    }
+
+    pub fn get_json(&self) -> &[u8] {
+        &self.json_data
     }
 }
 
@@ -60,18 +76,28 @@ impl Encoder for NetworkPacketDTO {
         let mut writer = binary_writer_builder.build(buffer.clone()).unwrap();
         
         writer.step_in(IonType::Struct).expect("Error while creating an ion struct");
+
+        writer.set_field_name("id");
+        writer.write_i64(self.id).unwrap();
         
         writer.set_field_name("frame_time");
         writer.write_i64(self.frame_time).unwrap();
 
-        writer.set_field_name("src_addr");
-        writer.write_string(&self.src_addr).unwrap();
+        writer.set_field_name("src");
+        writer.write_string(&self.src).unwrap();
 
-        writer.set_field_name("dst_addr");
-        writer.write_string(&self.dst_addr).unwrap();
+        writer.set_field_name("dst");
+        writer.write_string(&self.dst).unwrap();
 
-        writer.set_field_name("network_packet_data");
-        writer.write_blob(&self.network_packet_data).unwrap();
+        writer.set_field_name("protocols");
+        writer.step_in(IonType::List).expect("Error while entering an ion list");
+        for protocol in &self.protocols {
+            writer.write_string(protocol).unwrap();
+        }
+        writer.step_out().unwrap();
+        
+        writer.set_field_name("json_data");
+        writer.write_blob(&self.json_data).unwrap();
 
         writer.step_out().unwrap();
         writer.flush().unwrap();
@@ -88,25 +114,39 @@ impl Decoder for NetworkPacketDTO {
         binary_user_reader.step_in().unwrap();
 
         binary_user_reader.next().unwrap();
+        let id = binary_user_reader.read_i64().unwrap();
+
+        binary_user_reader.next().unwrap();
         let frame_time = binary_user_reader.read_i64().unwrap();
         
         binary_user_reader.next().unwrap();
         let binding = binary_user_reader.read_string().unwrap();
-        let src_addr = binding.text();
+        let src = binding.text();
 
         binary_user_reader.next().unwrap();
         let binding = binary_user_reader.read_string().unwrap();
-        let dst_addr = binding.text();
+        let dst = binding.text();
+
+        binary_user_reader.next().unwrap();
+        binary_user_reader.step_in().unwrap();
+        let elements = binary_user_reader.read_all_elements().unwrap();
+        let mut protocols = Vec::<String>::with_capacity(elements.len());
+        for element in elements {
+            protocols.push(element.as_text().unwrap().to_string());
+        }
+        binary_user_reader.step_out().unwrap();
 
         binary_user_reader.next().unwrap();
         let binding = binary_user_reader.read_blob().unwrap();
-        let network_packet_data = binding.as_slice();
+        let json_data = binding.as_slice();
 
         NetworkPacketDTO::new(
+            id,
             frame_time, 
-            src_addr, 
-            dst_addr, 
-            network_packet_data
+            src, 
+            dst,
+            &protocols, 
+            json_data,
         )
     }
 }
@@ -135,70 +175,93 @@ mod tests {
 
     use crate::api::network_packet::network_packet::NetworkPacketDTO;
 
-
     #[test]
-    fn reader_correctly_read_encoded_network_paket() {        
+    fn reader_correctly_read_encoded_network_packet() {
+        const ID: i64 = 1;
         const FRAME_TIME: i64 = i64::MIN;
         const SRC_ADDR: &str = "0.0.0.0:0000";
         const DST_ADDR: &str = "0.0.0.0:5656";
+        let protocols: &[String] = &["protocol1".to_string(), "protocol2".to_string()];
         const NETWORK_PACKET_DATA: &[u8] = "NETWORK_PACKET_DATA".as_bytes();
-        let network_paket = NetworkPacketDTO::new(
-            FRAME_TIME, 
-            SRC_ADDR, 
-            DST_ADDR, 
+        let network_packet = NetworkPacketDTO::new(
+            ID,
+            FRAME_TIME,
+            SRC_ADDR,
+            DST_ADDR,
+            protocols,
             NETWORK_PACKET_DATA
         );
-        let mut binary_user_reader = ReaderBuilder::new().build(network_paket.encode()).unwrap();
+        let mut binary_user_reader = ReaderBuilder::new().build(network_packet.encode()).unwrap();
 
         assert_eq!(StreamItem::Value(IonType::Struct), binary_user_reader.next().unwrap());
         binary_user_reader.step_in().unwrap();
+
+        assert_eq!(StreamItem::Value(IonType::Int), binary_user_reader.next().unwrap());
+        assert_eq!("id", binary_user_reader.field_name().unwrap());
+        assert_eq!(ID, binary_user_reader.read_i64().unwrap());
 
         assert_eq!(StreamItem::Value(IonType::Int), binary_user_reader.next().unwrap());
         assert_eq!("frame_time", binary_user_reader.field_name().unwrap());
         assert_eq!(FRAME_TIME, binary_user_reader.read_i64().unwrap());
         
         assert_eq!(StreamItem::Value(IonType::String), binary_user_reader.next().unwrap());
-        assert_eq!("src_addr", binary_user_reader.field_name().unwrap());
-        assert_eq!(SRC_ADDR,  binary_user_reader.read_string().unwrap().text());
+        assert_eq!("src", binary_user_reader.field_name().unwrap());
+        assert_eq!(SRC_ADDR, binary_user_reader.read_string().unwrap().text());
 
         assert_eq!(StreamItem::Value(IonType::String), binary_user_reader.next().unwrap());
-        assert_eq!("dst_addr", binary_user_reader.field_name().unwrap());
-        assert_eq!(DST_ADDR,  binary_user_reader.read_string().unwrap().text());
+        assert_eq!("dst", binary_user_reader.field_name().unwrap());
+        assert_eq!(DST_ADDR, binary_user_reader.read_string().unwrap().text());
+
+        assert_eq!(StreamItem::Value(IonType::List), binary_user_reader.next().unwrap());
+        assert_eq!("protocols", binary_user_reader.field_name().unwrap());
+        binary_user_reader.step_in().unwrap();
+        for protocol in protocols {
+            assert_eq!(StreamItem::Value(IonType::String), binary_user_reader.next().unwrap());
+            assert_eq!(protocol, binary_user_reader.read_string().unwrap().text());
+        }
+        binary_user_reader.step_out().unwrap();
 
         assert_eq!(StreamItem::Value(IonType::Blob), binary_user_reader.next().unwrap());
-        assert_eq!("network_packet_data", binary_user_reader.field_name().unwrap());
+        assert_eq!("json_data", binary_user_reader.field_name().unwrap());
         assert_eq!(NETWORK_PACKET_DATA, binary_user_reader.read_blob().unwrap().as_slice());
     }
 
     #[test]
-    #[ignore]
-    fn endec_network_paket() {
+    fn endec_network_packet() {
+        const ID: i64 = 1;
         const FRAME_TIME: i64 = i64::MIN;
         const SRC_ADDR: &str = "0.0.0.0:0000";
         const DST_ADDR: &str = "0.0.0.0:5656";
+        let protocols: &[String] = &["protocol1".to_string(), "protocol2".to_string()];
         const NETWORK_PACKET_DATA: &[u8] = "NETWORK_PACKET_DATA".as_bytes();
-        let network_paket = NetworkPacketDTO::new(
-            FRAME_TIME, 
-            SRC_ADDR, 
-            DST_ADDR, 
+        let network_packet = NetworkPacketDTO::new(
+            ID,
+            FRAME_TIME,
+            SRC_ADDR,
+            DST_ADDR,
+            protocols,
             NETWORK_PACKET_DATA
         );
-        assert_eq!(network_paket, NetworkPacketDTO::decode(&network_paket.encode()));
+        assert_eq!(network_packet, NetworkPacketDTO::decode(&network_packet.encode()));
     }
 
     #[test]
     fn test_getting_data_types() {
+        const ID: i64 = 1;
         const FRAME_TIME: i64 = i64::MIN;
         const SRC_ADDR: &str = "0.0.0.0:0000";
         const DST_ADDR: &str = "0.0.0.0:5656";
+        let protocols: &[String] = &["protocol1".to_string(), "protocol2".to_string()];
         const NETWORK_PACKET_DATA: &[u8] = "NETWORK_PACKET_DATA".as_bytes();
-        let network_paket = NetworkPacketDTO::new(
+        let network_packet = NetworkPacketDTO::new(
+            ID,
             FRAME_TIME,
             SRC_ADDR,
             DST_ADDR,
+            protocols,
             NETWORK_PACKET_DATA
         );
-        assert_eq!(network_paket.get_type(), NetworkPacketDTO::get_data_type());
-        assert_eq!(network_paket.get_type(), super::DATA_TYPE);
+        assert_eq!(network_packet.get_type(), NetworkPacketDTO::get_data_type());
+        assert_eq!(network_packet.get_type(), super::DATA_TYPE);
     }
 }
