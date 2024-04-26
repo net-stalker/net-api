@@ -13,21 +13,23 @@ use net_core_api::core::typed_api::Typed;
 use super::http_clients_filters::HttpClientsFiltersDTO;
 
 
-const DATA_TYPE: &str = "http_clients_request";
+const DATA_TYPE: &str = "http-clients-request";
 
 #[derive(Debug, PartialEq, Eq)]
 pub struct HttpClientsRequestDTO {
     start_date_time: i64,
     end_date_time: i64,
+    network_id: i64,
     filters: HttpClientsFiltersDTO,
 }
 impl API for HttpClientsRequestDTO { }
 
 impl HttpClientsRequestDTO {
-    pub fn new(start_date_time: i64, end_date_time: i64, filters: HttpClientsFiltersDTO) -> Self {
+    pub fn new(start_date_time: i64, end_date_time: i64, network_id: i64, filters: HttpClientsFiltersDTO) -> Self {
         HttpClientsRequestDTO {
             start_date_time,
             end_date_time,
+            network_id,
             filters,
         }
     }
@@ -38,6 +40,10 @@ impl HttpClientsRequestDTO {
 
     pub fn get_end_date_time(&self) -> i64 {
         self.end_date_time
+    }
+
+    pub fn get_network_id(&self) -> i64 {
+        self.network_id
     }
 
     pub fn get_filters(&self) -> &HttpClientsFiltersDTO {
@@ -59,6 +65,9 @@ impl Encoder for HttpClientsRequestDTO {
 
         writer.set_field_name("end_date_time");
         writer.write_i64(self.end_date_time).unwrap();
+
+        writer.set_field_name("network_id");
+        writer.write_i64(self.network_id).unwrap();
 
         writer.set_field_name("filters");
         writer.write_blob(self.filters.encode().as_slice()).unwrap();
@@ -83,6 +92,9 @@ impl Decoder for HttpClientsRequestDTO {
         let end_date_time = binary_user_reader.read_i64().unwrap();
 
         binary_user_reader.next().unwrap();
+        let network_id = binary_user_reader.read_i64().unwrap();
+
+        binary_user_reader.next().unwrap();
         
         let data = binary_user_reader.read_blob().unwrap();
         let filters = HttpClientsFiltersDTO::decode(data.as_slice());
@@ -90,6 +102,7 @@ impl Decoder for HttpClientsRequestDTO {
         HttpClientsRequestDTO::new(
             start_date_time,
             end_date_time,
+            network_id,
             filters,
         )
     }
@@ -139,10 +152,12 @@ mod tests {
     fn reader_correctly_read_encoded_http_clients_request_some_filters() {
         const START_DATE_TIME: i64 = i64::MIN;
         const END_DATE_TIME: i64 = i64::MAX;
+        const NETWORK_ID: i64 = 1;
 
         let network_bandwidth_request = HttpClientsRequestDTO::new(
             START_DATE_TIME,
             END_DATE_TIME,
+            NETWORK_ID,
             get_test_filters(),
         );
         
@@ -170,10 +185,12 @@ mod tests {
     fn endec_http_clients_request() {
         const START_DATE_TIME: i64 = i64::MIN;
         const END_DATE_TIME: i64 = i64::MAX;
+        const NETWORK_ID: i64 = 1;
 
         let network_bandwidth_request = HttpClientsRequestDTO::new(
             START_DATE_TIME,
             END_DATE_TIME,
+            NETWORK_ID,
             get_test_filters(),
         );
         assert_eq!(network_bandwidth_request, HttpClientsRequestDTO::decode(&network_bandwidth_request.encode()));
