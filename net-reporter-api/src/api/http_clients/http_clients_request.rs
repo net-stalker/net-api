@@ -174,6 +174,10 @@ mod tests {
         assert_eq!("end_date_time", binary_user_reader.field_name().unwrap());
         assert_eq!(END_DATE_TIME,  binary_user_reader.read_i64().unwrap());
 
+        assert_eq!(StreamItem::Value(IonType::Int), binary_user_reader.next().unwrap());
+        assert_eq!("network_id", binary_user_reader.field_name().unwrap());
+        assert_eq!(NETWORK_ID,  binary_user_reader.read_i64().unwrap());
+
         assert_eq!(StreamItem::Value(IonType::Blob), binary_user_reader.next().unwrap());
         assert_eq!("filters", binary_user_reader.field_name().unwrap());
         assert_eq!(get_test_filters(), HttpClientsFiltersDTO::decode(binary_user_reader.read_blob().unwrap().as_slice()));

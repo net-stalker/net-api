@@ -14,21 +14,23 @@ use net_core_api::core::typed_api::Typed;
 use super::network_bandwidth_per_protocol_filters::NetworkBandwidthPerProtocolFiltersDTO;
 
 
-const DATA_TYPE: &str = "network_bandwidth_per_protocol_request";
+const DATA_TYPE: &str = "network-bandwidth-per-protocol-request";
 
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct NetworkBandwidthPerProtocolRequestDTO {
     start_date_time: i64,
     end_date_time: i64,
+    network_id: i64,
     filters: NetworkBandwidthPerProtocolFiltersDTO,
 }
 impl API for NetworkBandwidthPerProtocolRequestDTO { }
 
 impl NetworkBandwidthPerProtocolRequestDTO {
-    pub fn new(start_date_time: i64, end_date_time: i64, filters: NetworkBandwidthPerProtocolFiltersDTO) -> Self {
+    pub fn new(start_date_time: i64, end_date_time: i64, network_id: i64, filters: NetworkBandwidthPerProtocolFiltersDTO) -> Self {
         NetworkBandwidthPerProtocolRequestDTO {
             start_date_time,
             end_date_time,
+            network_id,
             filters,
         }
     }
@@ -39,6 +41,10 @@ impl NetworkBandwidthPerProtocolRequestDTO {
 
     pub fn get_end_date_time(&self) -> i64 {
         self.end_date_time
+    }
+
+    pub fn get_network_id(&self) -> i64 {
+        self.network_id
     }
 
     pub fn get_filters(&self) -> &NetworkBandwidthPerProtocolFiltersDTO {
@@ -61,6 +67,9 @@ impl Encoder for NetworkBandwidthPerProtocolRequestDTO {
 
         writer.set_field_name("end_date_time");
         writer.write_i64(self.end_date_time).unwrap();
+
+        writer.set_field_name("network_id");
+        writer.write_i64(self.network_id).unwrap();
 
         writer.set_field_name("filters");
         writer.write_blob(self.filters.encode()).unwrap();
@@ -85,11 +94,15 @@ impl Decoder for NetworkBandwidthPerProtocolRequestDTO {
         let end_date_time = binary_user_reader.read_i64().unwrap();
 
         binary_user_reader.next().unwrap();
+        let network_id = binary_user_reader.read_i64().unwrap();
+
+        binary_user_reader.next().unwrap();
         let filters = NetworkBandwidthPerProtocolFiltersDTO::decode(binary_user_reader.read_blob().unwrap().as_slice());
 
         NetworkBandwidthPerProtocolRequestDTO::new(
             start_date_time,
             end_date_time,
+            network_id,
             filters,
         )
     }
@@ -138,10 +151,12 @@ mod tests {
     fn reader_correctly_read_encoded_network_bandwidth_per_protocol_request() {
         const START_DATE_TIME: i64 = i64::MIN;
         const END_DATE_TIME: i64 = i64::MAX;
+        const NETWORK_ID: i64 = 1;
 
         let network_bandwidth_per_protocol_request = NetworkBandwidthPerProtocolRequestDTO::new(
             START_DATE_TIME,
             END_DATE_TIME,
+            NETWORK_ID,
             get_test_filters(),
         );
 
@@ -158,6 +173,10 @@ mod tests {
         assert_eq!("end_date_time", binary_user_reader.field_name().unwrap());
         assert_eq!(END_DATE_TIME,  binary_user_reader.read_i64().unwrap());
 
+        assert_eq!(StreamItem::Value(IonType::Int), binary_user_reader.next().unwrap());
+        assert_eq!("network_id", binary_user_reader.field_name().unwrap());
+        assert_eq!(NETWORK_ID,  binary_user_reader.read_i64().unwrap());
+
         assert_eq!(StreamItem::Value(IonType::Blob), binary_user_reader.next().unwrap());
         assert_eq!("filters", binary_user_reader.field_name().unwrap());
         assert_eq!(get_test_filters(),  NetworkBandwidthPerProtocolFiltersDTO::decode(binary_user_reader.read_blob().unwrap().as_slice()));
@@ -167,10 +186,12 @@ mod tests {
     fn endec_network_bandwidth_per_protocol_request() {
         const START_DATE_TIME: i64 = i64::MIN;
         const END_DATE_TIME: i64 = i64::MAX;
+        const NETWORK_ID: i64 = 1;
 
         let network_bandwidth_per_protocol_request = NetworkBandwidthPerProtocolRequestDTO::new(
             START_DATE_TIME,
             END_DATE_TIME,
+            NETWORK_ID,
             get_test_filters(),
         );
         assert_eq!(network_bandwidth_per_protocol_request, NetworkBandwidthPerProtocolRequestDTO::decode(&network_bandwidth_per_protocol_request.encode()));
@@ -180,10 +201,12 @@ mod tests {
     fn test_getting_data_types() {
         const START_DATE_TIME: i64 = i64::MIN;
         const END_DATE_TIME: i64 = i64::MAX;
+        const NETWORK_ID: i64 = 1;
 
         let network_bandwidth_per_protocol_request = NetworkBandwidthPerProtocolRequestDTO::new(
             START_DATE_TIME,
             END_DATE_TIME,
+            NETWORK_ID,
             get_test_filters(),
         );
         assert_eq!(network_bandwidth_per_protocol_request.get_type(), NetworkBandwidthPerProtocolRequestDTO::get_data_type());
