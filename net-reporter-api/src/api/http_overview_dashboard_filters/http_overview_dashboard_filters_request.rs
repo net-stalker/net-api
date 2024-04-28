@@ -10,20 +10,22 @@ use net_core_api::core::encoder_api::Encoder;
 use net_core_api::core::decoder_api::Decoder;
 use net_core_api::core::typed_api::Typed;
 
-const DATA_TYPE: &str = "http_overview_dashboard_filters_request";
+const DATA_TYPE: &str = "http-overview-dashboard-filters-request";
 
 #[derive(Debug, PartialEq, Eq)]
 pub struct HttpOverviewDashboardFiltersRequestDTO {
     start_date_time: i64,
     end_date_time: i64,
+    network_id: i64,
 }
 impl API for HttpOverviewDashboardFiltersRequestDTO { }
 
 impl HttpOverviewDashboardFiltersRequestDTO {
-    pub fn new (start_date_time: i64, end_date_time: i64) -> Self {
+    pub fn new (start_date_time: i64, end_date_time: i64, network_id: i64) -> Self {
         HttpOverviewDashboardFiltersRequestDTO {
             start_date_time,
             end_date_time,
+            network_id,
         }
     }
 
@@ -33,6 +35,10 @@ impl HttpOverviewDashboardFiltersRequestDTO {
 
     pub fn get_end_date_time (&self) -> i64 {
         self.end_date_time
+    }
+
+    pub fn get_network_id(&self) -> i64 {
+        self.network_id
     }
 }
 
@@ -50,6 +56,9 @@ impl Encoder for HttpOverviewDashboardFiltersRequestDTO {
 
         writer.set_field_name("end_date_time");
         writer.write_i64(self.end_date_time).unwrap();
+
+        writer.set_field_name("network_id");
+        writer.write_i64(self.network_id).unwrap();
 
         writer.step_out().unwrap();
         writer.flush().unwrap();
@@ -71,9 +80,13 @@ impl Decoder for HttpOverviewDashboardFiltersRequestDTO {
         binary_user_reader.next().unwrap();
         let end_date_time = binary_user_reader.read_i64().unwrap();
 
+        binary_user_reader.next().unwrap();
+        let network_id = binary_user_reader.read_i64().unwrap();
+
         HttpOverviewDashboardFiltersRequestDTO::new(
             start_date_time,
-            end_date_time
+            end_date_time,
+            network_id,
         )
     }
 }
@@ -106,10 +119,12 @@ mod tests {
     fn reader_correctly_read_encoded_hvdf_request() {
         const START_DATE_TIME: i64 = i64::MIN;
         const END_DATE_TIME: i64 = i64::MAX;
+        const NETWORK_ID: i64 = 1;
 
         let network_bandwidth_request = HttpOverviewDashboardFiltersRequestDTO::new(
             START_DATE_TIME,
-            END_DATE_TIME
+            END_DATE_TIME,
+            NETWORK_ID,
         );
         
         let mut binary_user_reader = ReaderBuilder::new().build(network_bandwidth_request.encode()).unwrap();
@@ -124,16 +139,22 @@ mod tests {
         assert_eq!(StreamItem::Value(IonType::Int), binary_user_reader.next().unwrap());
         assert_eq!("end_date_time", binary_user_reader.field_name().unwrap());
         assert_eq!(END_DATE_TIME,  binary_user_reader.read_i64().unwrap());
+
+        assert_eq!(StreamItem::Value(IonType::Int), binary_user_reader.next().unwrap());
+        assert_eq!("network_id", binary_user_reader.field_name().unwrap());
+        assert_eq!(NETWORK_ID,  binary_user_reader.read_i64().unwrap());
     }
 
     #[test]
     fn endec_hvdf_request() {
         const START_DATE_TIME: i64 = i64::MIN;
         const END_DATE_TIME: i64 = i64::MAX;
+        const NETWORK_ID: i64 = 1;
 
         let network_bandwidth_request = HttpOverviewDashboardFiltersRequestDTO::new(
             START_DATE_TIME,
-            END_DATE_TIME
+            END_DATE_TIME,
+            NETWORK_ID,
         );
         assert_eq!(network_bandwidth_request, HttpOverviewDashboardFiltersRequestDTO::decode(&network_bandwidth_request.encode()));
     }
