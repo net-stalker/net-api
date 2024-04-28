@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 <!-- [START AUTO UPDATE] -->
 <!-- Please keep comment here to allow auto-update -->
+## [0.2.0-cca0c34] - 2024-04-28
+
+Add network id in requests (#41)
+
+* added network ids in dto requests structures
+
+* updated magor version of net-reporter-api to 6
 <!-- [END AUTO UPDATE] -->
 ## [0.2.0-16132f4] - 2024-04-26
 
