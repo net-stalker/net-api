@@ -5,13 +5,13 @@ use net_core_api::core::typed_api::Typed;
 
 const DATA_TYPE: &str = "refresh-views-request";
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Default, PartialEq, Eq)]
 pub struct RefreshViewsRequestDTO { }
 impl API for RefreshViewsRequestDTO { }
 
 impl RefreshViewsRequestDTO {
     pub fn new() -> Self {
-        RefreshViewsRequestDTO { }
+        RefreshViewsRequestDTO::default()
     }
 }
 

@@ -5,13 +5,13 @@ use net_core_api::core::typed_api::Typed;
 
 const DATA_TYPE: &str = "refresh-pcap-parsed-data-request";
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Default, PartialEq, Eq)]
 pub struct RefreshPcapParsedDataRequestDTO { }
 impl API for RefreshPcapParsedDataRequestDTO { }
 
 impl RefreshPcapParsedDataRequestDTO {
     pub fn new() -> Self {
-        RefreshPcapParsedDataRequestDTO { }
+        RefreshPcapParsedDataRequestDTO::default()
     }
 }
 
