@@ -3,6 +3,7 @@
 members = [
 	"net-inserter-api",
 	"net-reporter-api",
+	"net-updater-api",
 ]
 
 [workspace.dependencies]
