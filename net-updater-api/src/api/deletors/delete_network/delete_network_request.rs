@@ -15,19 +15,19 @@ const DATA_TYPE: &str = "delete-network-request";
 
 #[derive(Debug, PartialEq, Eq)]
 pub struct DeleteNetworkRequestDTO {
-    id: i64,
+    id: String,
 }
 impl API for DeleteNetworkRequestDTO { }
 
 impl DeleteNetworkRequestDTO {
-    pub fn new(id: i64) -> Self {
+    pub fn new(id: &str) -> Self {
         DeleteNetworkRequestDTO {
-            id,
+            id: id.to_string(),
         }
     }
     
-    pub fn get_id(&self) -> i64 {
-        self.id
+    pub fn get_id(&self) -> &str {
+        &self.id
     }
 }
 
@@ -41,7 +41,7 @@ impl Encoder for DeleteNetworkRequestDTO {
         writer.step_in(IonType::Struct).expect("Error while creating an ion struct");
 
         writer.set_field_name("id");
-        writer.write_i64(self.id).unwrap();
+        writer.write_string(&self.id).unwrap();
 
         writer.step_out().unwrap();
         writer.flush().unwrap();
@@ -57,7 +57,7 @@ impl Decoder for DeleteNetworkRequestDTO {
         binary_user_reader.step_in().unwrap();
 
         binary_user_reader.next().unwrap();
-        let id = binary_user_reader.read_i64().unwrap();
+        let id = binary_user_reader.read_str().unwrap();
         
         DeleteNetworkRequestDTO::new(
             id,
@@ -89,7 +89,7 @@ mod tests {
 
     #[test]
     fn reader_correctly_read_encoded_delete_network_request() {
-        const ID: i64 = 1;
+        const ID: &'static str = "1";
         let delete_network_request = DeleteNetworkRequestDTO::new(
             ID,
         );
@@ -98,16 +98,16 @@ mod tests {
         assert_eq!(StreamItem::Value(IonType::Struct), binary_user_reader.next().unwrap());
         binary_user_reader.step_in().unwrap();
 
-        assert_eq!(StreamItem::Value(IonType::Int), binary_user_reader.next().unwrap());
+        assert_eq!(StreamItem::Value(IonType::String), binary_user_reader.next().unwrap());
         assert_eq!("id", binary_user_reader.field_name().unwrap());
-        assert_eq!(ID, binary_user_reader.read_i64().unwrap());
+        assert_eq!(ID, binary_user_reader.read_str().unwrap());
 
         binary_user_reader.step_out().unwrap();
     }
 
     #[test]
     fn endec_delete_network_request() {
-        const ID: i64 = 1;
+        const ID: &'static str = "1";
         let delete_network_request = DeleteNetworkRequestDTO::new(
             ID,
         );
