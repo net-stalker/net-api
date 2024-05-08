@@ -109,7 +109,7 @@ mod tests {
     use net_core_api::core::encoder_api::Encoder;
     use net_core_api::core::decoder_api::Decoder;
 
-    use crate::api::updaters::update_pcap::update_pcap_request::UpdatePacketRequestDTO;
+    use crate::api::updaters::update_packet::update_packet_request::UpdatePacketRequestDTO;
 
     #[test]
     fn reader_correctly_read_encoded_update_pcap_request() {
