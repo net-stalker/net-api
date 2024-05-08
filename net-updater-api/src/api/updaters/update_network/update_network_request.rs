@@ -15,7 +15,7 @@ const DATA_TYPE: &str = "update-network-request";
 
 #[derive(Debug, PartialEq, Eq)]
 pub struct UpdateNetworkRequestDTO {
-    id: i64,
+    id: String,
     name: String,
     color: String,
 }
@@ -23,19 +23,19 @@ impl API for UpdateNetworkRequestDTO { }
 
 impl UpdateNetworkRequestDTO {
     pub fn new(
-        id: i64,
+        id: &str,
         name: &str,
         color: &str
     ) -> Self {
         UpdateNetworkRequestDTO {
-            id,
+            id: id.into(),
             name: name.into(),
             color: color.into()
         }
     }
     
-    pub fn get_id(&self) -> i64 {
-        self.id
+    pub fn get_id(&self) -> &str {
+        &self.id
     }
 
     pub fn get_name(&self) -> &str {
@@ -57,7 +57,7 @@ impl Encoder for UpdateNetworkRequestDTO {
         writer.step_in(IonType::Struct).expect("Error while creating an ion struct");
 
         writer.set_field_name("id");
-        writer.write_i64(self.id).unwrap();
+        writer.write_string(&self.id).unwrap();
 
         writer.set_field_name("name");
         writer.write_string(&self.name).unwrap();
@@ -79,7 +79,8 @@ impl Decoder for UpdateNetworkRequestDTO {
         binary_user_reader.step_in().unwrap();
 
         binary_user_reader.next().unwrap();
-        let id = binary_user_reader.read_i64().unwrap();
+        let binding = binary_user_reader.read_string().unwrap();
+        let id = binding.text();
         
         binary_user_reader.next().unwrap();
         let binding = binary_user_reader.read_string().unwrap();
@@ -121,7 +122,7 @@ mod tests {
 
     #[test]
     fn reader_correctly_read_encoded_update_network_request() {
-        const ID: i64 = 1;
+        const ID: &str = "1";
         const NAME: &str = "SOME_NAME";
         const COLOR: &str = "SOME_COLOR";
         let update_network_request = UpdateNetworkRequestDTO::new(
@@ -134,9 +135,9 @@ mod tests {
         assert_eq!(StreamItem::Value(IonType::Struct), binary_user_reader.next().unwrap());
         binary_user_reader.step_in().unwrap();
 
-        assert_eq!(StreamItem::Value(IonType::Int), binary_user_reader.next().unwrap());
+        assert_eq!(StreamItem::Value(IonType::String), binary_user_reader.next().unwrap());
         assert_eq!("id", binary_user_reader.field_name().unwrap());
-        assert_eq!(ID, binary_user_reader.read_i64().unwrap());
+        assert_eq!(ID, binary_user_reader.read_string().unwrap().text());
         
         assert_eq!(StreamItem::Value(IonType::String), binary_user_reader.next().unwrap());
         assert_eq!("name", binary_user_reader.field_name().unwrap());
@@ -151,7 +152,7 @@ mod tests {
 
     #[test]
     fn endec_update_network_request() {
-        const ID: i64 = 1;
+        const ID: &str = "1";
         const NAME: &str = "SOME_NAME";
         const COLOR: &str = "SOME_COLOR";
         let update_network_request = UpdateNetworkRequestDTO::new(
