@@ -8,16 +8,16 @@ use net_core_api::core::encoder_api::Encoder;
 use net_core_api::core::decoder_api::Decoder;
 use net_core_api::core::typed_api::Typed;
 
-const DATA_TYPE: &str = "get-networks-request";
+const DATA_TYPE: &str = "networks-request";
 
 #[derive(Debug, Default, PartialEq, Eq)]
-pub struct GetNetworksRequestDTO {
+pub struct NetworksRequestDTO {
     // empty vector means we want to get all the networks
     networks_ids_to_get: Vec<String>,
 }
-impl API for GetNetworksRequestDTO { }
+impl API for NetworksRequestDTO { }
 
-impl GetNetworksRequestDTO {
+impl NetworksRequestDTO {
     pub fn new(networks_ids_to_get: &[String]) -> Self {
         Self { networks_ids_to_get: networks_ids_to_get.to_vec() }
     }
@@ -27,7 +27,7 @@ impl GetNetworksRequestDTO {
     }
 }
 
-impl Encoder for GetNetworksRequestDTO {
+impl Encoder for NetworksRequestDTO {
     fn encode(&self) -> Vec<u8> {
         let buffer: Vec<u8> = Vec::new();
 
@@ -48,9 +48,9 @@ impl Encoder for GetNetworksRequestDTO {
     }
 }
 
-impl Decoder for GetNetworksRequestDTO {
+impl Decoder for NetworksRequestDTO {
     #[allow(unused_variables)]
-    fn decode(data: &[u8]) -> GetNetworksRequestDTO {
+    fn decode(data: &[u8]) -> NetworksRequestDTO {
         let mut binary_user_reader = ReaderBuilder::new().build(data).unwrap();
         binary_user_reader.next().unwrap();
         binary_user_reader.step_in().unwrap();
@@ -64,11 +64,11 @@ impl Decoder for GetNetworksRequestDTO {
         }
         binary_user_reader.step_out().unwrap();
 
-        GetNetworksRequestDTO::new(&network_ids_to_get)
+        NetworksRequestDTO::new(&network_ids_to_get)
     }
 }
 
-impl Typed for GetNetworksRequestDTO {
+impl Typed for NetworksRequestDTO {
     fn get_data_type() -> &'static str {
         DATA_TYPE
     }
@@ -88,12 +88,12 @@ mod tests {
     use net_core_api::core::decoder_api::Decoder;
     use net_core_api::core::typed_api::Typed;
 
-    use crate::api::network::networks_request::GetNetworksRequestDTO;
+    use crate::api::network::networks_request::NetworksRequestDTO;
 
     #[test]
     fn reader_correctly_read_encoded_network_packet() {
         const NETWORK_IDS_TO_GET: [&str; 3] = ["1", "2", "3"];
-        let get_networks_request = GetNetworksRequestDTO::new(NETWORK_IDS_TO_GET.map(|id| id.to_string()).as_slice());
+        let get_networks_request = NetworksRequestDTO::new(NETWORK_IDS_TO_GET.map(|id| id.to_string()).as_slice());
         let mut binary_user_reader = ReaderBuilder::new().build(get_networks_request.encode()).unwrap();
 
         assert_eq!(StreamItem::Value(IonType::Struct), binary_user_reader.next().unwrap());
@@ -112,15 +112,15 @@ mod tests {
     #[test]
     fn endec_network_packet() {
         const NETWORK_IDS_TO_GET: [&str; 3] = ["1", "2", "3"];
-        let get_networks_request = GetNetworksRequestDTO::new(NETWORK_IDS_TO_GET.map(|id| id.to_string()).as_slice());
-        assert_eq!(get_networks_request, GetNetworksRequestDTO::decode(&get_networks_request.encode()));
+        let get_networks_request = NetworksRequestDTO::new(NETWORK_IDS_TO_GET.map(|id| id.to_string()).as_slice());
+        assert_eq!(get_networks_request, NetworksRequestDTO::decode(&get_networks_request.encode()));
     }
 
     #[test]
     fn test_getting_data_types() {
         const NETWORK_IDS_TO_GET: [&str; 3] = ["1", "2", "3"];
-        let get_networks_request = GetNetworksRequestDTO::new(NETWORK_IDS_TO_GET.map(|id| id.to_string()).as_slice());
-        assert_eq!(get_networks_request.get_type(), GetNetworksRequestDTO::get_data_type());
+        let get_networks_request = NetworksRequestDTO::new(NETWORK_IDS_TO_GET.map(|id| id.to_string()).as_slice());
+        assert_eq!(get_networks_request.get_type(), NetworksRequestDTO::get_data_type());
         assert_eq!(get_networks_request.get_type(), super::DATA_TYPE);
     }
 }
