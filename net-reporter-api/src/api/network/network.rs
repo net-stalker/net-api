@@ -16,7 +16,7 @@ use crate::api::network_packet::network_packet::NetworkPacketDTO;
 
 const DATA_TYPE: &str = "network-packet";
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub struct NetworkDTO {
     id: String,
     name: String,
