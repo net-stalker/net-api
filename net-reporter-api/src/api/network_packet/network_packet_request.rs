@@ -88,7 +88,7 @@ mod tests {
     use crate::api::network_packet::network_packet_request::NetworkPacketRequestDTO;
 
     #[test]
-    fn reader_correctly_read_encoded_network_packet() {
+    fn reader_correctly_read_encoded_network_packet_request() {
         const ID: &str = "1";
         let network_packet_request = NetworkPacketRequestDTO::new(ID);
         let mut binary_user_reader = ReaderBuilder::new().build(network_packet_request.encode()).unwrap();
@@ -102,7 +102,7 @@ mod tests {
     }
 
     #[test]
-    fn endec_network_packet() {
+    fn endec_network_packet_request() {
         const ID: &str = "1";
         let network_packet_request = NetworkPacketRequestDTO::new(ID);
         assert_eq!(network_packet_request, NetworkPacketRequestDTO::decode(&network_packet_request.encode()));

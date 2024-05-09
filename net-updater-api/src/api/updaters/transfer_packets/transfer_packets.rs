@@ -106,7 +106,7 @@ mod tests {
     use net_core_api::core::encoder_api::Encoder;
     use net_core_api::core::decoder_api::Decoder;
 
-    use crate::api::updaters::transfer_packets::TransferPacketsRequestDTO;
+    use crate::api::updaters::transfer_packets::transfer_packets::TransferPacketsRequestDTO;
 
     #[test]
     fn reader_correctly_read_encoded_transfer_packets_request() {

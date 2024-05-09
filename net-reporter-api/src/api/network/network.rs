@@ -177,7 +177,7 @@ mod tests {
     }
 
     #[test]
-    fn reader_correctly_read_encoded_network_packet() {
+    fn reader_correctly_read_encoded_network() {
         const NETWORK_ID: &str = "network_id";
         const NAME: &str = "my network name";
         const COLOR: &str = "color";
@@ -216,7 +216,7 @@ mod tests {
     }
 
     #[test]
-    fn endec_network_packet() {
+    fn endec_network() {
         const NETWORK_ID: &str = "network_id";
         const NAME: &str = "my network name";
         const COLOR: &str = "color";
