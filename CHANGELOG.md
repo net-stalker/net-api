@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 <!-- [START AUTO UPDATE] -->
 <!-- Please keep comment here to allow auto-update -->
+<!-- [END AUTO UPDATE] -->
 ## [0.2.0-b6c16b4] - 2024-05-02
 
 NS-299/add-net-updater-api-crate (#42)
@@ -23,7 +24,6 @@ NS-299/add-net-updater-api-crate (#42)
 * NS-301/add-update-pcap-request: Add update pcap request (#44)
 
 * NS-303/add-refresh-pcap-parsed-data-request: Add refresh pcap parsed data request (#46)
-<!-- [END AUTO UPDATE] -->
 ## [0.2.0-cca0c34] - 2024-04-28
 
 Add network id in requests (#41)
