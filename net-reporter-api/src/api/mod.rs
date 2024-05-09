@@ -10,6 +10,8 @@ pub mod network_bandwidth_per_protocol;
 
 pub mod network_overview_dashboard_filters;
 
+pub mod network;
 pub mod network_bandwidth;
 pub mod network_graph;
+pub mod network_packet;
 pub mod total_http_requests;
