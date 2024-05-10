@@ -16,6 +16,7 @@ const DATA_TYPE: &str = "network-packet";
 
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct NetworkPacketDTO {
+    // network packet can actually be represented also as a response
     id: String,
     frame_time: i64,
     src: String,
