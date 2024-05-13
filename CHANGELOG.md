@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 <!-- [START AUTO UPDATE] -->
 <!-- Please keep comment here to allow auto-update -->
+## [0.1.0-461a483] - 2024-05-13
+
+added requests for deleting packets and networks (#47)
+
+* added requests for deleting packets and networks
 <!-- [END AUTO UPDATE] -->
 ## [0.2.0-b6c16b4] - 2024-05-02
 
