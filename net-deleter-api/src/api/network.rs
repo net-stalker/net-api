@@ -85,7 +85,7 @@ mod tests {
     use net_core_api::core::encoder_api::Encoder;
     use net_core_api::core::decoder_api::Decoder;
 
-    use crate::api::deletors::delete_network::delete_network_request::DeleteNetworkRequestDTO;
+    use crate::api::network::DeleteNetworkRequestDTO;
 
     #[test]
     fn reader_correctly_read_encoded_delete_network_request() {
