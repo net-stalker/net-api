@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 <!-- [START AUTO UPDATE] -->
 <!-- Please keep comment here to allow auto-update -->
+## [0.1.0-65656fd] - 2024-05-15
+
+Ns 315/implement api for network requests (#48)
+
+* implemented all necessary structures for networks feature
 <!-- [END AUTO UPDATE] -->
 ## [0.1.0-461a483] - 2024-05-13
 
