@@ -10,15 +10,15 @@ use net_core_api::core::typed_api::Typed;
 
 use super::network::NetworkDTO;
 
-const DATA_TYPE: &str = "networks-response";
+const DATA_TYPE: &str = "networks";
 
 #[derive(Debug, Default, PartialEq, Eq)]
-pub struct NetworksResponseDTO {
+pub struct NetworksDTO {
     networks: Vec<NetworkDTO>,
 }
-impl API for NetworksResponseDTO { }
+impl API for NetworksDTO { }
 
-impl NetworksResponseDTO {
+impl NetworksDTO {
     pub fn new(networks: &[NetworkDTO]) -> Self {
         Self { networks: networks.to_vec() }
     }
@@ -28,7 +28,7 @@ impl NetworksResponseDTO {
     }
 }
 
-impl Encoder for NetworksResponseDTO {
+impl Encoder for NetworksDTO {
     fn encode(&self) -> Vec<u8> {
         let buffer: Vec<u8> = Vec::new();
 
@@ -49,9 +49,9 @@ impl Encoder for NetworksResponseDTO {
     }
 }
 
-impl Decoder for NetworksResponseDTO {
+impl Decoder for NetworksDTO {
     #[allow(unused_variables)]
-    fn decode(data: &[u8]) -> NetworksResponseDTO {
+    fn decode(data: &[u8]) -> NetworksDTO {
         let mut binary_user_reader = ReaderBuilder::new().build(data).unwrap();
         binary_user_reader.next().unwrap();
         binary_user_reader.step_in().unwrap();
@@ -65,11 +65,11 @@ impl Decoder for NetworksResponseDTO {
         }
         binary_user_reader.step_out().unwrap();
 
-        NetworksResponseDTO::new(&networks)
+        NetworksDTO::new(&networks)
     }
 }
 
-impl Typed for NetworksResponseDTO {
+impl Typed for NetworksDTO {
     fn get_data_type() -> &'static str {
         DATA_TYPE
     }
@@ -92,7 +92,7 @@ mod tests {
     use crate::api::network::network::NetworkDTO;
     use crate::api::network_packet::network_packet::NetworkPacketDTO;
 
-    use super::NetworksResponseDTO;
+    use super::NetworksDTO;
 
     fn get_networks() -> Vec<NetworkDTO>{
         const ID: &str = "1";
@@ -138,7 +138,7 @@ mod tests {
     #[test]
     fn reader_correctly_read_encoded_network_request() {
         let networks = get_networks();
-        let get_networks_response = NetworksResponseDTO::new(&networks);
+        let get_networks_response = NetworksDTO::new(&networks);
         let mut binary_user_reader = ReaderBuilder::new().build(get_networks_response.encode()).unwrap();
 
         assert_eq!(StreamItem::Value(IonType::Struct), binary_user_reader.next().unwrap());
@@ -157,15 +157,15 @@ mod tests {
     #[test]
     fn endec_network_request() {
         let networks = get_networks();
-        let get_networks_response = NetworksResponseDTO::new(&networks);
-        assert_eq!(get_networks_response, NetworksResponseDTO::decode(&get_networks_response.encode()));
+        let get_networks_response = NetworksDTO::new(&networks);
+        assert_eq!(get_networks_response, NetworksDTO::decode(&get_networks_response.encode()));
     }
 
     #[test]
     fn test_getting_data_types() {
         let networks = get_networks();
-        let get_networks_response = NetworksResponseDTO::new(&networks);
-        assert_eq!(get_networks_response.get_type(), NetworksResponseDTO::get_data_type());
+        let get_networks_response = NetworksDTO::new(&networks);
+        assert_eq!(get_networks_response.get_type(), NetworksDTO::get_data_type());
         assert_eq!(get_networks_response.get_type(), super::DATA_TYPE);
     }
 }
