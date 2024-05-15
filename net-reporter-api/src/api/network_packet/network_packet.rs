@@ -14,9 +14,10 @@ use net_core_api::core::typed_api::Typed;
 
 const DATA_TYPE: &str = "network-packet";
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub struct NetworkPacketDTO {
-    id: i64,
+    // network packet can actually be represented also as a response
+    id: String,
     frame_time: i64,
     src: String,
     dst: String,
@@ -27,7 +28,7 @@ impl API for NetworkPacketDTO { }
 
 impl NetworkPacketDTO {
     pub fn new(
-        id: i64,
+        id: &str,
         frame_time: i64,
         src: &str,
         dst: &str,
@@ -35,7 +36,7 @@ impl NetworkPacketDTO {
         json_data: &[u8],
     ) -> Self {
         NetworkPacketDTO { 
-            id,
+            id: id.into(),
             frame_time, 
             src: src.into(), 
             dst: dst.into(), 
@@ -43,8 +44,8 @@ impl NetworkPacketDTO {
             json_data: json_data.into()
         }
     }
-    pub fn get_id(&self) -> i64 {
-        self.id
+    pub fn get_id(&self) -> &str {
+        &self.id
     }
 
     pub fn get_frame_time(&self) -> i64 {
@@ -78,7 +79,7 @@ impl Encoder for NetworkPacketDTO {
         writer.step_in(IonType::Struct).expect("Error while creating an ion struct");
 
         writer.set_field_name("id");
-        writer.write_i64(self.id).unwrap();
+        writer.write_string(&self.id).unwrap();
         
         writer.set_field_name("frame_time");
         writer.write_i64(self.frame_time).unwrap();
@@ -114,18 +115,16 @@ impl Decoder for NetworkPacketDTO {
         binary_user_reader.step_in().unwrap();
 
         binary_user_reader.next().unwrap();
-        let id = binary_user_reader.read_i64().unwrap();
+        let id = binary_user_reader.read_string().unwrap();
 
         binary_user_reader.next().unwrap();
         let frame_time = binary_user_reader.read_i64().unwrap();
         
         binary_user_reader.next().unwrap();
-        let binding = binary_user_reader.read_string().unwrap();
-        let src = binding.text();
+        let src = binary_user_reader.read_string().unwrap();
 
         binary_user_reader.next().unwrap();
-        let binding = binary_user_reader.read_string().unwrap();
-        let dst = binding.text();
+        let dst = binary_user_reader.read_string().unwrap();
 
         binary_user_reader.next().unwrap();
         binary_user_reader.step_in().unwrap();
@@ -141,10 +140,10 @@ impl Decoder for NetworkPacketDTO {
         let json_data = binding.as_slice();
 
         NetworkPacketDTO::new(
-            id,
+            id.text(),
             frame_time, 
-            src, 
-            dst,
+            src.text(), 
+            dst.text(),
             &protocols, 
             json_data,
         )
@@ -177,7 +176,7 @@ mod tests {
 
     #[test]
     fn reader_correctly_read_encoded_network_packet() {
-        const ID: i64 = 1;
+        const ID: &str = "1";
         const FRAME_TIME: i64 = i64::MIN;
         const SRC_ADDR: &str = "0.0.0.0:0000";
         const DST_ADDR: &str = "0.0.0.0:5656";
@@ -196,9 +195,9 @@ mod tests {
         assert_eq!(StreamItem::Value(IonType::Struct), binary_user_reader.next().unwrap());
         binary_user_reader.step_in().unwrap();
 
-        assert_eq!(StreamItem::Value(IonType::Int), binary_user_reader.next().unwrap());
+        assert_eq!(StreamItem::Value(IonType::String), binary_user_reader.next().unwrap());
         assert_eq!("id", binary_user_reader.field_name().unwrap());
-        assert_eq!(ID, binary_user_reader.read_i64().unwrap());
+        assert_eq!(ID, binary_user_reader.read_string().unwrap().text());
 
         assert_eq!(StreamItem::Value(IonType::Int), binary_user_reader.next().unwrap());
         assert_eq!("frame_time", binary_user_reader.field_name().unwrap());
@@ -228,7 +227,7 @@ mod tests {
 
     #[test]
     fn endec_network_packet() {
-        const ID: i64 = 1;
+        const ID: &str = "1";
         const FRAME_TIME: i64 = i64::MIN;
         const SRC_ADDR: &str = "0.0.0.0:0000";
         const DST_ADDR: &str = "0.0.0.0:5656";
@@ -247,7 +246,7 @@ mod tests {
 
     #[test]
     fn test_getting_data_types() {
-        const ID: i64 = 1;
+        const ID: &str = "1";
         const FRAME_TIME: i64 = i64::MIN;
         const SRC_ADDR: &str = "0.0.0.0:0000";
         const DST_ADDR: &str = "0.0.0.0:5656";
