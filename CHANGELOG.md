@@ -9,6 +9,50 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 <!-- [START AUTO UPDATE] -->
 <!-- Please keep comment here to allow auto-update -->
 <!-- [END AUTO UPDATE] -->
+## [0.1.1-b74ff40] - 2024-05-16
+
+Ns 315/implement api for network requests (#50)
+
+* renamed transfer packets request to update packets network id request
+
+* updated net-updater-api version
+## [0.1.1-01472a1] - 2024-05-16
+
+Ns 315/implement api for network requests (#49)
+
+* split buffer requests
+## [0.1.0-65656fd] - 2024-05-15
+
+Ns 315/implement api for network requests (#48)
+
+* implemented all necessary structures for networks feature
+## [0.1.0-461a483] - 2024-05-13
+
+added requests for deleting packets and networks (#47)
+
+* added requests for deleting packets and networks
+## [0.2.0-b6c16b4] - 2024-05-02
+
+NS-299/add-net-updater-api-crate (#42)
+
+* NS-299/add-net-updater-api-crate: Add net-updater-api project
+
+* NS-299/add-net-updater-api-crate: Add LICENSE and NOTICE
+
+* NS-300/add-update-network-request: Add update network request (#43)
+
+* NS-302/add-refresh-views-request: Add refresh views request (#45)
+
+* NS-301/add-update-pcap-request: Add update pcap request (#44)
+
+* NS-303/add-refresh-pcap-parsed-data-request: Add refresh pcap parsed data request (#46)
+## [0.2.0-cca0c34] - 2024-04-28
+
+Add network id in requests (#41)
+
+* added network ids in dto requests structures
+
+* updated magor version of net-reporter-api to 6
 ## [0.2.0-16132f4] - 2024-04-26
 
 remove-net-agent-api-updated-net-inserter-api: rewored network packet (#40)

@@ -1,8 +1,10 @@
 [workspace]
 
-members = [
+members = [ 
+	"net-deleter-api",
 	"net-inserter-api",
 	"net-reporter-api",
+	"net-updater-api",
 ]
 
 [workspace.dependencies]
