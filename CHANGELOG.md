@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 <!-- [START AUTO UPDATE] -->
 <!-- Please keep comment here to allow auto-update -->
+<!-- [END AUTO UPDATE] -->
 ## [0.1.1-b74ff40] - 2024-05-16
 
 Ns 315/implement api for network requests (#50)
@@ -15,7 +16,6 @@ Ns 315/implement api for network requests (#50)
 * renamed transfer packets request to update packets network id request
 
 * updated net-updater-api version
-<!-- [END AUTO UPDATE] -->
 ## [0.1.1-01472a1] - 2024-05-16
 
 Ns 315/implement api for network requests (#49)

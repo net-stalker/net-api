@@ -19,17 +19,17 @@ const DATA_TYPE: &str = "network-bandwidth-request";
 pub struct NetworkBandwidthRequestDTO {
     start_date_time: i64,
     end_date_time: i64,
-    network_id: i64,
+    network_id: String,
     filters: NetworkBandwidthFiltersDTO,
 }
 impl API for NetworkBandwidthRequestDTO { }
 
 impl NetworkBandwidthRequestDTO {
-    pub fn new (start_date_time: i64, end_date_time: i64, network_id: i64, filters: NetworkBandwidthFiltersDTO) -> Self {
+    pub fn new (start_date_time: i64, end_date_time: i64, network_id: &str, filters: NetworkBandwidthFiltersDTO) -> Self {
         NetworkBandwidthRequestDTO {
             start_date_time,
             end_date_time,
-            network_id,
+            network_id: network_id.to_string(),
             filters,
         }
     }
@@ -42,8 +42,8 @@ impl NetworkBandwidthRequestDTO {
         self.end_date_time
     }
 
-    pub fn get_network_id(&self) -> i64 {
-        self.network_id
+    pub fn get_network_id(&self) -> &str {
+        &self.network_id
     }
 
     pub fn get_filters(&self) -> &NetworkBandwidthFiltersDTO {
@@ -67,7 +67,7 @@ impl Encoder for NetworkBandwidthRequestDTO {
         writer.write_i64(self.end_date_time).unwrap();
 
         writer.set_field_name("network_id");
-        writer.write_i64(self.network_id).unwrap();
+        writer.write_string(&self.network_id).unwrap();
 
         writer.set_field_name("filters");
         writer.write_blob(self.filters.encode().as_slice()).unwrap();
@@ -92,7 +92,7 @@ impl Decoder for NetworkBandwidthRequestDTO {
         let end_date_time = binary_user_reader.read_i64().unwrap();
 
         binary_user_reader.next().unwrap();
-        let network_id = binary_user_reader.read_i64().unwrap();
+        let network_id = binary_user_reader.read_string().unwrap();
 
         binary_user_reader.next().unwrap();
         
@@ -102,7 +102,7 @@ impl Decoder for NetworkBandwidthRequestDTO {
         NetworkBandwidthRequestDTO::new(
             start_date_time,
             end_date_time,
-            network_id,
+            network_id.text(),
             filters,
         )
     }
@@ -145,7 +145,7 @@ mod tests {
     fn reader_correctly_read_encoded_nb_request_some_filters() {
         const START_DATE_TIME: i64 = i64::MIN;
         const END_DATE_TIME: i64 = i64::MAX;
-        const NETWORK_ID: i64 = 1;
+        const NETWORK_ID: &str = "1";
 
         let network_bandwidth_request = NetworkBandwidthRequestDTO::new(
             START_DATE_TIME,
@@ -167,9 +167,9 @@ mod tests {
         assert_eq!("end_date_time", binary_user_reader.field_name().unwrap());
         assert_eq!(END_DATE_TIME,  binary_user_reader.read_i64().unwrap());
 
-        assert_eq!(StreamItem::Value(IonType::Int), binary_user_reader.next().unwrap());
+        assert_eq!(StreamItem::Value(IonType::String), binary_user_reader.next().unwrap());
         assert_eq!("network_id", binary_user_reader.field_name().unwrap());
-        assert_eq!(NETWORK_ID,  binary_user_reader.read_i64().unwrap());
+        assert_eq!(NETWORK_ID,  binary_user_reader.read_string().unwrap().text());
 
         assert_eq!(StreamItem::Value(IonType::Blob), binary_user_reader.next().unwrap());
         assert_eq!("filters", binary_user_reader.field_name().unwrap());
@@ -182,7 +182,7 @@ mod tests {
     fn endec_ng_request() {
         const START_DATE_TIME: i64 = i64::MIN;
         const END_DATE_TIME: i64 = i64::MAX;
-        const NETWORK_ID: i64 = 1;
+        const NETWORK_ID: &str = "1";
 
         let network_bandwidth_request = NetworkBandwidthRequestDTO::new(
             START_DATE_TIME,
