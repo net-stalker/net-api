@@ -19,17 +19,17 @@ const DATA_TYPE: &str = "http-responses-distribution-request";
 pub struct HttpResponsesDistributionRequestDTO {
     start_date_time: i64,
     end_date_time: i64,
-    network_id: i64,
+    network_id: String,
     filters: HttpResponsesDistributionFiltersDTO,
 }
 impl API for HttpResponsesDistributionRequestDTO { }
 
 impl HttpResponsesDistributionRequestDTO {
-    pub fn new(start_date_time: i64, end_date_time: i64, network_id: i64, filters: HttpResponsesDistributionFiltersDTO) -> Self {
+    pub fn new(start_date_time: i64, end_date_time: i64, network_id: &str, filters: HttpResponsesDistributionFiltersDTO) -> Self {
         HttpResponsesDistributionRequestDTO {
             start_date_time,
             end_date_time,
-            network_id,
+            network_id: network_id.to_string(),
             filters,
         }
     }
@@ -42,8 +42,8 @@ impl HttpResponsesDistributionRequestDTO {
         self.end_date_time
     }
 
-    pub fn get_network_id(&self) -> i64 {
-        self.network_id
+    pub fn get_network_id(&self) -> &str {
+        &self.network_id
     }
 
     pub fn get_filters(&self) -> &HttpResponsesDistributionFiltersDTO {
@@ -67,7 +67,7 @@ impl Encoder for HttpResponsesDistributionRequestDTO {
         writer.write_i64(self.end_date_time).unwrap();
 
         writer.set_field_name("network_id");
-        writer.write_i64(self.network_id).unwrap();
+        writer.write_string(&self.network_id).unwrap();
 
         writer.set_field_name("filters");
         writer.write_blob(self.filters.encode().as_slice()).unwrap();
@@ -93,7 +93,7 @@ impl Decoder for HttpResponsesDistributionRequestDTO {
         let end_date_time = binary_user_reader.read_i64().unwrap();
 
         binary_user_reader.next().unwrap();
-        let network_id = binary_user_reader.read_i64().unwrap();
+        let network_id = binary_user_reader.read_string().unwrap();
 
         binary_user_reader.next().unwrap();
         let filters = HttpResponsesDistributionFiltersDTO::decode(binary_user_reader.read_blob().unwrap().as_slice());
@@ -101,7 +101,7 @@ impl Decoder for HttpResponsesDistributionRequestDTO {
         HttpResponsesDistributionRequestDTO::new(
             start_date_time,
             end_date_time,
-            network_id,
+            network_id.text(),
             filters,
         )
     }
@@ -150,7 +150,7 @@ mod tests {
     fn reader_correctly_read_encoded_hrmd_request() {
         const START_DATE_TIME: i64 = i64::MIN;
         const END_DATE_TIME: i64 = i64::MAX;
-        const NETWORK_ID: i64 = 1;
+        const NETWORK_ID: &str = "1";
 
         let http_responses_dist_request = HttpResponsesDistributionRequestDTO::new(
             START_DATE_TIME,
@@ -172,9 +172,9 @@ mod tests {
         assert_eq!("end_date_time", binary_user_reader.field_name().unwrap());
         assert_eq!(END_DATE_TIME,  binary_user_reader.read_i64().unwrap());
 
-        assert_eq!(StreamItem::Value(IonType::Int), binary_user_reader.next().unwrap());
+        assert_eq!(StreamItem::Value(IonType::String), binary_user_reader.next().unwrap());
         assert_eq!("network_id", binary_user_reader.field_name().unwrap());
-        assert_eq!(NETWORK_ID,  binary_user_reader.read_i64().unwrap());
+        assert_eq!(NETWORK_ID,  binary_user_reader.read_string().unwrap().text());
 
         assert_eq!(StreamItem::Value(IonType::Blob), binary_user_reader.next().unwrap());
         assert_eq!("filters", binary_user_reader.field_name().unwrap());
@@ -185,7 +185,7 @@ mod tests {
     fn endec_hrmd_request() {
         const START_DATE_TIME: i64 = i64::MIN;
         const END_DATE_TIME: i64 = i64::MAX;
-        const NETWORK_ID: i64 = 1;
+        const NETWORK_ID: &str = "1";
 
         let network_graph_request = HttpResponsesDistributionRequestDTO::new(
             START_DATE_TIME,
@@ -199,7 +199,7 @@ mod tests {
     fn test_getting_data_types() {
         const START_DATE_TIME: i64 = i64::MIN;
         const END_DATE_TIME: i64 = i64::MAX;
-        const NETWORK_ID: i64 = 1;
+        const NETWORK_ID: &str = "1";
 
         let network_graph_request = HttpResponsesDistributionRequestDTO::new(
             START_DATE_TIME,
