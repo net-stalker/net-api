@@ -13,32 +13,36 @@ use net_core_api::core::encoder_api::Encoder;
 use net_core_api::core::decoder_api::Decoder;
 use net_core_api::core::typed_api::Typed;
 
-const DATA_TYPE: &str = "transfer-packets-request";
+const DATA_TYPE: &str = "update-packets-network-id-request";
 
 #[derive(Debug, PartialEq, Eq)]
-pub struct TransferPacketsRequestDTO {
+pub struct UpdatePacketsNetworkIdRequestDTO {
     network_id: Option<String>,
     packets_ids: Vec<String>,
 }
-impl API for TransferPacketsRequestDTO { }
+impl API for UpdatePacketsNetworkIdRequestDTO { }
 
-impl TransferPacketsRequestDTO {
+impl UpdatePacketsNetworkIdRequestDTO {
     pub fn new(
         network_id: Option<&str>,
         packets_ids: &[String]
     ) -> Self {
-        TransferPacketsRequestDTO {
+        UpdatePacketsNetworkIdRequestDTO {
             network_id: network_id.map(str::to_string),
             packets_ids: packets_ids.to_vec(),
         }
     }
 
-    pub fn get_ids(&self) -> &[String] {
+    pub fn get_network_id(&self) -> Option<&str> {
+        self.network_id.as_deref()
+    }
+
+    pub fn get_packets_ids(&self) -> &[String] {
         &self.packets_ids
     }
 }
 
-impl Encoder for TransferPacketsRequestDTO {
+impl Encoder for UpdatePacketsNetworkIdRequestDTO {
     fn encode(&self) -> Vec<u8> {
         let buffer: Vec<u8> = Vec::new();
 
@@ -65,7 +69,7 @@ impl Encoder for TransferPacketsRequestDTO {
     }
 }
 
-impl Decoder for TransferPacketsRequestDTO {
+impl Decoder for UpdatePacketsNetworkIdRequestDTO {
     fn decode(data: &[u8]) -> Self {
         let mut binary_user_reader = ReaderBuilder::new().build(data).unwrap();
         binary_user_reader.next().unwrap();
@@ -81,11 +85,11 @@ impl Decoder for TransferPacketsRequestDTO {
         binary_user_reader.step_in().unwrap();
         let ids: Vec<String> = binary_user_reader.read_all_elements().unwrap().iter_mut().map(|element| element.as_string().unwrap().to_string()).collect();
 
-        TransferPacketsRequestDTO::new(network_id.as_deref(), &ids)
+        UpdatePacketsNetworkIdRequestDTO::new(network_id.as_deref(), &ids)
     }
 }
 
-impl Typed for TransferPacketsRequestDTO {
+impl Typed for UpdatePacketsNetworkIdRequestDTO {
     fn get_data_type() -> &'static str {
         DATA_TYPE
     }
@@ -106,13 +110,13 @@ mod tests {
     use net_core_api::core::encoder_api::Encoder;
     use net_core_api::core::decoder_api::Decoder;
 
-    use crate::api::updaters::transfer_packets::transfer_packets::TransferPacketsRequestDTO;
+    use crate::api::updaters::update_packets_network_id::update_packets_network_id_request::UpdatePacketsNetworkIdRequestDTO;
 
     #[test]
     fn reader_correctly_read_encoded_transfer_packets_request() {
         const NETWORK_ID: Option<&str> = Some("network_id");
         const PACKETS_IDS: [&'static str; 5] = ["1", "2", "3", "4", "5"];
-        let transfer_packets_request = TransferPacketsRequestDTO::new(
+        let transfer_packets_request = UpdatePacketsNetworkIdRequestDTO::new(
             NETWORK_ID,
             &PACKETS_IDS.iter().map(|id| id.to_string()).collect::<Vec<String>>(),
         );
@@ -143,11 +147,11 @@ mod tests {
     fn endec_transfer_packets_request() {
         const NETWORK_ID: Option<&str> = Some("network_id");
         const PACKETS_IDS: [&'static str; 5] = ["1", "2", "3", "4", "5"];
-        let transfer_packets_request = TransferPacketsRequestDTO::new(
+        let transfer_packets_request = UpdatePacketsNetworkIdRequestDTO::new(
             NETWORK_ID,
             &PACKETS_IDS.iter().map(|id| id.to_string()).collect::<Vec<String>>(),
         );
 
-        assert_eq!(transfer_packets_request, TransferPacketsRequestDTO::decode(&transfer_packets_request.encode()));
+        assert_eq!(transfer_packets_request, UpdatePacketsNetworkIdRequestDTO::decode(&transfer_packets_request.encode()));
     }
 }
