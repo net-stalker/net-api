@@ -3,6 +3,7 @@
 members = [ 
 	"net-deleter-api",
 	"net-inserter-api",
+	"net-primitives",
 	"net-reporter-api",
 	"net-updater-api",
 ]
