@@ -8,12 +8,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 <!-- [START AUTO UPDATE] -->
 <!-- Please keep comment here to allow auto-update -->
+<!-- [END AUTO UPDATE] -->
 ## [0.1.1-6ba7163] - 2024-05-16
 
 Add network id in requests (#51)
 
 * updated chart requests to use network id as a string
-<!-- [END AUTO UPDATE] -->
 ## [0.1.1-b74ff40] - 2024-05-16
 
 Ns 315/implement api for network requests (#50)
