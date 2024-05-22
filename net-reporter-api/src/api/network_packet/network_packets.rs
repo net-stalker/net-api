@@ -131,7 +131,7 @@ mod tests {
     }
 
     #[test]
-    fn reader_correctly_read_encoded_network_packets_request() {
+    fn reader_correctly_read_encoded_network_packets() {
         let networks = get_network_packets();
         let get_networks_response = NetworkPacketsDTO::new(&networks);
         let mut binary_user_reader = ReaderBuilder::new().build(get_networks_response.encode()).unwrap();
@@ -150,7 +150,7 @@ mod tests {
     }
 
     #[test]
-    fn endec_network_packets_request() {
+    fn endec_network_packets() {
         let networks = get_network_packets();
         let get_networks_response = NetworkPacketsDTO::new(&networks);
         assert_eq!(get_networks_response, NetworkPacketsDTO::decode(&get_networks_response.encode()));
