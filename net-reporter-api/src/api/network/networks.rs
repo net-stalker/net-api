@@ -90,41 +90,10 @@ mod tests {
     use net_core_api::core::typed_api::Typed;
 
     use crate::api::network::network::NetworkDTO;
-    use crate::api::network_packet::network_packet::NetworkPacketDTO;
 
     use super::NetworksDTO;
 
     fn get_networks() -> Vec<NetworkDTO>{
-        const ID: &str = "1";
-        const FRAME_TIME: i64 = i64::MIN;
-        const SRC_ADDR: &str = "0.0.0.0:0000";
-        const DST_ADDR: &str = "0.0.0.0:5656";
-        let protocols: &[String] = &["protocol1".to_string(), "protocol2".to_string()];
-        const NETWORK_PACKET_DATA: &[u8] = "NETWORK_PACKET_DATA".as_bytes();
-        let network_packet = NetworkPacketDTO::new(
-            ID,
-            FRAME_TIME,
-            SRC_ADDR,
-            DST_ADDR,
-            protocols,
-            NETWORK_PACKET_DATA
-        );
-        const ID2: &str = "2";
-        const FRAME_TIME2: i64 = i64::MIN;
-        const SRC_ADDR2: &str = "0.1.0.0:0000";
-        const DST_ADDR2: &str = "0.2.0.0:5656";
-        let protocols2: &[String] = &["protocol3".to_string(), "protocol4".to_string()];
-        const NETWORK_PACKET_DATA2: &[u8] = "NETWORK_PACKET_DATA_2".as_bytes();
-        let network_packet2 = NetworkPacketDTO::new(
-            ID2,
-            FRAME_TIME2,
-            SRC_ADDR2,
-            DST_ADDR2,
-            protocols2,
-            NETWORK_PACKET_DATA2
-        );
-        let first_pair = vec![network_packet.clone(), network_packet2.clone()];
-        let second_pair = vec![network_packet2, network_packet];
         const NETWORK_ID1: &str = "network_id1";
         const NAME1: &str = "network name 1";
         const COLOR1: &str = "network color 1";
@@ -132,7 +101,7 @@ mod tests {
         const NETWORK_ID2: &str = "network_id2";
         const NAME2: &str = "network name 2";
         const COLOR2: &str = "network color 2";
-        vec![NetworkDTO::new(NETWORK_ID1, NAME1, COLOR1, &first_pair), NetworkDTO::new(NETWORK_ID2, NAME2, COLOR2, &second_pair)]
+        vec![NetworkDTO::new(NETWORK_ID1, NAME1, COLOR1), NetworkDTO::new(NETWORK_ID2, NAME2, COLOR2)]
     }
 
     #[test]

@@ -16,8 +16,8 @@ const DATA_TYPE: &str = "network-packet";
 
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct NetworkPacketDTO {
-    // network packet can actually be represented also as a response
     id: String,
+    network_id: Option<String>,
     frame_time: i64,
     src: String,
     dst: String,
@@ -29,6 +29,7 @@ impl API for NetworkPacketDTO { }
 impl NetworkPacketDTO {
     pub fn new(
         id: &str,
+        network_id: Option<&str>,
         frame_time: i64,
         src: &str,
         dst: &str,
@@ -36,16 +37,22 @@ impl NetworkPacketDTO {
         json_data: &[u8],
     ) -> Self {
         NetworkPacketDTO { 
-            id: id.into(),
+            id: id.to_string(),
+            network_id: network_id.map(str::to_string),
             frame_time, 
             src: src.into(), 
             dst: dst.into(), 
             protocols: protocols.to_vec(),
-            json_data: json_data.into()
+            json_data: json_data.into(),
         }
     }
+
     pub fn get_id(&self) -> &str {
         &self.id
+    }
+
+    pub fn get_network_id(&self) -> Option<&str> {
+        self.network_id.as_deref()
     }
 
     pub fn get_frame_time(&self) -> i64 {
@@ -80,6 +87,12 @@ impl Encoder for NetworkPacketDTO {
 
         writer.set_field_name("id");
         writer.write_string(&self.id).unwrap();
+
+        writer.set_field_name("network_id");
+        match self.network_id.as_ref() {
+            Some(network_id) => writer.write_string(network_id).unwrap(),
+            None => writer.write_null(IonType::String).unwrap(),
+        };
         
         writer.set_field_name("frame_time");
         writer.write_i64(self.frame_time).unwrap();
@@ -109,13 +122,17 @@ impl Encoder for NetworkPacketDTO {
 
 impl Decoder for NetworkPacketDTO {
     fn decode(data: &[u8]) -> Self {
-
         let mut binary_user_reader = ReaderBuilder::new().build(data).unwrap();
         binary_user_reader.next().unwrap();
         binary_user_reader.step_in().unwrap();
 
+        binary_user_reader.next().unwrap();let id = binary_user_reader.read_string().unwrap();
+
         binary_user_reader.next().unwrap();
-        let id = binary_user_reader.read_string().unwrap();
+        let network_id = match binary_user_reader.current() {
+            ion_rs::StreamItem::Value(_) => Some(binary_user_reader.read_string().unwrap().text().to_string()),
+            _ => None,
+        };
 
         binary_user_reader.next().unwrap();
         let frame_time = binary_user_reader.read_i64().unwrap();
@@ -141,6 +158,7 @@ impl Decoder for NetworkPacketDTO {
 
         NetworkPacketDTO::new(
             id.text(),
+            network_id.as_deref(),
             frame_time, 
             src.text(), 
             dst.text(),
@@ -177,6 +195,7 @@ mod tests {
     #[test]
     fn reader_correctly_read_encoded_network_packet() {
         const ID: &str = "1";
+        const NETWORK_ID: &str = "network_id"; 
         const FRAME_TIME: i64 = i64::MIN;
         const SRC_ADDR: &str = "0.0.0.0:0000";
         const DST_ADDR: &str = "0.0.0.0:5656";
@@ -184,6 +203,7 @@ mod tests {
         const NETWORK_PACKET_DATA: &[u8] = "NETWORK_PACKET_DATA".as_bytes();
         let network_packet = NetworkPacketDTO::new(
             ID,
+            Some(NETWORK_ID),
             FRAME_TIME,
             SRC_ADDR,
             DST_ADDR,
@@ -198,6 +218,10 @@ mod tests {
         assert_eq!(StreamItem::Value(IonType::String), binary_user_reader.next().unwrap());
         assert_eq!("id", binary_user_reader.field_name().unwrap());
         assert_eq!(ID, binary_user_reader.read_string().unwrap().text());
+
+        assert_eq!(StreamItem::Value(IonType::String), binary_user_reader.next().unwrap());
+        assert_eq!("network_id", binary_user_reader.field_name().unwrap());
+        assert_eq!(NETWORK_ID, binary_user_reader.read_string().unwrap().text());
 
         assert_eq!(StreamItem::Value(IonType::Int), binary_user_reader.next().unwrap());
         assert_eq!("frame_time", binary_user_reader.field_name().unwrap());
@@ -226,7 +250,28 @@ mod tests {
     }
 
     #[test]
-    fn endec_network_packet() {
+    fn endec_network_packet_some_network() {
+        const ID: &str = "1";
+        const NETWORK_ID: &str = "network_id"; 
+        const FRAME_TIME: i64 = i64::MIN;
+        const SRC_ADDR: &str = "0.0.0.0:0000";
+        const DST_ADDR: &str = "0.0.0.0:5656";
+        let protocols: &[String] = &["protocol1".to_string(), "protocol2".to_string()];
+        const NETWORK_PACKET_DATA: &[u8] = "NETWORK_PACKET_DATA".as_bytes();
+        let network_packet = NetworkPacketDTO::new(
+            ID,
+            Some(NETWORK_ID),
+            FRAME_TIME,
+            SRC_ADDR,
+            DST_ADDR,
+            protocols,
+            NETWORK_PACKET_DATA
+        );
+        assert_eq!(network_packet, NetworkPacketDTO::decode(&network_packet.encode()));
+    }
+
+    #[test]
+    fn endec_network_packet_none_network() {
         const ID: &str = "1";
         const FRAME_TIME: i64 = i64::MIN;
         const SRC_ADDR: &str = "0.0.0.0:0000";
@@ -235,6 +280,7 @@ mod tests {
         const NETWORK_PACKET_DATA: &[u8] = "NETWORK_PACKET_DATA".as_bytes();
         let network_packet = NetworkPacketDTO::new(
             ID,
+            None,
             FRAME_TIME,
             SRC_ADDR,
             DST_ADDR,
@@ -254,6 +300,7 @@ mod tests {
         const NETWORK_PACKET_DATA: &[u8] = "NETWORK_PACKET_DATA".as_bytes();
         let network_packet = NetworkPacketDTO::new(
             ID,
+            None,
             FRAME_TIME,
             SRC_ADDR,
             DST_ADDR,

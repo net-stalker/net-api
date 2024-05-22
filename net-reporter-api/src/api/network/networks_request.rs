@@ -12,19 +12,18 @@ const DATA_TYPE: &str = "networks-request";
 
 #[derive(Debug, Default, PartialEq, Eq)]
 pub struct NetworksRequestDTO {
-    // None - unassinged network
     // empty vector means we want to get all the networks
-    networks_ids_to_get: Option<Vec<String>>,
+    networks_ids_to_get: Vec<String>,
 }
 impl API for NetworksRequestDTO { }
 
 impl NetworksRequestDTO {
-    pub fn new(networks_ids_to_get: Option<&[String]>) -> Self {
-        Self { networks_ids_to_get: networks_ids_to_get.map(|ids| ids.to_vec()) }
+    pub fn new(networks_ids_to_get: &[String]) -> Self {
+        Self { networks_ids_to_get: networks_ids_to_get.to_vec() }
     }
 
-    pub fn get_networks_ids_to_get(&self) -> Option<&[String]> {
-        self.networks_ids_to_get.as_deref()
+    pub fn get_networks_ids_to_get(&self) -> &[String] {
+        &self.networks_ids_to_get
     }
 }
 
@@ -38,16 +37,9 @@ impl Encoder for NetworksRequestDTO {
         writer.step_in(IonType::Struct).expect("Error while creating an ion struct");
 
         writer.set_field_name("networks_ids_to_get");
-        match self.networks_ids_to_get.as_ref() {
-            Some(networks_ids_to_get) => {
-                writer.step_in(IonType::List).unwrap();
-                networks_ids_to_get.iter().for_each(|network_id| writer.write_string(network_id).unwrap());
-                writer.step_out().unwrap();
-            },
-            None => {
-                writer.write_null(IonType::List).unwrap();
-            },
-        }
+        writer.step_in(IonType::List).unwrap();
+        self.networks_ids_to_get.iter().for_each(|network_id| writer.write_string(network_id).unwrap());
+        writer.step_out().unwrap();
         
         writer.step_out().unwrap();
         writer.flush().unwrap();
@@ -64,21 +56,15 @@ impl Decoder for NetworksRequestDTO {
         binary_user_reader.step_in().unwrap();
 
         binary_user_reader.next().unwrap();
-        let network_ids_to_get = match binary_user_reader.current() {
-            ion_rs::StreamItem::Value(_) => {
-                binary_user_reader.step_in().unwrap();
-                let elements = binary_user_reader.read_all_elements().unwrap();
-                let mut network_ids_to_get = Vec::<String>::with_capacity(elements.len());
-                for element in elements {
-                    network_ids_to_get.push(element.as_string().unwrap().to_string());
-                }
-                binary_user_reader.step_out().unwrap();
-                Some(network_ids_to_get)
-            },
-            _ => None
-        };
+        binary_user_reader.step_in().unwrap();
+        let elements = binary_user_reader.read_all_elements().unwrap();
+        let mut network_ids_to_get = Vec::<String>::with_capacity(elements.len());
+        for element in elements {
+            network_ids_to_get.push(element.as_string().unwrap().to_string());
+        }
+        binary_user_reader.step_out().unwrap();
         
-        NetworksRequestDTO::new(network_ids_to_get.as_deref())
+        NetworksRequestDTO::new(&network_ids_to_get)
     }
 }
 
@@ -105,9 +91,9 @@ mod tests {
     use crate::api::network::networks_request::NetworksRequestDTO;
 
     #[test]
-    fn reader_correctly_read_encoded_network_request_some() {
+    fn reader_correctly_read_encoded_network_request() {
         const NETWORK_IDS_TO_GET: [&str; 3] = ["1", "2", "3"];
-        let get_networks_request = NetworksRequestDTO::new(Some(NETWORK_IDS_TO_GET.map(|id| id.to_string()).as_slice()));
+        let get_networks_request = NetworksRequestDTO::new(NETWORK_IDS_TO_GET.map(|id| id.to_string()).as_slice());
         let mut binary_user_reader = ReaderBuilder::new().build(get_networks_request.encode()).unwrap();
 
         assert_eq!(StreamItem::Value(IonType::Struct), binary_user_reader.next().unwrap());
@@ -123,38 +109,17 @@ mod tests {
         binary_user_reader.step_out().unwrap();
     }
 
-
     #[test]
-    fn reader_correctly_read_encoded_network_request_none() {
-        let get_networks_request = NetworksRequestDTO::new(None);
-        let mut binary_user_reader = ReaderBuilder::new().build(get_networks_request.encode()).unwrap();
-
-        assert_eq!(StreamItem::Value(IonType::Struct), binary_user_reader.next().unwrap());
-        binary_user_reader.step_in().unwrap();
-
-        assert_eq!(StreamItem::Null(IonType::List), binary_user_reader.next().unwrap());
-        assert_eq!("networks_ids_to_get", binary_user_reader.field_name().unwrap());
-        binary_user_reader.step_out().unwrap();
-    }
-
-
-    #[test]
-    fn endec_network_request_none() {
-        let get_networks_request = NetworksRequestDTO::new(None);
-        assert_eq!(get_networks_request, NetworksRequestDTO::decode(&get_networks_request.encode()))
-    }
-
-    #[test]
-    fn endec_network_request_some() {
+    fn endec_network_request() {
         const NETWORK_IDS_TO_GET: [&str; 3] = ["1", "2", "3"];
-        let get_networks_request = NetworksRequestDTO::new(Some(NETWORK_IDS_TO_GET.map(|id| id.to_string()).as_slice()));
+        let get_networks_request = NetworksRequestDTO::new(NETWORK_IDS_TO_GET.map(|id| id.to_string()).as_slice());
         assert_eq!(get_networks_request, NetworksRequestDTO::decode(&get_networks_request.encode()));
     }
 
     #[test]
     fn test_getting_data_types() {
         const NETWORK_IDS_TO_GET: [&str; 3] = ["1", "2", "3"];
-        let get_networks_request = NetworksRequestDTO::new(Some(NETWORK_IDS_TO_GET.map(|id| id.to_string()).as_slice()));
+        let get_networks_request = NetworksRequestDTO::new(NETWORK_IDS_TO_GET.map(|id| id.to_string()).as_slice());
         assert_eq!(get_networks_request.get_type(), NetworksRequestDTO::get_data_type());
         assert_eq!(get_networks_request.get_type(), super::DATA_TYPE);
     }
