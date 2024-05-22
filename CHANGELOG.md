@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 <!-- [START AUTO UPDATE] -->
 <!-- Please keep comment here to allow auto-update -->
+## [0.1.1-643eec2] - 2024-05-22
+
+refactored requets for network packets and network, now they are split (#53)
+
+* refactored requets for network packets and network, now they are split
 <!-- [END AUTO UPDATE] -->
 ## [0.1.1-6ba7163] - 2024-05-16
 
