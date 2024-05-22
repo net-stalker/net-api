@@ -91,7 +91,7 @@ mod tests {
     use crate::api::network::networks_request::NetworksRequestDTO;
 
     #[test]
-    fn reader_correctly_read_encoded_network_request() {
+    fn reader_correctly_read_encoded_networks_request() {
         const NETWORK_IDS_TO_GET: [&str; 3] = ["1", "2", "3"];
         let get_networks_request = NetworksRequestDTO::new(NETWORK_IDS_TO_GET.map(|id| id.to_string()).as_slice());
         let mut binary_user_reader = ReaderBuilder::new().build(get_networks_request.encode()).unwrap();
@@ -110,7 +110,7 @@ mod tests {
     }
 
     #[test]
-    fn endec_network_request() {
+    fn endec_networks_request() {
         const NETWORK_IDS_TO_GET: [&str; 3] = ["1", "2", "3"];
         let get_networks_request = NetworksRequestDTO::new(NETWORK_IDS_TO_GET.map(|id| id.to_string()).as_slice());
         assert_eq!(get_networks_request, NetworksRequestDTO::decode(&get_networks_request.encode()));
