@@ -95,7 +95,7 @@ mod tests {
     use crate::api::network::network_id_request::NetworkIdRequestDTO;
 
     #[test]
-    fn reader_correctly_read_encoded_networks_request() {
+    fn reader_correctly_read_encoded_network_id_request() {
         const NAME: &str = "name";
         const COLOR: &str = "color";
         let get_network_id_request = NetworkIdRequestDTO::new(NAME, COLOR);
@@ -116,7 +116,7 @@ mod tests {
     }
 
     #[test]
-    fn endec_networks_request() {
+    fn endec_network_id_request() {
         const NAME: &str = "name";
         const COLOR: &str = "color";
         let get_network_id_request = NetworkIdRequestDTO::new(NAME, COLOR);
