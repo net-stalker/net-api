@@ -8,12 +8,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 <!-- [START AUTO UPDATE] -->
 <!-- Please keep comment here to allow auto-update -->
+<!-- [END AUTO UPDATE] -->
 ## [0.1.1-a67c1cb] - 2024-05-23
 
 Ns 330/fix bad network requests (#54)
 
 * added buffered network packets request
-<!-- [END AUTO UPDATE] -->
 ## [0.1.1-643eec2] - 2024-05-22
 
 refactored requets for network packets and network, now they are split (#53)
