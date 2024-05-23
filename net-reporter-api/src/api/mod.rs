@@ -1,5 +1,5 @@
 //TODO: Rewrite all the inbound ion structs encode to `write_blob(*.encode())`
-
+pub mod buffer;
 pub mod http_overview_dashboard_filters;
 pub mod http_responses;
 pub mod http_request_methods_distribution;
