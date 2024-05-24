@@ -11,8 +11,8 @@ const DATA_TYPE: &str = "network-id-request";
 
 #[derive(Debug, Default, PartialEq, Eq)]
 pub struct NetworkIdRequestDTO {
-    pub name: String,
-    pub color: String,
+    name: String,
+    color: String,
 }
 impl API for NetworkIdRequestDTO { }
 
