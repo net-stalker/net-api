@@ -8,12 +8,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 <!-- [START AUTO UPDATE] -->
 <!-- Please keep comment here to allow auto-update -->
+## [0.1.1-b6bd13f] - 2024-05-24
+
+added network id dto structure into net-reporter-api (#56)
+
+* added network id dto structure into net-reporter-api
+<!-- [END AUTO UPDATE] -->
 ## [0.1.1-f0fd062] - 2024-05-23
 
 Ns 330/fix bad network requests (#55)
 
 * added request for getting network id and request for getting buffer
-<!-- [END AUTO UPDATE] -->
 ## [0.1.1-a67c1cb] - 2024-05-23
 
 Ns 330/fix bad network requests (#54)
