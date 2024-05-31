@@ -12,24 +12,18 @@ const DATA_TYPE: &str = "network-id-request";
 #[derive(Debug, Default, PartialEq, Eq)]
 pub struct NetworkIdRequestDTO {
     name: String,
-    color: String,
 }
 impl API for NetworkIdRequestDTO { }
 
 impl NetworkIdRequestDTO {
-    pub fn new(name: &str, color: &str) -> Self {
+    pub fn new(name: &str) -> Self {
         Self { 
             name: name.to_string(),
-            color: color.to_string(),
         }
     }
 
     pub fn get_name(&self) -> &str {
         &self.name
-    }
-
-    pub fn get_color(&self) -> &str {
-        &self.color
     }
 }
 
@@ -44,9 +38,6 @@ impl Encoder for NetworkIdRequestDTO {
 
         writer.set_field_name("name");
         writer.write_string(&self.name).unwrap();
-
-        writer.set_field_name("color");
-        writer.write_string(&self.color).unwrap();
 
         writer.step_out().unwrap();
         writer.flush().unwrap();
@@ -64,11 +55,8 @@ impl Decoder for NetworkIdRequestDTO {
 
         binary_user_reader.next().unwrap();
         let name = binary_user_reader.read_string().unwrap();
-
-        binary_user_reader.next().unwrap();
-        let color = binary_user_reader.read_string().unwrap();
         
-        NetworkIdRequestDTO::new(name.text(), color.text())
+        NetworkIdRequestDTO::new(name.text())
     }
 }
 
@@ -97,8 +85,7 @@ mod tests {
     #[test]
     fn reader_correctly_read_encoded_network_id_request() {
         const NAME: &str = "name";
-        const COLOR: &str = "color";
-        let get_network_id_request = NetworkIdRequestDTO::new(NAME, COLOR);
+        let get_network_id_request = NetworkIdRequestDTO::new(NAME);
         let mut binary_user_reader = ReaderBuilder::new().build(get_network_id_request.encode()).unwrap();
 
         assert_eq!(StreamItem::Value(IonType::Struct), binary_user_reader.next().unwrap());
@@ -108,26 +95,20 @@ mod tests {
         assert_eq!("name", binary_user_reader.field_name().unwrap());
         assert_eq!(NAME, binary_user_reader.read_string().unwrap().text());
 
-        assert_eq!(StreamItem::Value(IonType::String), binary_user_reader.next().unwrap());
-        assert_eq!("color", binary_user_reader.field_name().unwrap());
-        assert_eq!(COLOR, binary_user_reader.read_string().unwrap().text());
-
         binary_user_reader.step_out().unwrap();
     }
 
     #[test]
     fn endec_network_id_request() {
         const NAME: &str = "name";
-        const COLOR: &str = "color";
-        let get_network_id_request = NetworkIdRequestDTO::new(NAME, COLOR);
+        let get_network_id_request = NetworkIdRequestDTO::new(NAME);
         assert_eq!(get_network_id_request, NetworkIdRequestDTO::decode(&get_network_id_request.encode()));
     }
 
     #[test]
     fn test_getting_data_types() {
         const NAME: &str = "name";
-        const COLOR: &str = "color";
-        let get_network_id_request = NetworkIdRequestDTO::new(NAME, COLOR);
+        let get_network_id_request = NetworkIdRequestDTO::new(NAME);
         assert_eq!(get_network_id_request.get_type(), NetworkIdRequestDTO::get_data_type());
         assert_eq!(get_network_id_request.get_type(), super::DATA_TYPE);
     }
