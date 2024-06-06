@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 <!-- [START AUTO UPDATE] -->
 <!-- Please keep comment here to allow auto-update -->
+## [0.1.1-dd97d62] - 2024-06-06
+
+fixed wrong method name (#58)
+
+* fixed wrong method name
 <!-- [END AUTO UPDATE] -->
 ## [0.1.1-bf42d81] - 2024-05-31
 
