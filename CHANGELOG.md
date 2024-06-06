@@ -8,12 +8,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 <!-- [START AUTO UPDATE] -->
 <!-- Please keep comment here to allow auto-update -->
+<!-- [END AUTO UPDATE] -->
 ## [0.1.1-bf42d81] - 2024-05-31
 
 Ns 337/network id dto strucutre (#57)
 
 * removed color from network id
-<!-- [END AUTO UPDATE] -->
 ## [0.1.1-b6bd13f] - 2024-05-24
 
 added network id dto structure into net-reporter-api (#56)
