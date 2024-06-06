@@ -16,18 +16,18 @@ const DATA_TYPE: &str = "network-packet-request";
 
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct NetworkPacketsRequestDTO {
-    packets_networks_ids: Vec<Option<String>>,
+    packets_network_ids: Vec<Option<String>>,
 }
 impl API for NetworkPacketsRequestDTO { }
 
 impl NetworkPacketsRequestDTO {
-    pub fn new(packets_networks_ids: &[Option<&str>]) -> Self {
+    pub fn new(packets_network_ids: &[Option<&str>]) -> Self {
         NetworkPacketsRequestDTO { 
-            packets_networks_ids: packets_networks_ids.iter().map(|id| id.map(str::to_string)).collect(),
+            packets_network_ids: packets_network_ids.iter().map(|id| id.map(str::to_string)).collect(),
         }
     }
-    pub fn get_id(&self) -> &[Option<String>] {
-        self.packets_networks_ids.as_slice()
+    pub fn get_network_ids(&self) -> &[Option<String>] {
+        self.packets_network_ids.as_slice()
     }
 }
 
@@ -40,9 +40,9 @@ impl Encoder for NetworkPacketsRequestDTO {
         
         writer.step_in(IonType::Struct).expect("Error while creating an ion struct");
 
-        writer.set_field_name("packets_networks_ids");
+        writer.set_field_name("packets_network_ids");
         writer.step_in(IonType::List).unwrap();
-        self.packets_networks_ids.iter().for_each(|network_id|{
+        self.packets_network_ids.iter().for_each(|network_id|{
             match network_id.as_ref() {
                 Some(id) => writer.write_string(id).unwrap(),
                 None => writer.write_null(IonType::String).unwrap(),
@@ -101,16 +101,16 @@ mod tests {
 
     #[test]
     fn reader_correctly_read_encoded_network_packets_request() {
-        let test_networks_ids = vec![Some("1"), Some("2"), None, None, Some("3")];
-        let network_packets_request = NetworkPacketsRequestDTO::new(test_networks_ids.as_slice());
+        let test_network_ids = vec![Some("1"), Some("2"), None, None, Some("3")];
+        let network_packets_request = NetworkPacketsRequestDTO::new(test_network_ids.as_slice());
         let mut binary_user_reader = ReaderBuilder::new().build(network_packets_request.encode()).unwrap();
         assert_eq!(StreamItem::Value(IonType::Struct), binary_user_reader.next().unwrap());
         binary_user_reader.step_in().unwrap();
         assert_eq!(StreamItem::Value(IonType::List), binary_user_reader.next().unwrap());
-        assert_eq!("packets_networks_ids", binary_user_reader.field_name().unwrap());
+        assert_eq!("packets_network_ids", binary_user_reader.field_name().unwrap());
         binary_user_reader.step_in().unwrap();
         let elements = binary_user_reader.read_all_elements().unwrap();
-        for (element, id) in elements.iter().zip(test_networks_ids.iter()) {
+        for (element, id) in elements.iter().zip(test_network_ids.iter()) {
             assert_eq!(element.as_text(), *id);
         }
         binary_user_reader.step_out().unwrap();
@@ -125,8 +125,8 @@ mod tests {
 
     #[test]
     fn test_getting_data_types() {
-        let test_networks_ids = vec![Some("1"), Some("2"), None, None, Some("3")];
-        let network_packets_request = NetworkPacketsRequestDTO::new(test_networks_ids.as_slice()); 
+        let test_network_ids = vec![Some("1"), Some("2"), None, None, Some("3")];
+        let network_packets_request = NetworkPacketsRequestDTO::new(test_network_ids.as_slice()); 
         assert_eq!(network_packets_request.get_type(), NetworkPacketsRequestDTO::get_data_type());
         assert_eq!(network_packets_request.get_type(), super::DATA_TYPE);
     }
