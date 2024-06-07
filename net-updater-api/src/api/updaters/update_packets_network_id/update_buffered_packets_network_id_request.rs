@@ -113,7 +113,7 @@ mod tests {
     use crate::api::updaters::update_packets_network_id::update_buffered_packets_network_id_request::UpdateBufferedPacketsNetworkIdRequestDTO;
 
     #[test]
-    fn reader_correctly_read_encoded_transfer_packets_request() {
+    fn reader_correctly_read_encoded_udpate_buffered_packets_network_id() {
         const NETWORK_ID: Option<&str> = Some("network_id");
         const PACKETS_IDS: [&'static str; 5] = ["1", "2", "3", "4", "5"];
         let transfer_packets_request = UpdateBufferedPacketsNetworkIdRequestDTO::new(
@@ -144,7 +144,7 @@ mod tests {
     }
 
     #[test]
-    fn endec_transfer_packets_request() {
+    fn endec_udpate_buffered_packets_network_id() {
         const NETWORK_ID: Option<&str> = Some("network_id");
         const PACKETS_IDS: [&'static str; 5] = ["1", "2", "3", "4", "5"];
         let transfer_packets_request = UpdateBufferedPacketsNetworkIdRequestDTO::new(
