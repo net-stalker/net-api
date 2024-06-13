@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 <!-- [START AUTO UPDATE] -->
 <!-- Please keep comment here to allow auto-update -->
+## [0.1.2-84509be] - 2024-06-13
+
+added delete buffered packet request (#60)
 <!-- [END AUTO UPDATE] -->
 ## [0.1.1-dd97d62] - 2024-06-06
 
