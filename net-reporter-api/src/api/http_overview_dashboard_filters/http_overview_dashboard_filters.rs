@@ -19,15 +19,22 @@ pub struct HttpOverviewDashboardFiltersDTO {
     endpoints: Vec<String>,
     http_request_methods: Vec<String>,
     http_response_codes: Vec<String>,
+    networks: Vec<String>,
 }
 impl API for HttpOverviewDashboardFiltersDTO { }
 
 impl HttpOverviewDashboardFiltersDTO {
-    pub fn new(endpoints: &[String], http_request_methods: &[String], http_response_codes: &[String]) -> Self {
+    pub fn new(
+        endpoints: &[String],
+        http_request_methods: &[String],
+        http_response_codes: &[String],
+        networks: &[String],
+    ) -> Self {
         HttpOverviewDashboardFiltersDTO {
             endpoints: endpoints.to_vec(),
             http_request_methods: http_request_methods.to_vec(),
             http_response_codes: http_response_codes.to_vec(),
+            networks: networks.to_vec(),
         }
     }
 
@@ -41,6 +48,10 @@ impl HttpOverviewDashboardFiltersDTO {
 
     pub fn get_response_codes(&self) -> &[String] {
         &self.http_response_codes
+    }
+
+    pub fn get_networks(&self) -> &[String] {
+        &self.networks
     }
 }
 
@@ -73,6 +84,14 @@ impl Encoder for HttpOverviewDashboardFiltersDTO {
             writer.write_string(code).unwrap();
         }
         writer.step_out().unwrap();
+
+        writer.set_field_name("networks");
+        writer.step_in(IonType::List).expect("Error while entering an ion list");
+        for network in &self.networks {
+            writer.write_string(network).unwrap();
+        }
+        writer.step_out().unwrap();
+
 
         writer.step_out().unwrap();
         writer.flush().unwrap();
@@ -115,12 +134,23 @@ impl Decoder for HttpOverviewDashboardFiltersDTO {
         }
         binary_user_reader.step_out().unwrap();
 
+
+        binary_user_reader.next().unwrap();
+        binary_user_reader.step_in().unwrap();
+        let elements = binary_user_reader.read_all_elements().unwrap();
+        let mut networks = Vec::<String>::with_capacity(elements.len());
+        for element in elements {
+            networks.push(element.as_text().unwrap().to_string());
+        }
+        binary_user_reader.step_out().unwrap();
+
         binary_user_reader.step_out().unwrap();
 
         HttpOverviewDashboardFiltersDTO::new(
             endpoints.as_slice(),
             http_request_methods.as_slice(),
             http_response_codes.as_slice(),
+            networks.as_slice(),
         )
     }
 }
@@ -154,10 +184,12 @@ mod tests {
         let endpoints: Vec<String> = vec!["e1".to_string(), "e2".to_string(), "e3".to_string()];
         let requests: Vec<String> = vec!["GET".to_string(), "POST".to_string(), "PUT".to_string()];
         let codes: Vec<String> = vec!["200".to_string(), "201".to_string(), "404".to_string()];
+        let networks: Vec<String> = vec!["first not null".to_string(), "second not null".to_string(), "third not null".to_string()];
         let filter_entry = HttpOverviewDashboardFiltersDTO::new(
             &endpoints,
             &requests,
-            &codes
+            &codes,
+            &networks,
         );
         let mut binary_user_reader = ReaderBuilder::new().build(filter_entry.encode()).unwrap();
 
@@ -199,6 +231,20 @@ mod tests {
         assert_eq!(codes, endeced_response_codes);
 
         binary_user_reader.step_out().unwrap();
+
+        assert_eq!(StreamItem::Value(IonType::List), binary_user_reader.next().unwrap());
+        assert_eq!("networks", binary_user_reader.field_name().unwrap());
+        binary_user_reader.step_in().unwrap();
+
+        let endeced_networks: Vec<String> = binary_user_reader.read_all_elements().unwrap().iter().map(|element| {
+          element.as_string().unwrap().to_owned()
+        }).collect();
+
+        assert_eq!(endeced_networks, networks);
+
+        binary_user_reader.step_out().unwrap();
+
+
         binary_user_reader.step_out().unwrap();
     }
 
@@ -207,10 +253,12 @@ mod tests {
         let endpoints: Vec<String> = vec!["e1".to_string(), "e2".to_string(), "e3".to_string()];
         let requests: Vec<String> = vec!["GET".to_string(), "POST".to_string(), "PUT".to_string()];
         let codes: Vec<String> = vec!["200".to_string(), "201".to_string(), "404".to_string()];
+        let networks: Vec<String> = vec!["first not null".to_string(), "second not null".to_string(), "third not null".to_string()];
         let filter_entry = HttpOverviewDashboardFiltersDTO::new(
             &endpoints,
             &requests,
-            &codes
+            &codes,
+            &networks,
         );
         assert_eq!(filter_entry, HttpOverviewDashboardFiltersDTO::decode(&filter_entry.encode()));
     }
@@ -220,10 +268,12 @@ mod tests {
         let endpoints: Vec<String> = vec!["e1".to_string(), "e2".to_string(), "e3".to_string()];
         let requests: Vec<String> = vec!["GET".to_string(), "POST".to_string(), "PUT".to_string()];
         let codes: Vec<String> = vec!["200".to_string(), "201".to_string(), "404".to_string()];
+        let networks: Vec<String> = vec!["first not null".to_string(), "second not null".to_string(), "third not null".to_string()];
         let filter_entry = HttpOverviewDashboardFiltersDTO::new(
             &endpoints,
             &requests,
-            &codes
+            &codes,
+            &networks,
         );
         assert_eq!(filter_entry.get_type(), HttpOverviewDashboardFiltersDTO::get_data_type());
         assert_eq!(filter_entry.get_type(), super::DATA_TYPE);
