@@ -12,7 +12,7 @@ use super::network::NetworkDTO;
 
 const DATA_TYPE: &str = "networks";
 
-#[derive(Debug, Default, PartialEq, Eq)]
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct NetworksDTO {
     networks: Vec<NetworkDTO>,
 }
