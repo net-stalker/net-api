@@ -12,22 +12,31 @@ use net_core_api::core::encoder_api::Encoder;
 use net_core_api::core::decoder_api::Decoder;
 use net_core_api::core::typed_api::Typed;
 
-const DATA_TYPE: &str = "http_overview_dashboard_filters";
+use crate::api::network::networks::NetworksDTO;
+
+const DATA_TYPE: &str = "http-overview-dashboard-filters";
 
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct HttpOverviewDashboardFiltersDTO {
     endpoints: Vec<String>,
     http_request_methods: Vec<String>,
     http_response_codes: Vec<String>,
+    networks: NetworksDTO,
 }
 impl API for HttpOverviewDashboardFiltersDTO { }
 
 impl HttpOverviewDashboardFiltersDTO {
-    pub fn new(endpoints: &[String], http_request_methods: &[String], http_response_codes: &[String]) -> Self {
+    pub fn new(
+        endpoints: &[String],
+        http_request_methods: &[String],
+        http_response_codes: &[String],
+        networks: &NetworksDTO,
+    ) -> Self {
         HttpOverviewDashboardFiltersDTO {
             endpoints: endpoints.to_vec(),
             http_request_methods: http_request_methods.to_vec(),
             http_response_codes: http_response_codes.to_vec(),
+            networks: networks.clone(),
         }
     }
 
@@ -41,6 +50,10 @@ impl HttpOverviewDashboardFiltersDTO {
 
     pub fn get_response_codes(&self) -> &[String] {
         &self.http_response_codes
+    }
+
+    pub fn get_networks(&self) -> &NetworksDTO {
+        &self.networks
     }
 }
 
@@ -74,7 +87,11 @@ impl Encoder for HttpOverviewDashboardFiltersDTO {
         }
         writer.step_out().unwrap();
 
+        writer.set_field_name("networks");
+        writer.write_blob(&self.networks.encode()).unwrap();
+
         writer.step_out().unwrap();
+
         writer.flush().unwrap();
 
         writer.output().as_slice().into()
@@ -83,7 +100,6 @@ impl Encoder for HttpOverviewDashboardFiltersDTO {
 
 impl Decoder for HttpOverviewDashboardFiltersDTO {
     fn decode(data: &[u8]) -> Self {
-
         let mut binary_user_reader = ReaderBuilder::new().build(data).unwrap();
         binary_user_reader.next().unwrap();
         binary_user_reader.step_in().unwrap();
@@ -115,12 +131,15 @@ impl Decoder for HttpOverviewDashboardFiltersDTO {
         }
         binary_user_reader.step_out().unwrap();
 
+        binary_user_reader.next().unwrap();
+        let networks = NetworksDTO::decode(binary_user_reader.read_blob().unwrap().as_slice());
         binary_user_reader.step_out().unwrap();
 
         HttpOverviewDashboardFiltersDTO::new(
             endpoints.as_slice(),
             http_request_methods.as_slice(),
             http_response_codes.as_slice(),
+            &networks,
         )
     }
 }
@@ -148,16 +167,41 @@ mod tests {
     use net_core_api::core::typed_api::Typed;
 
     use crate::api::http_overview_dashboard_filters::http_overview_dashboard_filters::HttpOverviewDashboardFiltersDTO;
+    use crate::api::network::network::NetworkDTO;
+    use crate::api::network::networks::NetworksDTO;
+
+    fn get_networks() -> NetworksDTO {
+        let networks = vec![
+            NetworkDTO::new(
+                "id1",
+                "first name",
+                "white"
+            ),
+            NetworkDTO::new(
+                "id2",
+                "second name",
+                "black"
+            ),
+            NetworkDTO::new(
+                "id3",
+                "third name",
+                "yellow"
+            ),
+        ];
+        NetworksDTO::new(&networks)
+    }
 
     #[test]
     fn reader_correctly_read_encoded_http_overview_filters() {
         let endpoints: Vec<String> = vec!["e1".to_string(), "e2".to_string(), "e3".to_string()];
         let requests: Vec<String> = vec!["GET".to_string(), "POST".to_string(), "PUT".to_string()];
         let codes: Vec<String> = vec!["200".to_string(), "201".to_string(), "404".to_string()];
+        let networks = get_networks(); 
         let filter_entry = HttpOverviewDashboardFiltersDTO::new(
             &endpoints,
             &requests,
-            &codes
+            &codes,
+            &networks,
         );
         let mut binary_user_reader = ReaderBuilder::new().build(filter_entry.encode()).unwrap();
 
@@ -199,6 +243,11 @@ mod tests {
         assert_eq!(codes, endeced_response_codes);
 
         binary_user_reader.step_out().unwrap();
+
+        assert_eq!(StreamItem::Value(IonType::Blob), binary_user_reader.next().unwrap());
+        assert_eq!("networks", binary_user_reader.field_name().unwrap());
+        assert_eq!(networks,  NetworksDTO::decode(binary_user_reader.read_blob().unwrap().as_slice()));
+
         binary_user_reader.step_out().unwrap();
     }
 
@@ -207,10 +256,12 @@ mod tests {
         let endpoints: Vec<String> = vec!["e1".to_string(), "e2".to_string(), "e3".to_string()];
         let requests: Vec<String> = vec!["GET".to_string(), "POST".to_string(), "PUT".to_string()];
         let codes: Vec<String> = vec!["200".to_string(), "201".to_string(), "404".to_string()];
+        let networks = get_networks(); 
         let filter_entry = HttpOverviewDashboardFiltersDTO::new(
             &endpoints,
             &requests,
-            &codes
+            &codes,
+            &networks,
         );
         assert_eq!(filter_entry, HttpOverviewDashboardFiltersDTO::decode(&filter_entry.encode()));
     }
@@ -220,10 +271,12 @@ mod tests {
         let endpoints: Vec<String> = vec!["e1".to_string(), "e2".to_string(), "e3".to_string()];
         let requests: Vec<String> = vec!["GET".to_string(), "POST".to_string(), "PUT".to_string()];
         let codes: Vec<String> = vec!["200".to_string(), "201".to_string(), "404".to_string()];
+        let networks = get_networks(); 
         let filter_entry = HttpOverviewDashboardFiltersDTO::new(
             &endpoints,
             &requests,
-            &codes
+            &codes,
+            &networks,
         );
         assert_eq!(filter_entry.get_type(), HttpOverviewDashboardFiltersDTO::get_data_type());
         assert_eq!(filter_entry.get_type(), super::DATA_TYPE);
