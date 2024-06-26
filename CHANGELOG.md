@@ -8,6 +8,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 <!-- [START AUTO UPDATE] -->
 <!-- Please keep comment here to allow auto-update -->
+## [0.1.2-47a0435] - 2024-06-26
+
+Ns 361/dahsboard filters update (#61)
+
+* updated http overview dashboard gilters to request list of networks
+
+* updated filters requests to use NetworksDTO
+
+* udpated chart requests to use Option<String> for network id
 <!-- [END AUTO UPDATE] -->
 ## [0.1.2-84509be] - 2024-06-13
 
